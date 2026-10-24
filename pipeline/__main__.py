@@ -36,6 +36,11 @@ def prepare_data(params=None, area=None):
 def main():
     parser = argparse.ArgumentParser(description='快消新品渠道进入 Agent L0-L4 + PACK')
     sub = parser.add_subparsers(dest='command', required=True)
+    draft = sub.add_parser('profile-draft', help='从用户原文抽取有证据的产品档案草稿')
+    draft.add_argument('--text-file', type=Path, required=True)
+    draft.add_argument('--id', required=True)
+    draft.add_argument('--name')
+    draft.add_argument('-o', '--output', type=Path, help='检查报告路径（默认主仓库 .work/reports/profile-wizard/ 下）')
     sub.add_parser('llm-check', help='Probe LLM provider, model, latency and JSON schema support')
     sub.add_parser('fetch', help='显式刷新OSM缓存')
     market=sub.add_parser('fetch-market',help='三个商圈竞品和渠道伙伴；累计150搜索调用')
@@ -60,6 +65,14 @@ def main():
     run.add_argument('-o', '--output', type=Path, help='写JSON执行摘要')
     args = parser.parse_args()
     try:
+        if args.command == 'profile-draft':
+            from pipeline.profile_builder import save_draft, report_directory
+            if args.output is None:
+                args.output = report_directory() / 'profile-draft.check.json'
+            result = save_draft(dict(text=args.text_file.read_text(encoding='utf-8-sig'),
+                                     id=args.id, product_name=args.name), report_path=args.output)
+            print(json.dumps({k: v for k, v in result.items() if k not in ('profile', 'attempts')}, ensure_ascii=False))
+            return 0 if result['status'] == 'passed' else 2
         if args.command == 'llm-check':
             from pipeline.llm import Gateway
             print(json.dumps(Gateway(parameters()).check(), ensure_ascii=False))

@@ -1,0 +1,216 @@
+id: fictional-beer
+source: user_text#0
+judged_by: llm
+product:
+  quote: 测试麦田精酿
+  name: 测试麦田精酿
+  source: user_text#40
+  judged_by: llm
+  specification:
+    volume: null
+    pack_size: null
+    facts:
+    - quote: 配料为水、麦芽和啤酒花
+      value: 配料为水、麦芽和啤酒花
+      source: user_text#48
+      judged_by: llm
+    note: 未推断容量与箱规；提取事实见 facts。
+  official_slogan: null
+selling_points:
+- quote: 配料为水、麦芽和啤酒花
+  id: ingredients
+  name: 配料
+  fact: 配料为水、麦芽和啤酒花
+  scene_ids:
+  - meal
+  source: user_text#48
+  judged_by: llm
+  mapping_source: 模型基于用户原文的适用场景候选；非已验证渠道表现。
+scenes:
+- quote: 海鲜、火锅、烧烤、酒楼宴席、夜宵、简餐等餐饮佐餐
+  id: meal
+  name: 海鲜、火锅、烧烤、酒楼宴席、夜宵、简餐等餐饮佐餐
+  source: user_text#66
+  judged_by: llm
+  visual_keywords: 海鲜、火锅、烧烤、酒楼宴席、夜宵、简餐等餐饮佐餐
+  emotion: ''
+channels:
+- id: seafood
+  name: 海鲜
+  categories:
+  - restaurant
+  pattern: 海鲜|大排档|seafood
+  scene_ids:
+  - meal
+  rules_fit: 0.95
+  rules_reason: 依据产品档案中的场景和卖点匹配；渠道适配为待走访验证的假设。
+  grid_type: 夜宵餐饮街
+  source: user_text#66
+  quote: 海鲜、火锅、烧烤、酒楼宴席、夜宵、简餐等餐饮佐餐
+  judged_by: llm
+  rules_source: profiles/jiangnan-gongquan.yaml#channels/seafood；复用项目排序假设，非新产品实测。
+- id: hotpot
+  name: 火锅
+  categories:
+  - restaurant
+  pattern: 火锅|hot_?pot
+  scene_ids:
+  - meal
+  rules_fit: 0.9
+  rules_reason: 依据产品档案中的场景和卖点匹配；渠道适配为待走访验证的假设。
+  grid_type: 夜宵餐饮街
+  source: user_text#66
+  quote: 海鲜、火锅、烧烤、酒楼宴席、夜宵、简餐等餐饮佐餐
+  judged_by: llm
+  rules_source: profiles/jiangnan-gongquan.yaml#channels/hotpot；复用项目排序假设，非新产品实测。
+- id: bbq
+  name: 烧烤
+  categories:
+  - restaurant
+  pattern: 烧烤|烤肉|barbecue|bbq
+  scene_ids:
+  - meal
+  rules_fit: 0.9
+  rules_reason: 依据产品档案中的场景和卖点匹配；渠道适配为待走访验证的假设。
+  grid_type: 夜宵餐饮街
+  source: user_text#66
+  quote: 海鲜、火锅、烧烤、酒楼宴席、夜宵、简餐等餐饮佐餐
+  judged_by: llm
+  rules_source: profiles/jiangnan-gongquan.yaml#channels/bbq；复用项目排序假设，非新产品实测。
+- id: banquet
+  name: 酒楼宴席
+  categories:
+  - restaurant
+  pattern: 酒楼|酒家|宴|banquet
+  scene_ids:
+  - meal
+  rules_fit: 0.95
+  rules_reason: 依据产品档案中的场景和卖点匹配；渠道适配为待走访验证的假设。
+  grid_type: 商务宴请区
+  source: user_text#66
+  quote: 海鲜、火锅、烧烤、酒楼宴席、夜宵、简餐等餐饮佐餐
+  judged_by: llm
+  rules_source: profiles/jiangnan-gongquan.yaml#channels/banquet；复用项目排序假设，非新产品实测。
+- id: late_meal
+  name: 夜宵
+  categories:
+  - restaurant
+  pattern: 夜宵|宵夜
+  scene_ids:
+  - meal
+  rules_fit: 0.8
+  rules_reason: 依据产品档案中的场景和卖点匹配；渠道适配为待走访验证的假设。
+  grid_type: 夜宵餐饮街
+  source: user_text#66
+  quote: 海鲜、火锅、烧烤、酒楼宴席、夜宵、简餐等餐饮佐餐
+  judged_by: llm
+  rules_source: profiles/jiangnan-gongquan.yaml#channels/late_meal；复用项目排序假设，非新产品实测。
+- id: canteen
+  name: 简餐
+  categories:
+  - restaurant
+  pattern: 食堂|简餐|盖码饭|canteen
+  scene_ids:
+  - meal
+  rules_fit: 0.65
+  rules_reason: 依据产品档案中的场景和卖点匹配；渠道适配为待走访验证的假设。
+  grid_type: 产业园食堂/简餐
+  source: user_text#66
+  quote: 海鲜、火锅、烧烤、酒楼宴席、夜宵、简餐等餐饮佐餐
+  judged_by: llm
+  rules_source: profiles/jiangnan-gongquan.yaml#channels/canteen；复用项目排序假设，非新产品实测。
+- id: restaurant_other
+  name: 其他餐饮
+  categories:
+  - restaurant
+  pattern: null
+  scene_ids:
+  - meal
+  rules_fit: 0.65
+  rules_reason: 依据产品档案中的场景和卖点匹配；渠道适配为待走访验证的假设。
+  grid_type: 社区餐饮
+  source: user_text#66
+  quote: 海鲜、火锅、烧烤、酒楼宴席、夜宵、简餐等餐饮佐餐
+  judged_by: llm
+  rules_source: profiles/jiangnan-gongquan.yaml#channels/restaurant_other；复用项目排序假设，非新产品实测。
+compliance_rules:
+- id: brief-extreme-a
+  terms:
+  - 最甜
+  - 最好喝
+  - 第一
+  - 顶级
+  source: .work/handbook/dongting-brief.md#A-合规红线
+  judged_by: rules
+- id: brief-extreme-b
+  terms:
+  - 最佳
+  - 长寿神水
+  source: .work/handbook/dongting-brief.md#B-合规红线
+  judged_by: rules
+- id: brief-function
+  terms:
+  - 排尿酸
+  - 缓痛风
+  - 调胃酸
+  - 促消化
+  - 强代谢
+  - 护血管
+  - 弱碱中和酸性体质
+  source: .work/handbook/dongting-brief.md#B-功能转译及B-合规红线
+  judged_by: rules
+- id: law-9-3
+  terms:
+  - 国家级
+  - 最高级
+  source: https://www.samr.gov.cn/zw/zfxxgk/fdzdgknr/fgs/art/2023/art_5474cf75173c45d6a0379730fb4e8d97.html
+    第九条第三项（最佳另由 brief-extreme-b 扫描）
+  judged_by: rules
+- id: project-conservative
+  terms:
+  - 最解腻
+  - 治疗
+  - 预防疾病
+  - 治愈
+  - 降血糖
+  - 降血压
+  - 解酒
+  - 排毒
+  - 防癌
+  - 抗癌
+  - 第一品牌
+  - 世界第一
+  source: 项目保守禁用词表；依据 brief 功效禁令及广告法第九/十七条扩展，非法律穷举；https://www.samr.gov.cn/zw/zfxxgk/fdzdgknr/fgs/art/2023/art_5474cf75173c45d6a0379730fb4e8d97.html
+  judged_by: rules
+- id: competitor-denigration
+  terms:
+  - 竞品垃圾
+  - 别家水质差
+  - 其他品牌不安全
+  - 不如我们
+  - 劣质竞品
+  source: 《广告法》第十三条；项目保守词表，非法律穷举；https://www.samr.gov.cn/zw/zfxxgk/fdzdgknr/fgs/art/2023/art_5474cf75173c45d6a0379730fb4e8d97.html
+  judged_by: rules
+- quote: 不得使用“无限畅饮”宣传
+  id: brand-redline
+  terms:
+  - 无限畅饮
+  source: user_text#105
+  judged_by: llm
+- id: competitor-naming
+  terms: []
+  source: 项目规则：不得点名文本中提供的竞品；复用 pipeline/profiles.py 规则。
+  judged_by: rules
+competitors: []
+material:
+  selling_point_ids:
+  - ingredients
+  pitch: '{product}：{fact}'
+  display: 陈列位置与进货条件待门店确认。
+  table_copy: '{product}'
+draft_metadata:
+  input_sha256: 23dd7a27d0c752e0dd9ded9cdf668e2ec53cb6bc4cd33efe027dc1f3dc6773ac
+  offset_unit: original Unicode code points; zero based
+  extraction_contract: PROFILE
+  generic_rules_judged_by: rules
+  mock: true

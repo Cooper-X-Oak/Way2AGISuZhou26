@@ -7,14 +7,38 @@ PROFILE_DIR = Path(__file__).resolve().parent.parent / "profiles"
 
 
 def load(profile_id, directory=PROFILE_DIR):
-    if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", profile_id):
+    if not re.fullmatch(r"(?:drafts/)?[a-z0-9]+(?:-[a-z0-9]+)*", profile_id):
         raise ValueError("产品档案 id 格式不合法")
-    path = directory / f"{profile_id}.yaml"
+    draft = profile_id.startswith('drafts/')
+    path = Path(directory) / f"{profile_id}.yaml"
     if not path.is_file():
         raise ValueError(f"产品档案不存在: {profile_id}")
     profile = yaml.safe_load(path.read_text(encoding="utf-8"))
-    if profile["id"] != profile_id:
+    if profile["id"] != profile_id.removeprefix('drafts/'):
         raise ValueError("档案 id 与文件名不一致")
+    if draft:
+        import hashlib
+        source_path = path.with_suffix('.txt').resolve()
+        text = source_path.read_bytes().decode('utf-8')
+        if hashlib.sha256(text.encode()).hexdigest() != profile['draft_metadata']['input_sha256']:
+            raise ValueError('草稿原文摘要不一致')
+        # Runtime file anchors keep the original logical user_text provenance.
+        def resolve_source(value):
+            if isinstance(value, dict):
+                source = value.get('source', '')
+                if source.startswith('user_text#'):
+                    value['input_source'] = source
+                    value['source'] = str(source_path) + '#' + source.split('#', 1)[1]
+                    # Engine source capture uses universal-newline text reads.
+                    for key in ('fact', 'visual_keywords'):
+                        if isinstance(value.get(key), str):
+                            value[key] = value[key].replace('\r\n', '\n').replace('\r', '\n')
+                for child in value.values():
+                    resolve_source(child)
+            elif isinstance(value, list):
+                for child in value:
+                    resolve_source(child)
+        resolve_source(profile)
     for key in ("scenes", "selling_points", "channels", "compliance_rules"):
         ids = [row["id"] for row in profile[key]]
         if not ids or len(ids) != len(set(ids)):
@@ -27,8 +51,10 @@ def load(profile_id, directory=PROFILE_DIR):
         if not channel["scene_ids"] or not set(channel["scene_ids"]) <= scenes:
             raise ValueError("渠道假设引用了不存在的场景")
     competitors=profile.get('competitors',[])
-    if len({r['brand'] for r in competitors})!=len(competitors) or any(not r.get('source') or r.get('category') not in ('瓶装水','苏打水','送水站') for r in competitors):
+    if len({r['brand'] for r in competitors})!=len(competitors) or any(not r.get('source') or not r.get('category') or (not draft and r.get('category') not in ('瓶装水','苏打水','送水站')) for r in competitors):
         raise ValueError('竞品必须有唯一品牌、品类和来源')
+    if draft:
+        return profile
     profile['compliance_rules'].append(dict(id='competitor-naming',terms=[r['brand'] for r in competitors],
         source='项目规则：不得点名竞品；法律依据为《广告法》第十三条禁止贬低其他生产经营者的商品或者服务，非禁止所有比较广告；https://www.samr.gov.cn/zw/zfxxgk/fdzdgknr/fgs/art/2023/art_5474cf75173c45d6a0379730fb4e8d97.html'))
     profile['compliance_rules'].append(dict(id='competitor-denigration',terms=['竞品垃圾','别家水质差','其他品牌不安全','不如我们','劣质竞品'],
