@@ -38,6 +38,10 @@ uv run python docs/runtime-review/reproduce.py --run --area shishan --profile ji
 
 原始区域快照已在 `data/areas/{shishan,guanqian,ligongdi}/` 版本控制中。脚本打印两份已有档案在三个区域的渠道计数；零计数只说明当前分类映射没有匹配，不证明区域无法用于另一品类，更不证明现实没有商户。数据采样截断和来源以coverage为准。
 
+### 实际独立checkout验证
+
+2026-10-24在独立Git clone中，仅用本目录公开资料执行`--prepare-sources --run`，8关completed，run ID为`20261024T125940102134+0000-616f78e0`，运行状态时间12:59:41–13:00:11 UTC。使用已安装依赖的Python解释器，未重新验证包下载/安装；没有复制原工作区.work或伪造来源。sources的Git换行转换已禁用，使Windows checkout仍保持manifest哈希一致。
+
 ## 已观测结果与新的验收
 
 之前本地rules实跑：1199个POI，4网格，229终端（A46/B26/C157），73条材料实际8种文本，954条复核记录。技术检查13项通过，243项测试通过。见 [evidence.json](evidence.json)。这些是旧流水线的结果，不是通用Agent已经实现的证据。
