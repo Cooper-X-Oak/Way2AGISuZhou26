@@ -8,3 +8,6 @@ __pycache__/
 !.env.example
 runs/
 .orca/
+dist/
+
+web/app/node_modules/

@@ -1,0 +1,29 @@
+/* ── pack ── */
+.filters{display:flex;flex-wrap:wrap;gap:var(--s-2)}
+.filters button{border:var(--bw) solid var(--c-line-strong);background:var(--c-sheet);border-radius:var(--r-pill);padding:2px 10px;font-size:var(--t-xs)}
+.filters button[aria-pressed="true"]{background:var(--c-ink);border-color:var(--c-ink);color:var(--c-sheet)}
+.tbl{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:var(--t-md)}
+th,td{padding:8px var(--s-3);text-align:left;border-bottom:var(--bw) solid var(--c-line);white-space:nowrap}
+th{font-size:var(--t-xs);font-weight:500;color:var(--c-muted);letter-spacing:var(--tr-label);background:var(--c-sunk);position:sticky;top:0}
+td.num{text-align:right}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:var(--c-sunk)}
+tbody tr.on{background:var(--c-brand-soft)}
+.g{display:inline-grid;place-items:center;width:22px;height:22px;font:600 var(--t-xs) var(--f-data);color:var(--c-sheet);background:var(--c-grade-a);border-radius:var(--r-1)}
+.g.B{background:var(--c-grade-b)} .g.C{background:var(--c-grade-c);color:var(--c-ink)}
+.foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:var(--s-2);padding:var(--s-3) var(--s-4);font-size:var(--t-xs);color:var(--c-muted)}
+.foot>div{display:flex;flex-wrap:wrap;gap:var(--s-2) var(--s-4);align-items:center}
+.pager{display:inline-flex;align-items:center;gap:var(--s-2)}
+.pager button{border:var(--bw) solid var(--c-line-strong);background:var(--c-sheet);padding:2px 10px;border-radius:var(--r-1);font-size:var(--t-xs)}
+.pager button:disabled{color:var(--c-muted);border-color:var(--c-line);cursor:default}
+.ch-m{display:none;color:var(--c-muted)}
+.sub{font-size:var(--t-xs);color:var(--c-muted);margin:0}
+@media (max-width:560px){.c-ch,.c-z,.c-d,th:nth-child(3),th:nth-child(4),th:nth-child(5){display:none}.ch-m{display:inline}td.nm{white-space:normal}}
+
+@media (max-width:1080px){.work{grid-template-columns:1fr}}
+@media (max-width:560px){
+  .task{flex-basis:100%;white-space:normal}
+  .store{grid-template-columns:auto 1fr}
+  .score{grid-row:auto;grid-column:1/-1;text-align:left;display:flex;gap:var(--s-2);align-items:baseline}
+}

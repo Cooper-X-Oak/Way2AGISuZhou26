@@ -1,0 +1,9 @@
+
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--c-ground);color:var(--c-ink);font:var(--t-md)/var(--lh-body) var(--f-ui);
+  padding-left:max(var(--s-4),env(safe-area-inset-left,0px));padding-right:max(var(--s-4),env(safe-area-inset-right,0px))}
+.mono{font-family:var(--f-data);font-variant-numeric:tabular-nums}
+.shell{max-width:1440px;margin:0 auto;padding-block:var(--s-4) var(--s-10);display:flex;flex-direction:column;gap:var(--s-4)}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--c-brand);outline-offset:2px}

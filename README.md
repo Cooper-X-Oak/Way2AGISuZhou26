@@ -103,3 +103,9 @@ uv run python -m pipeline run --area guanqian --offline --auto-approve --input "
 PACK仅安排A+B；每人每天首次拜访不超过 params.first_visits_per_day=10（项目假设），每周5天，并遵守用户给定的更低日容量。未排入的A+B完整保存在backlog，C保存在items。检查层重新计算等级、路线和backlog。
 
 `uv run python -m pipeline supplement-amap -o .work/reports/grading-fix/supplement.json` 仅补三个商圈coverage标截断的类型。原3000米圆外接矩形四等分，调用polygon后过滤回原圆；按ID去重，保留原缓存和脱敏请求ledger。每格每类型最多8页，各格轮流分页。本任务grading-fix累计硬限制150搜索调用（含失败），重启共享usage.json余额，达到上限即停止并保留truncated及具体原因。接口不保证普查全量。补抓前快照存data/raw/amap/grading-*/before.json，历史runs不修改。
+
+## 前端
+
+前端位于 `web/app/`，使用 Vite + React 18 + TypeScript，依赖锁定于 package-lock.json。进入该目录执行 `npm ci`、`npm run dev`，打开 `http://localhost:5173/#/run/guanqian`。Vite 直接提供 `web/data/`；`#/replay/<scenario>` 为回放，`#/data` 为数据底座。设置可保存 API 基址（默认 `http://localhost:8787`），输入已有运行 ID 可订阅实时关卡事件；地图与清单明确标识为导出快照。回放和实时事件共用 reducer。
+
+在 `web/app/` 运行 `npm run build` 生成 `dist/app/` 常规站点，`npm run build:single` 生成根目录 `dist/铺市流水线.html`（五场景内联，≤20MB，file:// 离线可用）。需筛选场景时，先完成单文件构建，再从仓库根执行 `python scripts/build_single.py --scenario guanqian-compliance`；可重复传 `--scenario`，用 `--output` 指定输出。单文件无需外部字体或网络。运行 `npx vitest run` 验证状态转换。CSV 含 UTF-8 BOM；派发仅预览。缺失日期、抓取时间及证据显示「—」。

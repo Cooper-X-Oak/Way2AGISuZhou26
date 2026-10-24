@@ -1,0 +1,11 @@
+import {createRoot} from 'react-dom/client';
+import App from './App';
+import './styles/tokens.css';
+import './styles/base.css';
+import './styles/header.css';
+import './styles/pipeline.css';
+import './styles/map.css';
+import './styles/inspector.css';
+import './styles/pack.css';
+import './styles/components.css';
+createRoot(document.getElementById('root')!).render(<App/>);
