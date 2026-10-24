@@ -12,6 +12,14 @@
 
 ## 运行
 
+### 本地实时 API
+
+在仓库根目录运行 `uv run uvicorn server.app:app --port 8787`（单 worker）；接口文档见 `http://127.0.0.1:8787/docs`。允许 localhost、127.0.0.1 和 IPv6 回环地址任意端口的 CORS。服务只读缓存并使用标记为 `rules` 的离线判断，不调用高德或 LLM。最多同时运行两个任务，等待人工确认也占名额，超限返回 429。
+
+`POST /api/runs` 接收 `area`、`profile`、`input`，以及可选的 `demo_replay` 和 `auto_approve`（默认 false），返回 `run_id`。通过 `/api/runs/{id}` 读状态、`/api/runs/{id}/events` 订阅 SSE；事件 ID 是 ledger 行号，重连发送 `Last-Event-ID`。L2/L3 等待时，向 `/api/runs/{id}/gates/{stage}` 提交 `{"decision":"approve","note":"确认"}` 或 reject，决定保存在 `pending/<stage>-r<revision>.decision.json`，批准标记为 human。通过 `/api/runs/{id}/artifacts/{name}` 读取白名单 JSON。服务管理本进程创建的运行；重启后历史文件保留于 `runs/`，但不恢复运行或订阅。独立 worktree 自动从主仓库读取 `.work/` 产品原文。
+
+等待确认时，状态中的 `pending_artifact` 指向白名单别名 `L2.pending.json` 或 `L3.pending.json`，通过上述 artifacts 接口读取候选、检查结果和 L2 竞争摘要。
+
 ```powershell
 uv run python -m pipeline run --area shishan --offline --auto-approve --profile jiangnan-gongquan --input "想把江南贡泉铺进苏州高新区周边3公里的餐馆，2个地推，做4周" -o .work/reports/main.json
 uv run python -m pipeline run --offline --auto-approve --profile jiangnan-gongquan --demo-replay compliance --input "苏州高新区周边3公里，2个地推，做4周" -o .work/reports/compliance.json
