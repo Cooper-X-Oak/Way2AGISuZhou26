@@ -11,3 +11,6 @@ runs/
 dist/
 
 web/app/node_modules/
+data/app.db
+data/app.db-*
+data/blobs/
