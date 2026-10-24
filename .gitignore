@@ -8,3 +8,6 @@ __pycache__/
 !.env.example
 runs/
 .orca/
+data/app.db
+data/app.db-*
+data/blobs/
