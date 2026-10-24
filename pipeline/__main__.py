@@ -36,7 +36,8 @@ def prepare_data(params=None, area=None):
 def main():
     parser = argparse.ArgumentParser(description='快消新品渠道进入 Agent L0-L4 + PACK')
     sub = parser.add_subparsers(dest='command', required=True)
-    sub.add_parser('llm-check', help='Probe LLM provider, model, latency and JSON schema support')
+    probe = sub.add_parser('llm-check', help='Probe JSON or agent tools support')
+    probe.add_argument('--runtime', choices=['rules', 'agent'], default='rules')
     export = sub.add_parser('export', help='导出离线网页演示数据')
     export.add_argument('--run', type=Path, required=True)
     export.add_argument('--out', type=Path, required=True)
@@ -54,6 +55,9 @@ def main():
     amap.add_argument('-o', '--output', type=Path)
     run = sub.add_parser('run')
     run.add_argument('--offline', action='store_true')
+    run.add_argument('--runtime', choices=['rules', 'agent'], default='rules')
+    run.add_argument('--mode', choices=['rules', 'llm'], default='rules')
+    run.add_argument('--root', type=Path, default=Path('.'), help='运行产物根目录')
     run.add_argument('--area', choices=list(AREAS), help='读取商圈缓存；不调用高德')
     run.add_argument('--input', required=True)
     run.add_argument('--profile', default='jiangnan-gongquan')
@@ -64,6 +68,10 @@ def main():
     args = parser.parse_args()
     try:
         if args.command == 'llm-check':
+            if args.runtime == 'agent':
+                from runtime.client import Client
+                print(json.dumps(Client().check(), ensure_ascii=False))
+                return 0
             from pipeline.llm import Gateway
             print(json.dumps(Gateway(parameters()).check(), ensure_ascii=False))
             return 0
@@ -96,7 +104,7 @@ def main():
             write('data/coverage.json', coverage)
             print(json.dumps({'source':coverage['source'],'poi_count':len(pois)},ensure_ascii=False))
             return 0
-        judge = Judge(args.offline)
+        judge = Judge(args.offline or args.mode == 'rules' or args.runtime == 'agent')
         profile = load(args.profile)
         params = parameters()
         pois, coverage = prepare_data(params, args.area)
@@ -105,7 +113,15 @@ def main():
                   'params': params, 'judge': judge, 'profile': profile,
                   'demo_replay': args.demo_replay, 'auto_approve': args.auto_approve, 'no_defaults': args.no_defaults}
         inputs['market']=load_market(args.area)
-        directory, state = execute(inputs)
+        runner = execute
+        if args.runtime == 'agent':
+            from runtime.session import execute as runner
+        source_root = Path(__file__).resolve().parents[1]
+        git_file = source_root / '.git'
+        if git_file.is_file():
+            git_dir = Path(git_file.read_text().strip().removeprefix('gitdir: '))
+            source_root = (source_root / git_dir).resolve().parents[2]
+        directory, state = runner(inputs, args.root, source_root=source_root)
         result = {'run_directory': str(directory), **state}
         if args.output: write(args.output, result)
         print(json.dumps(result, ensure_ascii=False))

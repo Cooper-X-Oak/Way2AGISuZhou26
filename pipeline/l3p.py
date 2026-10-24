@@ -27,9 +27,10 @@ def coverage(p,c):
         distance(p['lat'],p['lon'],pois[t['poi_id']]['lat'],pois[t['poi_id']]['lon'])<=c['params']['partners']['coverage_radius_m'])
 
 
-def recommended(c):
+def recommended(c, *, eligible_ids=None):
     """Independent greedy cover for each selected grid; marginal gain, distance, id."""
-    rows={pid:p for pid,p in candidates(c).items() if kind(p,c) in c['params']['partners']['eligible_types']}
+    rows={pid:p for pid,p in candidates(c).items() if (pid in eligible_ids if eligible_ids is not None
+          else kind(p,c) in c['params']['partners']['eligible_types'])}
     covers={pid:set(coverage(p,c)) for pid,p in rows.items()}
     result={}
     for z in c['l2']['items']:

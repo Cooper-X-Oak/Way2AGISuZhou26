@@ -9,7 +9,8 @@ EVENT_TYPES = {'stage_start', 'attempt', 'check', 'violation', 'backtrack',
 
 
 async def stream_events(manager, run_id, last_id, request):
-    path = manager.directory(run_id) / 'ledger.jsonl'
+    agent = manager.runs[run_id].get('runtime') == 'agent'
+    path = manager.directory(run_id) / ('events.jsonl' if agent else 'ledger.jsonl')
     offset = 0
     line_id = 0
     while True:
@@ -29,6 +30,10 @@ async def stream_events(manager, run_id, last_id, request):
                     if line_id <= last_id:
                         continue
                     entry = resolve(json.loads(line), path.parent)
+                    if agent:
+                        if entry['seq'] > last_id:
+                            yield dict(id=str(entry['seq']), event=entry['kind'], data=json.dumps(entry, ensure_ascii=False))
+                        continue
                     kind = entry.get('event', 'attempt')
                     if kind not in EVENT_TYPES:
                         continue

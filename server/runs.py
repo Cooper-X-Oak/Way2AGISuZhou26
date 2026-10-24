@@ -36,15 +36,16 @@ class RunManager:
         pois, coverage = prepare_data(params, request.area)
         inputs = dict(request=request.input, profile=profile, params=params,
                       pois=pois, coverage=coverage, site=coverage['site'],
-                      area_id=request.area, judge=Judge(getattr(request, 'mode', 'rules') == 'rules'),
+                      area_id=request.area, judge=Judge(getattr(request, 'runtime', 'rules') == 'agent' or getattr(request, 'mode', 'rules') == 'rules'),
                       market=load_market(request.area), no_defaults=False,
                       auto_approve=request.auto_approve, demo_replay=request.demo_replay)
+        inputs['runtime'] = getattr(request, 'runtime', 'rules')
         with self.lock:
             if self.closed or not self.slots.acquire(blocking=False):
                 raise RuntimeError('最多同时运行两个任务（含等待人工确认的任务）')
             run_id = uuid.uuid4().hex
             self.runs[run_id] = dict(run_id=run_id, status='queued', current_stage=None,
-                                     completed_stages=[], gate=None, done=threading.Event())
+                                     completed_stages=[], runtime=inputs['runtime'], gate=None, done=threading.Event())
             try:
                 self.executor.submit(self._run, run_id, inputs)
             except Exception:
@@ -69,6 +70,13 @@ class RunManager:
         with self.lock:
             row = self.runs[run_id]
             kind = entry.get('event')
+            if 'kind' in entry:
+                kind = {'stage.started': 'stage_start', 'stage.completed': 'stage_done',
+                        'gate.pending': 'gate_pending', 'run.completed': 'run_done',
+                        'run.failed': 'run_failed', 'flow.backtrack': 'backtrack'}.get(entry['kind'])
+                entry = {**entry, 'payload': entry['detail']}
+                if kind == 'backtrack':
+                    entry['status'] = 'returning'
             if kind == 'stage_start':
                 row.update(status='running', current_stage=entry['stage'])
             elif kind == 'stage_done':
@@ -106,7 +114,10 @@ class RunManager:
 
     def _run(self, run_id, inputs):
         try:
-            execute(inputs, self.root, run_id=run_id, source_root=self.source_root,
+            runner = execute
+            if inputs.get('runtime') == 'agent':
+                from runtime.session import execute as runner
+            runner(inputs, self.root, run_id=run_id, source_root=self.source_root,
                     observer=lambda entry: self._observe(run_id, entry),
                     approve=lambda stage, preview: self._approve(run_id, stage, preview))
         except Exception as exc:
@@ -117,6 +128,9 @@ class RunManager:
                 state = self.status(run_id)
             directory = self.directory(run_id)
             write(directory / 'status.json', state)
+            if inputs.get('runtime') == 'agent':
+                from runtime.events import Events
+                Events(directory).emit('run.failed', actor='system', status='blocked', detail=state)
             with (directory / 'ledger.jsonl').open('a', encoding='utf-8', newline='\n') as stream:
                 stream.write(json.dumps(dict(event='run_failed', payload=state, timestamp=now())) + '\n')
         finally:

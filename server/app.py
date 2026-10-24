@@ -28,6 +28,7 @@ class RunRequest(BaseModel):
     demo_replay: Literal['compliance', 'backtrack'] | None = None
     auto_approve: bool = False
     mode: Literal['rules', 'llm'] = 'rules'
+    runtime: Literal['agent', 'rules'] = 'rules'
 
 
 class GateRequest(BaseModel):

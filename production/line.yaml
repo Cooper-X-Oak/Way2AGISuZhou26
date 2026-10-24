@@ -1,0 +1,244 @@
+stages:
+- name: L0
+  sop: 核对用户需求、明确输入和有来源假设；缺失事实提出问题，不得擅自补齐。
+  inputs:
+  - brief
+  output_contract: pipeline.contracts.Brief
+  skills_allowed:
+  - clarify-requirements
+  tools_allowed:
+  - get_brief
+  - get_artifact
+  - get_profile
+  - load_skill
+  - read_result
+  - submit_artifact
+  checks: pipeline.l0.inspect
+  layers:
+  - structure
+  - references
+  - business
+  - judgment_quality
+  - human_gate
+  gate: none
+  max_steps: 16
+  max_attempts: 3
+- name: L1
+  sop: 依据场景与产品原文判断渠道优先级，保留缺失商业条件。
+  inputs:
+  - brief
+  - L0
+  output_contract: pipeline.v2_contracts.Channels
+  skills_allowed:
+  - scene-channel-mapping
+  - business-classification
+  tools_allowed:
+  - get_brief
+  - get_artifact
+  - get_profile
+  - load_skill
+  - read_result
+  - submit_artifact
+  - poi_query
+  - poi_detail
+  - compliance_scan
+  checks: pipeline.l1.inspect
+  layers:
+  - structure
+  - references
+  - business
+  - judgment_quality
+  - human_gate
+  gate: none
+  max_steps: 16
+  max_attempts: 3
+- name: L2
+  sop: 读取网格统计，判断商圈类型与层级；保留代码排名和选择并通过人工关口。
+  inputs:
+  - brief
+  - L0
+  - L1
+  output_contract: pipeline.v2_contracts.Zones
+  skills_allowed:
+  - zone-analysis
+  - business-classification
+  tools_allowed:
+  - get_brief
+  - get_artifact
+  - get_profile
+  - load_skill
+  - read_result
+  - submit_artifact
+  - grid_stats
+  - poi_query
+  - poi_detail
+  checks: pipeline.l2.inspect
+  layers:
+  - structure
+  - references
+  - business
+  - judgment_quality
+  - human_gate
+  gate: human
+  max_steps: 16
+  max_attempts: 3
+- name: L2C
+  sop: 分析竞争与饮品可得性代理指标，结合现有验收政策选择切入策略；不得推断市场份额。
+  inputs:
+  - brief
+  - L0
+  - L1
+  - L2
+  output_contract: pipeline.v2_contracts.Competition
+  skills_allowed:
+  - competition-analysis
+  tools_allowed:
+  - get_brief
+  - get_artifact
+  - get_profile
+  - load_skill
+  - read_result
+  - submit_artifact
+  - competitor_scan
+  - grid_stats
+  checks: pipeline.l2c.inspect
+  layers:
+  - structure
+  - references
+  - business
+  - judgment_quality
+  - human_gate
+  gate: none
+  max_steps: 16
+  max_attempts: 3
+- name: L3
+  sop: 查询候选证据，调用确定性评分；解释优选理由，不自算分数或等级。
+  inputs:
+  - brief
+  - L0
+  - L1
+  - L2
+  - L2C
+  output_contract: pipeline.v2_contracts.Terminals
+  skills_allowed:
+  - terminal-rationale
+  - business-classification
+  tools_allowed:
+  - get_brief
+  - get_artifact
+  - get_profile
+  - load_skill
+  - read_result
+  - submit_artifact
+  - poi_query
+  - poi_detail
+  - score_terminals
+  checks: pipeline.l3.inspect
+  layers:
+  - structure
+  - references
+  - business
+  - judgment_quality
+  - human_gate
+  gate: human
+  max_steps: 16
+  max_attempts: 3
+- name: L3P
+  sop: 依据名称与高德类型判断伙伴类别，读取几何覆盖与配置分配，明确资质待核实。
+  inputs:
+  - brief
+  - L0
+  - L1
+  - L2
+  - L2C
+  - L3
+  output_contract: pipeline.v2_contracts.Partners
+  skills_allowed:
+  - partner-screening
+  - business-classification
+  tools_allowed:
+  - get_brief
+  - get_artifact
+  - get_profile
+  - load_skill
+  - read_result
+  - submit_artifact
+  - partner_candidates
+  - poi_detail
+  - partner_coverage
+  checks: pipeline.l3p.inspect
+  layers:
+  - structure
+  - references
+  - business
+  - judgment_quality
+  - human_gate
+  gate: none
+  max_steps: 16
+  max_attempts: 3
+- name: L4
+  sop: 按真实上游目标编写老板视角话术，保留卖点原文、切入策略和商业条件待确认，并扫描合规。
+  inputs:
+  - brief
+  - L0
+  - L1
+  - L2
+  - L2C
+  - L3
+  - L3P
+  output_contract: pipeline.v2_contracts.Materials
+  skills_allowed:
+  - owner-pitch
+  - compliance-rewrite
+  tools_allowed:
+  - get_brief
+  - get_artifact
+  - get_profile
+  - load_skill
+  - read_result
+  - submit_artifact
+  - compliance_scan
+  checks: pipeline.l4.inspect
+  layers:
+  - structure
+  - references
+  - business
+  - judgment_quality
+  - human_gate
+  gate: none
+  max_steps: 16
+  max_attempts: 3
+- name: PACK
+  sop: 读取已验收交付物，调用路线与证据拼装计算，提交完整作战包与有边界的总结。
+  inputs:
+  - brief
+  - L0
+  - L1
+  - L2
+  - L2C
+  - L3
+  - L3P
+  - L4
+  output_contract: pipeline.v2_contracts.Pack
+  skills_allowed:
+  - campaign-pack
+  tools_allowed:
+  - get_brief
+  - get_artifact
+  - get_profile
+  - load_skill
+  - read_result
+  - submit_artifact
+  - route_plan
+  - pack_components
+  - compliance_scan
+  checks: pipeline.pack.inspect
+  layers:
+  - structure
+  - references
+  - business
+  - judgment_quality
+  - human_gate
+  gate: none
+  max_steps: 16
+  max_attempts: 3
