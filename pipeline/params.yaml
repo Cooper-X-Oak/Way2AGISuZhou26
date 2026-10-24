@@ -12,6 +12,10 @@ partners:
   coverage_radius_m: 2000
   max_recommended_per_zone: 3
   eligible_types: [酒水批发, 餐饮供应链, 品牌自有网点]
+  retail_exclusion:
+    keywords: [超市, 便利店, 商场, 购物中心, 百货]
+    typecode_prefixes: ['0601', '0602', '0604']
+    source: 项目伙伴分类规则；名称或类型显示零售业态时归其他，不作为供货方推荐，优先于烟酒类型和品牌关键词
   source: 项目假设；5公里候选搜索、2000米球面供货半径；每选中网格按新增A/B覆盖数贪心推荐最多3家，平局按距网格中心距离再poi_id；零新增覆盖停止；供货资质未确认
   classification:
     - {kind: 品牌自有网点, keywords: [洞庭山泉], typecodes: []}
@@ -43,9 +47,13 @@ scoring:
   source: 项目排序假设，执行前固定；非销量预测
 first_visits_per_day: 10
 amap_classification:
-  typecode_subtypes: {'050119': 海鲜, '050117': 火锅, '050101': 酒楼, '050300': 简餐}
+  typecode_subtypes: {'050119': 海鲜, '050117': 火锅, '050101': 酒楼, '050107': 酒楼, '050300': 简餐}
   type_keywords: [海鲜, 火锅, 烧烤, 烤肉, 酒楼, 酒家, 夜宵, 宵夜]
-  source: 项目映射规则；高德type明确子类型优先，再类型码，再档案名称规则；050118不直接推断烧烤；不证明营业时段或宴会能力
+  subtype_aliases: {江浙菜: 酒楼, 苏帮菜: 酒楼, 本帮菜: 酒楼, 淮扬菜: 酒楼, 苏菜: 酒楼, 河鲜: 海鲜}
+  name_subtypes: {苏帮菜: 酒楼, 本帮菜: 酒楼, 淮扬菜: 酒楼, 江浙菜: 酒楼, 海鲜: 海鲜, 河鲜: 海鲜}
+  named_restaurants:
+    - {name: 得月楼, subtype: 酒楼, source: '.work/tasks/data-quality.md#发现1；任务明确指出的苏帮菜老字号；仅匹配店名及括号分店后缀，不凭楼字推断'}
+  source: 项目映射假设（Issue 12）；高德type明确子类型优先，再050107江浙菜等类型码，再名称明确菜系关键词与档案规则；地方正餐菜系暂归酒楼宴席，不证明宴会能力或老字号身份；050100中餐厅与050118特色中餐厅保持待核实；不推断营业时段
 sources:
   first_visits_per_day: 项目首访容量假设；每人每天10家，每周5天，执行前固定
   priority_weights: 项目渠道排序假设，待品牌方校准

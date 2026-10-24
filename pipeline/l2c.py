@@ -62,7 +62,7 @@ def strategies(c,values):
     return result
 
 
-def reason(n):return '饮品可得性计数='+json.dumps(n,ensure_ascii=False,sort_keys=True)+'；代理指标，非竞品实测。'
+def reason(n):return '缓存中记录的饮品可得性点位：'+'、'.join(f'{label}{count}处' for label,count in sorted(n.items()))+'。这些计数是代理指标，非竞品实测，不代表店内在售品牌或市场份额。'
 
 
 def preview(c,zones):
