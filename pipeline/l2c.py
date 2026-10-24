@@ -1,7 +1,7 @@
 """Observed competitor POIs, never market share or inferred restaurant stock."""
 import json
 import math
-from pipeline.common import decide
+from pipeline.llm import decide
 from pipeline.geo import grid_id, distance
 from pipeline.contracts import violation
 from pipeline.v2_contracts import Competition

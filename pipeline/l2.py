@@ -1,5 +1,6 @@
-﻿from collections import Counter
-from pipeline.common import decide, selected_pois, channel_for
+from collections import Counter
+from pipeline.common import selected_pois, channel_for
+from pipeline.llm import decide
 from pipeline.geo import grid_id, distance
 from pipeline.contracts import violation
 from pipeline.v2_contracts import Zones

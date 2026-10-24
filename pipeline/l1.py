@@ -1,4 +1,4 @@
-﻿from pipeline.common import decide
+from pipeline.llm import decide
 from pipeline.contracts import violation
 from pipeline.v2_contracts import Channels
 from pipeline.quality import meta, envelope, evaluate, errors, equal_ids, check_compliance

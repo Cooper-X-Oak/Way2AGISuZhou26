@@ -1,7 +1,8 @@
 import re
 from pipeline.contracts import Brief, validate, violation
 from pipeline.sources import SITE_NOTE
-from pipeline.common import decide, provenance
+from pipeline.common import provenance
+from pipeline.llm import decide
 from pipeline.profiles import PROFILE_DIR
 
 REQUIRED = ("lat", "lon", "radius_m", "profile_id", "delivery_people", "weeks", "visits_per_person_day", "planned_visits_day")
