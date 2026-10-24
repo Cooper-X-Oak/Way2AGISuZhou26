@@ -60,3 +60,13 @@ uv run python docs/runtime-review/reproduce.py --run --area shishan --profile ji
 ## 公开资料范围
 
 用户授权公开项目复现上下文。品牌原文来源为公开黑客松brief（见sources/manifest.json），权利归原来源，未另行宣称其采用某个开源许可证。本包不发布API key、个人联系方式、现场Wi-Fi凭据、完整活动手册或本机路径；不需要ChatGPT会话和私有.work链接。
+
+## 公开开发入口
+
+- [#19 自主搜索、工具与Skill闭环](https://github.com/Cooper-X-Oak/Way2AGISuZhou26/issues/19)
+- [#5 通用runtime移除领域硬编码](https://github.com/Cooper-X-Oak/Way2AGISuZhou26/issues/5)
+- [#20 独立复现与资料交付](https://github.com/Cooper-X-Oak/Way2AGISuZhou26/issues/20)
+- [#21 跨品类、动态补全验收](https://github.com/Cooper-X-Oak/Way2AGISuZhou26/issues/21)
+- [#7 模型工具网关](https://github.com/Cooper-X-Oak/Way2AGISuZhou26/issues/7)、[#8 时间线](https://github.com/Cooper-X-Oak/Way2AGISuZhou26/issues/8)、[#9 自主补全优先](https://github.com/Cooper-X-Oak/Way2AGISuZhou26/issues/9)、[#10 市场策略交付](https://github.com/Cooper-X-Oak/Way2AGISuZhou26/issues/10)
+- [#11 后续阶段执行端](https://github.com/Cooper-X-Oak/Way2AGISuZhou26/issues/11)，不阻塞第一阶段。
+- [公开资料PR #22](https://github.com/Cooper-X-Oak/Way2AGISuZhou26/pull/22)
