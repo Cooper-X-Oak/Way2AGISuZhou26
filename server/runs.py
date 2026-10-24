@@ -36,7 +36,7 @@ class RunManager:
         pois, coverage = prepare_data(params, request.area)
         inputs = dict(request=request.input, profile=profile, params=params,
                       pois=pois, coverage=coverage, site=coverage['site'],
-                      area_id=request.area, judge=Judge(True),
+                      area_id=request.area, judge=Judge(getattr(request, 'mode', 'rules') == 'rules'),
                       market=load_market(request.area), no_defaults=False,
                       auto_approve=request.auto_approve, demo_replay=request.demo_replay)
         with self.lock:

@@ -1,6 +1,6 @@
 """Candidate partners and geometric coverage; supply capability remains unverified."""
 import math
-from pipeline.common import decide
+from pipeline.llm import decide
 from pipeline.geo import distance, EARTH_M
 from pipeline.contracts import violation
 from pipeline.v2_contracts import Partners

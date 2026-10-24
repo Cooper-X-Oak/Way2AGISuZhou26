@@ -36,6 +36,7 @@ def prepare_data(params=None, area=None):
 def main():
     parser = argparse.ArgumentParser(description='快消新品渠道进入 Agent L0-L4 + PACK')
     sub = parser.add_subparsers(dest='command', required=True)
+    sub.add_parser('llm-check', help='Probe LLM provider, model, latency and JSON schema support')
     export = sub.add_parser('export', help='导出离线网页演示数据')
     export.add_argument('--run', type=Path, required=True)
     export.add_argument('--out', type=Path, required=True)
@@ -62,6 +63,10 @@ def main():
     run.add_argument('-o', '--output', type=Path, help='写JSON执行摘要')
     args = parser.parse_args()
     try:
+        if args.command == 'llm-check':
+            from pipeline.llm import Gateway
+            print(json.dumps(Gateway(parameters()).check(), ensure_ascii=False))
+            return 0
         if args.command == 'export':
             from pipeline.export import export_run
             print(json.dumps(export_run(args.run, args.out), ensure_ascii=False))

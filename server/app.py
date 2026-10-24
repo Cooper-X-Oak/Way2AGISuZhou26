@@ -27,6 +27,7 @@ class RunRequest(BaseModel):
     input: str = Field(min_length=1, max_length=10000)
     demo_replay: Literal['compliance', 'backtrack'] | None = None
     auto_approve: bool = False
+    mode: Literal['rules', 'llm'] = 'rules'
 
 
 class GateRequest(BaseModel):

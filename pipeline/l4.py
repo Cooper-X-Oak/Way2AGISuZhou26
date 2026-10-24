@@ -1,4 +1,5 @@
-﻿from pipeline.common import decide,scan
+from pipeline.common import scan
+from pipeline.llm import decide
 from pipeline.contracts import violation
 import re
 from pipeline.v2_contracts import Materials
