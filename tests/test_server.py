@@ -10,6 +10,10 @@ from pipeline.io import read
 from server.app import create_app
 from server.runs import RunManager
 
+# Two concurrent DAG writers can exceed one minute on Windows; this bounds
+# asynchronous test waiting only, without changing pipeline gates or retries.
+RUN_TIMEOUT = 180
+
 BODY = dict(area='shishan', profile='jiangnan-gongquan',
             input='苏州高新区周边3公里，2个地推，做4周', auto_approve=True)
 
@@ -32,12 +36,12 @@ def start(client, **changes):
 
 
 def wait(client, run_id, status=None):
-    deadline = time.monotonic() + 60
+    deadline = time.monotonic() + RUN_TIMEOUT
     while time.monotonic() < deadline:
         state = client.get(f'/api/runs/{run_id}').json()
         if state['status'] == status or (status is None and state['status'] in ('completed', 'blocked', 'failed')):
             return state
-        time.sleep(0.02)
+        time.sleep(0.1)
     pytest.fail(f'Run timed out: {state}')
 
 
@@ -85,7 +89,23 @@ def test_run_sse_resume_and_artifacts(api):
     assert client.get(f'/api/runs/{run_id}/artifacts/pack.json').json()['judged_by']
     for name in ('%2E%2E%2Finputs.json', '..%5Cinputs.json', 'ledger.jsonl', 'pending/L2-r1.json'):
         assert client.get(f'/api/runs/{run_id}/artifacts/{name}').status_code == 404
-    assert read(manager.directory(run_id) / 'status.json')['judged_by'] == 'rules'
+    directory = manager.directory(run_id)
+    assert read(directory / 'status.json')['judged_by'] == 'rules'
+    # Disk entry points are references; API and SSE must recursively expand them.
+    assert set(json.loads((directory / 'terminals.json').read_text(encoding='utf-8'))) == {'$run_ref', 'sha256'}
+    for name in ('terminals.json', 'pack.json', 'trace.json', 'inputs.json'):
+        response = client.get(f'/api/runs/{run_id}/artifacts/{name}')
+        assert response.status_code == 200
+        assert response.json() == read(directory / name)
+        assert '$run_ref' not in response.text
+    terminals = client.get(f'/api/runs/{run_id}/artifacts/terminals.json').json()
+    assert terminals['items'] and isinstance(terminals['items'][0], dict)
+    assert '$run_ref' not in json.dumps(rows)
+    attempts = [row['payload'] for _, row in rows if row['type'] == 'attempt']
+    assert attempts
+    for attempt in attempts:
+        assert attempt['artifact_ref'] == read(directory / attempt['artifact_path'])
+        assert attempt['check_ref'] == read(directory / attempt['check_path'])
 
 
 def test_compliance_events(api):
@@ -108,12 +128,13 @@ def test_human_gates_and_capacity(api):
         assert state['current_stage'] == stage
         preview = client.get(f'/api/runs/{run_id}/artifacts/{stage}.pending.json')
         assert preview.status_code == 200 and preview.json()['artifact']
+        assert '$run_ref' not in preview.text
         assert client.post(f'/api/runs/{run_id}/gates/{stage}', json={'decision': 'approve', 'note': '测试人工确认'}).status_code == 200
         assert client.post(f'/api/runs/{run_id}/gates/{stage}', json={'decision': 'approve'}).status_code == 409
         if stage == 'L2':
-            deadline = time.monotonic() + 60
+            deadline = time.monotonic() + RUN_TIMEOUT
             while client.get(f'/api/runs/{run_id}').json()['current_stage'] == 'L2' and time.monotonic() < deadline:
-                time.sleep(0.02)
+                time.sleep(0.1)
     assert wait(client, run_id)['status'] == 'completed'
     for stage in ('L2', 'L3'):
         assert read(manager.directory(run_id) / f'pending/{stage}-r1.decision.json')['approved_by'] == 'human'

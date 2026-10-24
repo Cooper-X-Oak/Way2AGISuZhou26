@@ -2,6 +2,8 @@
 import asyncio
 import json
 
+from pipeline.io import resolve
+
 EVENT_TYPES = {'stage_start', 'attempt', 'check', 'violation', 'backtrack',
                'gate_pending', 'gate_approved', 'stage_done', 'run_done', 'run_failed'}
 
@@ -26,7 +28,7 @@ async def stream_events(manager, run_id, last_id, request):
                     line_id += 1
                     if line_id <= last_id:
                         continue
-                    entry = json.loads(line)
+                    entry = resolve(json.loads(line), path.parent)
                     kind = entry.get('event', 'attempt')
                     if kind not in EVENT_TYPES:
                         continue
