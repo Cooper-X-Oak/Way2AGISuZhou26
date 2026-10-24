@@ -1,0 +1,5488 @@
+{
+  "competitors": [
+    {
+      "id": "amap:B0IKUCEL5S",
+      "name": "农夫山泉(南山·丽舍店)",
+      "lat": 31.307021,
+      "lon": 120.725209,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "生活服务;生活服务场所;生活服务场所",
+        "typecode": "070000"
+      },
+      "distance_m": 2792.5,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:17.872326+00:00",
+      "brands": [
+        "农夫山泉"
+      ]
+    },
+    {
+      "id": "amap:B0KU9CNVPB",
+      "name": "农夫山泉(城邦店)",
+      "lat": 31.293429,
+      "lon": 120.678371,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "生活服务;生活服务场所;生活服务场所",
+        "typecode": "070000"
+      },
+      "distance_m": 1913.63,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:17.872326+00:00",
+      "brands": [
+        "农夫山泉"
+      ]
+    }
+  ],
+  "partners": [
+    {
+      "id": "amap:B020005QNL",
+      "name": "恒辉烟酒商店",
+      "lat": 31.296367,
+      "lon": 120.735404,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3671.18,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:34.427499+00:00"
+    },
+    {
+      "id": "amap:B020005SSJ",
+      "name": "吉晟酒水大卖场",
+      "lat": 31.300817,
+      "lon": 120.652256,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店|公司企业;公司;公司",
+        "typecode": "061210|170200"
+      },
+      "distance_m": 4251.93,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:39.647215+00:00"
+    },
+    {
+      "id": "amap:B020005Z38",
+      "name": "邻里生鲜(湖东邻里中心店)",
+      "lat": 31.314368,
+      "lon": 120.728247,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;综合市场;农副产品市场|购物服务;综合市场;水产海鲜市场|购物服务;超级市场;超市",
+        "typecode": "060703|060706|060400"
+      },
+      "distance_m": 3372.73,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:30.427669+00:00"
+    },
+    {
+      "id": "amap:B020006W2M",
+      "name": "好佳乐生活超市(东环路店)",
+      "lat": 31.308235,
+      "lon": 120.65381,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4204.61,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:35.837538+00:00"
+    },
+    {
+      "id": "amap:B02000HUKJ",
+      "name": "益达烟杂店",
+      "lat": 31.299466,
+      "lon": 120.646183,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;便民商店/便利店;便民商店/便利店",
+        "typecode": "060200"
+      },
+      "distance_m": 4828.27,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:42.048034+00:00"
+    },
+    {
+      "id": "amap:B02000J1W1",
+      "name": "天虹超市(苏雅路)",
+      "lat": 31.315738,
+      "lon": 120.664205,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 3574.53,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:30.427669+00:00"
+    },
+    {
+      "id": "amap:B02000JD92",
+      "name": "日日兴烟杂店(葑门西街小区店)",
+      "lat": 31.297582,
+      "lon": 120.645627,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;便民商店/便利店;便民商店/便利店",
+        "typecode": "060200"
+      },
+      "distance_m": 4888.06,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:44.108909+00:00"
+    },
+    {
+      "id": "amap:B02000JDSG",
+      "name": "江苏省教育超市(苏大东校区店)",
+      "lat": 31.302715,
+      "lon": 120.647012,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4758.84,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:38.277484+00:00"
+    },
+    {
+      "id": "amap:B02000K0JK",
+      "name": "联丰烟酒商行(联丰广场店)",
+      "lat": 31.296466,
+      "lon": 120.734792,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3612.18,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:34.427499+00:00"
+    },
+    {
+      "id": "amap:B02000KA2A",
+      "name": "易家福(东振店)",
+      "lat": 31.291467,
+      "lon": 120.670175,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 2718.48,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:27.599217+00:00"
+    },
+    {
+      "id": "amap:B02000KA3T",
+      "name": "华联超市(湖畔天城店)",
+      "lat": 31.315971,
+      "lon": 120.737675,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;上海华联",
+        "typecode": "060405"
+      },
+      "distance_m": 4254.18,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:35.837538+00:00"
+    },
+    {
+      "id": "amap:B0200168Z0",
+      "name": "华润万家便利超市(现代大街店)(装修中)",
+      "lat": 31.321485,
+      "lon": 120.667634,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;华润",
+        "typecode": "060403"
+      },
+      "distance_m": 3674.45,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:35.837538+00:00"
+    },
+    {
+      "id": "amap:B0200169H6",
+      "name": "中全烟酒(联丰广场店)",
+      "lat": 31.296162,
+      "lon": 120.735664,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店|餐饮服务;糕饼店;糕饼店",
+        "typecode": "061210|050800"
+      },
+      "distance_m": 3698.29,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:34.427499+00:00"
+    },
+    {
+      "id": "amap:B020016HEA",
+      "name": "云元谷·烟酒茶专卖·庄山茶行(东城世纪广场店)",
+      "lat": 31.289232,
+      "lon": 120.656096,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;专营店",
+        "typecode": "061200"
+      },
+      "distance_m": 4065.78,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:37.059259+00:00"
+    },
+    {
+      "id": "amap:B0200172J4",
+      "name": "好又多购物中心(葑门路店)",
+      "lat": 31.299544,
+      "lon": 120.645265,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4915.39,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:40.852023+00:00"
+    },
+    {
+      "id": "amap:B020017QSJ",
+      "name": "城市之间(玲珑湾花园店)",
+      "lat": 31.328931,
+      "lon": 120.694412,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;便民商店/便利店;便民商店/便利店|购物服务;超级市场;超市",
+        "typecode": "060200|060400"
+      },
+      "distance_m": 3229.0,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:30.427669+00:00"
+    },
+    {
+      "id": "amap:B020017QWY",
+      "name": "天地缘超市(天地源橄榄湾店)",
+      "lat": 31.299649,
+      "lon": 120.726037,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 2759.38,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:27.599217+00:00"
+    },
+    {
+      "id": "amap:B0200183BL",
+      "name": "杨枝小街烟杂店",
+      "lat": 31.295982,
+      "lon": 120.649536,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;便民商店/便利店;便民商店/便利店",
+        "typecode": "060200"
+      },
+      "distance_m": 4531.26,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:39.647215+00:00"
+    },
+    {
+      "id": "amap:B02001B6YI",
+      "name": "顺海烟酒店(莲花商业街店)",
+      "lat": 31.286969,
+      "lon": 120.739162,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4259.51,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:39.647215+00:00"
+    },
+    {
+      "id": "amap:B02001B7N0",
+      "name": "吉恒商行(莲花商业街店)",
+      "lat": 31.286491,
+      "lon": 120.740241,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;便民商店/便利店;便民商店/便利店",
+        "typecode": "060200"
+      },
+      "distance_m": 4374.02,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:39.647215+00:00"
+    },
+    {
+      "id": "amap:B02001BB1V",
+      "name": "惠明烟酒商店",
+      "lat": 31.297436,
+      "lon": 120.645663,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "医疗保健服务;医药保健销售店;医疗保健用品",
+        "typecode": "090602"
+      },
+      "distance_m": 4885.56,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:44.108909+00:00"
+    },
+    {
+      "id": "amap:B02001BHDY",
+      "name": "老酋长烟斗店",
+      "lat": 31.309263,
+      "lon": 120.672466,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;专营店",
+        "typecode": "061200"
+      },
+      "distance_m": 2549.15,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:21.554208+00:00"
+    },
+    {
+      "id": "amap:B02001BT9P",
+      "name": "群星苑超市(苏州吴中区)",
+      "lat": 31.286195,
+      "lon": 120.661928,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;便民商店/便利店;便民商店/便利店|购物服务;超级市场;超市",
+        "typecode": "060200|060400"
+      },
+      "distance_m": 3667.67,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:33.098786+00:00"
+    },
+    {
+      "id": "amap:B02001BTOB",
+      "name": "悦邻超市(东湖大郡三期店)",
+      "lat": 31.317219,
+      "lon": 120.728237,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 3533.35,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:30.427669+00:00"
+    },
+    {
+      "id": "amap:B02001E0P1",
+      "name": "上海如海超市(淞江路店)",
+      "lat": 31.299573,
+      "lon": 120.7256,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 2717.99,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:27.599217+00:00"
+    },
+    {
+      "id": "amap:B02001FYTP",
+      "name": "ENOTECA(苏州久光百货店)",
+      "lat": 31.319792,
+      "lon": 120.716085,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 2853.69,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:29.041969+00:00"
+    },
+    {
+      "id": "amap:B02001GR77",
+      "name": "洞庭山天然泉水专卖店(相门店)",
+      "lat": 31.314469,
+      "lon": 120.650759,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;专营店|生活服务;生活服务场所;生活服务场所",
+        "typecode": "061200|070000"
+      },
+      "distance_m": 4679.09,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:26.359885+00:00"
+    },
+    {
+      "id": "amap:B02001GRFT",
+      "name": "洞庭山天然泉水(大湖城邦店)",
+      "lat": 31.293932,
+      "lon": 120.682127,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "生活服务;生活服务场所;生活服务场所",
+        "typecode": "070000"
+      },
+      "distance_m": 1564.57,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:26.359885+00:00"
+    },
+    {
+      "id": "amap:B0FFF06RBB",
+      "name": "好又多超市(湖滨花园店)",
+      "lat": 31.282776,
+      "lon": 120.679924,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 2507.92,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:27.599217+00:00"
+    },
+    {
+      "id": "amap:B0FFF2CYWM",
+      "name": "洞庭山天然泉水(斜塘店)",
+      "lat": 31.287688,
+      "lon": 120.727496,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "生活服务;生活服务场所;生活服务场所",
+        "typecode": "070000"
+      },
+      "distance_m": 3203.91,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:26.359885+00:00"
+    },
+    {
+      "id": "amap:B0FFF2L50N",
+      "name": "八六八烟酒店(杏秀桥店)",
+      "lat": 31.277397,
+      "lon": 120.653582,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4829.35,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:42.048034+00:00"
+    },
+    {
+      "id": "amap:B0FFF34HFN",
+      "name": "华润万家购物中心(园区店)",
+      "lat": 31.315311,
+      "lon": 120.741655,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;华润",
+        "typecode": "060403"
+      },
+      "distance_m": 4572.53,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:38.277484+00:00"
+    },
+    {
+      "id": "amap:B0FFF9C915",
+      "name": "星名轩烟酒商行(星湖尚街店)",
+      "lat": 31.28768,
+      "lon": 120.725468,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3031.13,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:29.041969+00:00"
+    },
+    {
+      "id": "amap:B0FFFCLUAI",
+      "name": "(中国体育彩票)城市生活超市(群星一路店)",
+      "lat": 31.273133,
+      "lon": 120.67016,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 3925.88,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:33.098786+00:00"
+    },
+    {
+      "id": "amap:B0FFFCOMBA",
+      "name": "吉云名烟名酒(华成大厦店)",
+      "lat": 31.288928,
+      "lon": 120.662645,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3487.56,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:31.800940+00:00"
+    },
+    {
+      "id": "amap:B0FFFCOU1W",
+      "name": "叁邺社商贸有限公司",
+      "lat": 31.289697,
+      "lon": 120.663128,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3415.07,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:31.800940+00:00"
+    },
+    {
+      "id": "amap:B0FFFCP0M2",
+      "name": "九一九名烟名酒",
+      "lat": 31.287956,
+      "lon": 120.661638,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3615.83,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:34.427499+00:00"
+    },
+    {
+      "id": "amap:B0FFFDC6BE",
+      "name": "苏湖烟酒店",
+      "lat": 31.306185,
+      "lon": 120.653069,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4230.25,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:37.059259+00:00"
+    },
+    {
+      "id": "amap:B0FFFDKRXW",
+      "name": "品梅名烟名酒(中天湖畔广场店)",
+      "lat": 31.324622,
+      "lon": 120.67838,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3261.65,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:29.041969+00:00"
+    },
+    {
+      "id": "amap:B0FFFFBAK9",
+      "name": "佳得利超市(东兴路店)",
+      "lat": 31.278659,
+      "lon": 120.659472,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;便民商店/便利店;便民商店/便利店|购物服务;超级市场;超市",
+        "typecode": "060200|060400"
+      },
+      "distance_m": 4281.69,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:38.277484+00:00"
+    },
+    {
+      "id": "amap:B0FFFOKSZ8",
+      "name": "佳邻超市(自由水岸花园店)",
+      "lat": 31.318687,
+      "lon": 120.741365,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4700.58,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:38.277484+00:00"
+    },
+    {
+      "id": "amap:B0FFFRYKNO",
+      "name": "爱·生活超市(加城花园店)",
+      "lat": 31.308441,
+      "lon": 120.672882,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 2476.92,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:27.599217+00:00"
+    },
+    {
+      "id": "amap:B0FFFRZY65",
+      "name": "项雪云烟酒店(文萃路店)",
+      "lat": 31.286801,
+      "lon": 120.661844,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3647.33,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:34.427499+00:00"
+    },
+    {
+      "id": "amap:B0FFFS0ON4",
+      "name": "洋河蓝色经典新加烟酒(新加花园店)",
+      "lat": 31.322943,
+      "lon": 120.67267,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店|购物服务;便民商店/便利店;便民商店/便利店",
+        "typecode": "061210|060200"
+      },
+      "distance_m": 3444.27,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:31.800940+00:00"
+    },
+    {
+      "id": "amap:B0FFFV413H",
+      "name": "快乐购超市(国泰新村店)",
+      "lat": 31.256781,
+      "lon": 120.685502,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4925.73,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:40.852023+00:00"
+    },
+    {
+      "id": "amap:B0FFFV54I7",
+      "name": "易好家超市(现代花园梅园店)",
+      "lat": 31.284259,
+      "lon": 120.651791,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4637.37,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:38.277484+00:00"
+    },
+    {
+      "id": "amap:B0FFFVI8VF",
+      "name": "五粮液专卖店(干将东路店)",
+      "lat": 31.311659,
+      "lon": 120.648248,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4810.18,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:42.048034+00:00"
+    },
+    {
+      "id": "amap:B0FFFVUMMS",
+      "name": "北燕烟酒店",
+      "lat": 31.292641,
+      "lon": 120.652673,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4289.71,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:39.647215+00:00"
+    },
+    {
+      "id": "amap:B0FFFZ58J3",
+      "name": "海虹烟杂店",
+      "lat": 31.313117,
+      "lon": 120.649183,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;便民商店/便利店;便民商店/便利店",
+        "typecode": "060200"
+      },
+      "distance_m": 4771.8,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:42.048034+00:00"
+    },
+    {
+      "id": "amap:B0FFFZU3XO",
+      "name": "欧德福超市(塘南店)",
+      "lat": 31.270668,
+      "lon": 120.674757,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 3884.18,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:33.098786+00:00"
+    },
+    {
+      "id": "amap:B0FFG21T9F",
+      "name": "如海超市(莲花新村六区店)",
+      "lat": 31.289545,
+      "lon": 120.732296,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市|购物服务;便民商店/便利店;便民商店/便利店",
+        "typecode": "060400|060200"
+      },
+      "distance_m": 3548.89,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:30.427669+00:00"
+    },
+    {
+      "id": "amap:B0FFG49MSE",
+      "name": "金梦都烟酒(苏雅路店)",
+      "lat": 31.316027,
+      "lon": 120.666891,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3371.36,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:29.041969+00:00"
+    },
+    {
+      "id": "amap:B0FFG49OSA",
+      "name": "波桂烟酒副食品批发部",
+      "lat": 31.307881,
+      "lon": 120.652313,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;便民商店/便利店;便民商店/便利店",
+        "typecode": "060200"
+      },
+      "distance_m": 4335.37,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:39.647215+00:00"
+    },
+    {
+      "id": "amap:B0FFG55KPX",
+      "name": "启明烟酒商行",
+      "lat": 31.266134,
+      "lon": 120.685565,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3916.74,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:37.059259+00:00"
+    },
+    {
+      "id": "amap:B0FFG61P6Q",
+      "name": "世纪华联超市(斜塘店)(暂停营业)",
+      "lat": 31.286492,
+      "lon": 120.738318,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;便民商店/便利店;便民商店/便利店|购物服务;超级市场;超市",
+        "typecode": "060200|060400"
+      },
+      "distance_m": 4202.8,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:35.837538+00:00"
+    },
+    {
+      "id": "amap:B0FFG9ZB3W",
+      "name": "康丽苑烟酒店(甬旺商业广场店)",
+      "lat": 31.286994,
+      "lon": 120.729303,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3392.14,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:31.800940+00:00"
+    },
+    {
+      "id": "amap:B0FFGAMTM9",
+      "name": "世纪华联超市(中海店)",
+      "lat": 31.265677,
+      "lon": 120.690729,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 3860.11,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:33.098786+00:00"
+    },
+    {
+      "id": "amap:B0FFGC76C8",
+      "name": "好邻多超市(星海街店)",
+      "lat": 31.322965,
+      "lon": 120.669832,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 3632.41,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:33.098786+00:00"
+    },
+    {
+      "id": "amap:B0FFGC8L2I",
+      "name": "兰保烟酒店",
+      "lat": 31.312775,
+      "lon": 120.647804,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4885.48,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:44.108909+00:00"
+    },
+    {
+      "id": "amap:B0FFGFACYD",
+      "name": "源利华烟酒批发商行(葑门西街小区店)",
+      "lat": 31.295569,
+      "lon": 120.646121,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4858.7,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:42.048034+00:00"
+    },
+    {
+      "id": "amap:B0FFGFB79D",
+      "name": "双登烟酒店",
+      "lat": 31.310467,
+      "lon": 120.653271,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4314.93,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:39.647215+00:00"
+    },
+    {
+      "id": "amap:B0FFGFCBYJ",
+      "name": "塘南超市便利店(北区)",
+      "lat": 31.272982,
+      "lon": 120.676115,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 3598.21,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:34.427499+00:00"
+    },
+    {
+      "id": "amap:B0FFGFOU4A",
+      "name": "全庄烟酒店",
+      "lat": 31.306858,
+      "lon": 120.647968,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4720.59,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:42.048034+00:00"
+    },
+    {
+      "id": "amap:B0FFGG5ARH",
+      "name": "吉卖盛生活超市(唯亭店)",
+      "lat": 31.344064,
+      "lon": 120.698835,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4905.48,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:40.852023+00:00"
+    },
+    {
+      "id": "amap:B0FFGG890D",
+      "name": "山姆会员商店(苏州金鸡湖店)",
+      "lat": 31.297047,
+      "lon": 120.718863,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 2102.93,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:27.599217+00:00"
+    },
+    {
+      "id": "amap:B0FFGIHZ0G",
+      "name": "联华超市(荷花店)",
+      "lat": 31.283008,
+      "lon": 120.730606,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 3709.25,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:33.098786+00:00"
+    },
+    {
+      "id": "amap:B0FFGJQ3XX",
+      "name": "经典烟酒(莲花商业街店)",
+      "lat": 31.285878,
+      "lon": 120.737981,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4197.93,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:37.059259+00:00"
+    },
+    {
+      "id": "amap:B0FFGYWU0W",
+      "name": "吉客隆休闲食品(跨塘店)",
+      "lat": 31.344527,
+      "lon": 120.69313,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4967.45,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:40.852023+00:00"
+    },
+    {
+      "id": "amap:B0FFH3YJUZ",
+      "name": "黄天荡超市",
+      "lat": 31.291673,
+      "lon": 120.66008,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 3627.17,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:33.098786+00:00"
+    },
+    {
+      "id": "amap:B0FFH9G8IM",
+      "name": "友家超市(领汇广场店)",
+      "lat": 31.325152,
+      "lon": 120.732636,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4393.14,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:38.277484+00:00"
+    },
+    {
+      "id": "amap:B0FFHB8RP1",
+      "name": "欧麦德生鲜超市(水坊路店)",
+      "lat": 31.300595,
+      "lon": 120.683723,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市|餐饮服务;糕饼店;糕饼店",
+        "typecode": "060400|050800"
+      },
+      "distance_m": 1263.06,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:27.599217+00:00"
+    },
+    {
+      "id": "amap:B0FFHCMN37",
+      "name": "洞庭山天然泉水(葑门店)",
+      "lat": 31.299494,
+      "lon": 120.646611,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "生活服务;生活服务场所;生活服务场所",
+        "typecode": "070000"
+      },
+      "distance_m": 4787.57,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:26.359885+00:00"
+    },
+    {
+      "id": "amap:B0FFHDLL2V",
+      "name": "玖恒烟酒(通园大厦店)",
+      "lat": 31.289002,
+      "lon": 120.664048,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3360.12,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:29.041969+00:00"
+    },
+    {
+      "id": "amap:B0FFHED95M",
+      "name": "乐购express(苏州广电大厦店)",
+      "lat": 31.323596,
+      "lon": 120.734838,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;华润",
+        "typecode": "060403"
+      },
+      "distance_m": 4452.11,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:38.277484+00:00"
+    },
+    {
+      "id": "amap:B0FFHF1VJQ",
+      "name": "葡旅葡萄酒空间",
+      "lat": 31.266625,
+      "lon": 120.670525,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;购物相关场所;购物相关场所",
+        "typecode": "060000"
+      },
+      "distance_m": 4481.18,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:39.647215+00:00"
+    },
+    {
+      "id": "amap:B0FFHFP835",
+      "name": "五粮液专卖店(葑门路店)",
+      "lat": 31.300744,
+      "lon": 120.652249,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4252.42,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:39.647215+00:00"
+    },
+    {
+      "id": "amap:B0FFHLMVPU",
+      "name": "邻里生鲜(新城邻里中心店)",
+      "lat": 31.321858,
+      "lon": 120.668765,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;综合市场;农副产品市场|购物服务;超级市场;超市",
+        "typecode": "060703|060400"
+      },
+      "distance_m": 3621.29,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:33.098786+00:00"
+    },
+    {
+      "id": "amap:B0FFHMU3IM",
+      "name": "屈臣氏(华润万家购物中心店)",
+      "lat": 31.315058,
+      "lon": 120.741468,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;屈臣氏",
+        "typecode": "060411"
+      },
+      "distance_m": 4545.6,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:38.277484+00:00"
+    },
+    {
+      "id": "amap:B0FFHMZ8EZ",
+      "name": "好又多超市(杨枝新村店)",
+      "lat": 31.293472,
+      "lon": 120.654243,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4126.14,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:35.837538+00:00"
+    },
+    {
+      "id": "amap:B0FFHNH50G",
+      "name": "耀达烟酒商行(湖东新街口店)",
+      "lat": 31.313113,
+      "lon": 120.740062,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4344.34,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:39.647215+00:00"
+    },
+    {
+      "id": "amap:B0FFHNKCQV",
+      "name": "水井坊第一坊(莲花商业街店)",
+      "lat": 31.286462,
+      "lon": 120.740236,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4374.69,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:39.647215+00:00"
+    },
+    {
+      "id": "amap:B0FFHOZO4O",
+      "name": "敦强烟酒便利店",
+      "lat": 31.31601,
+      "lon": 120.649959,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;便民商店/便利店;便民商店/便利店",
+        "typecode": "060200"
+      },
+      "distance_m": 4811.31,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:42.048034+00:00"
+    },
+    {
+      "id": "amap:B0FFHOZS0F",
+      "name": "东兴旺超市(东兴路店)",
+      "lat": 31.278485,
+      "lon": 120.657291,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4466.08,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:38.277484+00:00"
+    },
+    {
+      "id": "amap:B0FFHP0KZ6",
+      "name": "金樽烟酒商行(和众街店)",
+      "lat": 31.329412,
+      "lon": 120.70968,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3487.85,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:31.800940+00:00"
+    },
+    {
+      "id": "amap:B0FFHP7X1T",
+      "name": "荣盛食品商行",
+      "lat": 31.278612,
+      "lon": 120.658697,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;便民商店/便利店;便民商店/便利店",
+        "typecode": "060200"
+      },
+      "distance_m": 4346.06,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:39.647215+00:00"
+    },
+    {
+      "id": "amap:B0FFHQ0094",
+      "name": "君利便利店(中茵·星墅湾店)",
+      "lat": 31.283851,
+      "lon": 120.676894,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;购物相关场所;购物相关场所",
+        "typecode": "060000"
+      },
+      "distance_m": 2619.87,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:21.554208+00:00"
+    },
+    {
+      "id": "amap:B0FFHQ5P77",
+      "name": "德爱酒行(久光百货店)",
+      "lat": 31.319856,
+      "lon": 120.715122,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 2802.06,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:21.554208+00:00"
+    },
+    {
+      "id": "amap:B0FFHS8XVP",
+      "name": "水新烟酒店(联丰广场C幢店)",
+      "lat": 31.296481,
+      "lon": 120.73464,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店|餐饮服务;糕饼店;糕饼店",
+        "typecode": "061210|050800"
+      },
+      "distance_m": 3597.64,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:34.427499+00:00"
+    },
+    {
+      "id": "amap:B0FFHS928U",
+      "name": "三万昌(方洲店)",
+      "lat": 31.314164,
+      "lon": 120.742014,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市|餐饮服务;糕饼店;糕饼店",
+        "typecode": "060400|050800"
+      },
+      "distance_m": 4558.52,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:38.277484+00:00"
+    },
+    {
+      "id": "amap:B0FFHS929M",
+      "name": "盛世烟酒商行(方洲邻里中心店)",
+      "lat": 31.31428,
+      "lon": 120.742088,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店|餐饮服务;糕饼店;糕饼店",
+        "typecode": "061210|050800"
+      },
+      "distance_m": 4569.59,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:39.647215+00:00"
+    },
+    {
+      "id": "amap:B0FFHXMQJD",
+      "name": "洞庭山天然泉水(新城邻里中心店)",
+      "lat": 31.321835,
+      "lon": 120.668854,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;专营店",
+        "typecode": "061200"
+      },
+      "distance_m": 3613.31,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:26.359885+00:00"
+    },
+    {
+      "id": "amap:B0FFI01C6X",
+      "name": "韩国超市(中天湖畔广场店)",
+      "lat": 31.324694,
+      "lon": 120.678558,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 3259.26,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:30.427669+00:00"
+    },
+    {
+      "id": "amap:B0FFI0A4HY",
+      "name": "520生活圈休闲食品超市(金象城店)",
+      "lat": 31.290525,
+      "lon": 120.656475,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 3991.1,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:33.098786+00:00"
+    },
+    {
+      "id": "amap:B0FFI70FDT",
+      "name": "洞庭山天然泉水(领汇广场店)",
+      "lat": 31.325406,
+      "lon": 120.731443,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "生活服务;生活服务场所;生活服务场所",
+        "typecode": "070000"
+      },
+      "distance_m": 4324.81,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:26.359885+00:00"
+    },
+    {
+      "id": "amap:B0FFI7ULV4",
+      "name": "精品烟酒(苏杭精品超市1号店)",
+      "lat": 31.341875,
+      "lon": 120.686825,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4758.1,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:42.048034+00:00"
+    },
+    {
+      "id": "amap:B0FFIBJ4S2",
+      "name": "好享购生活超市(东方大道店)",
+      "lat": 31.2657,
+      "lon": 120.676738,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4269.96,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:35.837538+00:00"
+    },
+    {
+      "id": "amap:B0FFICBUKA",
+      "name": "睿桐烟杂店",
+      "lat": 31.299478,
+      "lon": 120.646387,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;便民商店/便利店;便民商店/便利店",
+        "typecode": "060200"
+      },
+      "distance_m": 4808.87,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:42.048034+00:00"
+    },
+    {
+      "id": "amap:B0FFIPBLE5",
+      "name": "芬旺烟酒商行(雅戈尔未来城店)",
+      "lat": 31.329992,
+      "lon": 120.710251,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3567.22,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:31.800940+00:00"
+    },
+    {
+      "id": "amap:B0FFIPM3WU",
+      "name": "佳佳美超市(莲花新村八区店)",
+      "lat": 31.290598,
+      "lon": 120.72812,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 3135.67,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:27.599217+00:00"
+    },
+    {
+      "id": "amap:B0FFIRR1RW",
+      "name": "吉诚烟酒茗城(大湖城邦商业街店)",
+      "lat": 31.293061,
+      "lon": 120.681141,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 1691.43,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:21.554208+00:00"
+    },
+    {
+      "id": "amap:B0FFIRTBXZ",
+      "name": "尊品烟酒行(海尚·壹品店)",
+      "lat": 31.327658,
+      "lon": 120.716149,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3575.6,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:31.800940+00:00"
+    },
+    {
+      "id": "amap:B0FFIRTKJO",
+      "name": "尚品烟酒商行(莲花商业街店)",
+      "lat": 31.285877,
+      "lon": 120.737777,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4180.0,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:37.059259+00:00"
+    },
+    {
+      "id": "amap:B0FFIVQ5JB",
+      "name": "鸣旭生鲜超市(杨枝新村店)",
+      "lat": 31.293727,
+      "lon": 120.654292,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;综合市场;农副产品市场|购物服务;超级市场;超市",
+        "typecode": "060703|060400"
+      },
+      "distance_m": 4116.67,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:35.837538+00:00"
+    },
+    {
+      "id": "amap:B0FFIVQ8IT",
+      "name": "E家超市(璨园)",
+      "lat": 31.273922,
+      "lon": 120.663313,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4317.21,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:38.277484+00:00"
+    },
+    {
+      "id": "amap:B0FFIVQ8M3",
+      "name": "今世缘国缘(北摆宴街店)",
+      "lat": 31.289304,
+      "lon": 120.663319,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3412.93,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:31.800940+00:00"
+    },
+    {
+      "id": "amap:B0FFIZMGVS",
+      "name": "悦己超市(金象城店)",
+      "lat": 31.290677,
+      "lon": 120.656007,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4029.64,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:35.837538+00:00"
+    },
+    {
+      "id": "amap:B0FFJ0A0QC",
+      "name": "烟酒茶商行(旺墩道135融盛商务中心店)",
+      "lat": 31.320133,
+      "lon": 120.729773,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3836.57,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:34.427499+00:00"
+    },
+    {
+      "id": "amap:B0FFJ4BZJB",
+      "name": "盒马鲜生(湖东邻里中心店)",
+      "lat": 31.313631,
+      "lon": 120.729478,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 3439.17,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:30.427669+00:00"
+    },
+    {
+      "id": "amap:B0FFJCK0BM",
+      "name": "悦仕超市(雅戈尔店)",
+      "lat": 31.329505,
+      "lon": 120.710113,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 3511.94,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:30.427669+00:00"
+    },
+    {
+      "id": "amap:B0FFJHKUV9",
+      "name": "大润发金鸡湖旗舰店(星杭街店)",
+      "lat": 31.304462,
+      "lon": 120.65901,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 3643.43,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:33.098786+00:00"
+    },
+    {
+      "id": "amap:B0FFJP0DEQ",
+      "name": "杏秀烟酒店",
+      "lat": 31.284206,
+      "lon": 120.648537,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4927.24,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:44.108909+00:00"
+    },
+    {
+      "id": "amap:B0FFK1JMQY",
+      "name": "Ole精品超市(苏州中心商场店)",
+      "lat": 31.318423,
+      "lon": 120.677761,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;华润",
+        "typecode": "060403"
+      },
+      "distance_m": 2747.2,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:27.599217+00:00"
+    },
+    {
+      "id": "amap:B0FFK4WOVF",
+      "name": "正元名饮(东方大道店)",
+      "lat": 31.266095,
+      "lon": 120.684938,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店|餐饮服务;餐饮相关场所;餐饮相关",
+        "typecode": "061210|050000"
+      },
+      "distance_m": 3937.83,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:37.059259+00:00"
+    },
+    {
+      "id": "amap:B0FFK94OLI",
+      "name": "绍家酒铺(永林店)",
+      "lat": 31.299038,
+      "lon": 120.648724,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4587.71,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:42.048034+00:00"
+    },
+    {
+      "id": "amap:B0FFKAYR4L",
+      "name": "晨韵烟酒商行(师惠坊店)",
+      "lat": 31.311616,
+      "lon": 120.668812,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 2974.14,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:29.041969+00:00"
+    },
+    {
+      "id": "amap:B0FFKS8F7X",
+      "name": "小王皮鞋店(葑门横街店)",
+      "lat": 31.298951,
+      "lon": 120.646897,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;服装鞋帽皮具店;服装鞋帽皮具店",
+        "typecode": "061100"
+      },
+      "distance_m": 4761.47,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:42.048034+00:00"
+    },
+    {
+      "id": "amap:B0FFKSK8IY",
+      "name": "苏州北半球食品有限公司",
+      "lat": 31.277372,
+      "lon": 120.672438,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "公司企业;公司;公司",
+        "typecode": "170200"
+      },
+      "distance_m": 3429.79,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:25.173675+00:00"
+    },
+    {
+      "id": "amap:B0FFKT1E7K",
+      "name": "琴台酒肆(莫邪路店)",
+      "lat": 31.297327,
+      "lon": 120.645467,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;购物相关场所;购物相关场所|餐饮服务;餐饮相关场所;餐饮相关",
+        "typecode": "060000|050000"
+      },
+      "distance_m": 4904.87,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:44.108909+00:00"
+    },
+    {
+      "id": "amap:B0FFKTQEP3",
+      "name": "屈臣氏(双湖广场店)",
+      "lat": 31.282613,
+      "lon": 120.672152,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;屈臣氏",
+        "typecode": "060411"
+      },
+      "distance_m": 3049.72,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:27.599217+00:00"
+    },
+    {
+      "id": "amap:B0FFKY33KK",
+      "name": "欧味多(苏州金鸡湖欧尚店)",
+      "lat": 31.30483,
+      "lon": 120.65846,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 3700.94,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:33.098786+00:00"
+    },
+    {
+      "id": "amap:B0FFL26ZG4",
+      "name": "来之福酒(东环时代广场店)",
+      "lat": 31.313742,
+      "lon": 120.650003,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4719.77,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:42.048034+00:00"
+    },
+    {
+      "id": "amap:B0FFL2LQD0",
+      "name": "全家便利店(苏州大道二店)",
+      "lat": 31.325271,
+      "lon": 120.735433,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;便民商店/便利店;便民商店/便利店",
+        "typecode": "060200"
+      },
+      "distance_m": 4609.09,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:42.048034+00:00"
+    },
+    {
+      "id": "amap:B0FFL2UVEP",
+      "name": "尼古拉圣艾挪骑士bar",
+      "lat": 31.298897,
+      "lon": 120.697062,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 120.14,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:21.554208+00:00"
+    },
+    {
+      "id": "amap:B0FFL3F1TB",
+      "name": "苏杭精品超市1号店",
+      "lat": 31.341902,
+      "lon": 120.686882,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4759.95,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:38.277484+00:00"
+    },
+    {
+      "id": "amap:B0FFL7A97O",
+      "name": "太拾惠进口食品店",
+      "lat": 31.300212,
+      "lon": 120.649746,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;便民商店/便利店;便民商店/便利店|购物服务;超级市场;超市",
+        "typecode": "060200|060400"
+      },
+      "distance_m": 4489.47,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:38.277484+00:00"
+    },
+    {
+      "id": "amap:B0FFL9CSS3",
+      "name": "晟源斌烟酒商行",
+      "lat": 31.296557,
+      "lon": 120.645604,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4897.8,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:44.108909+00:00"
+    },
+    {
+      "id": "amap:B0FFLAF3PK",
+      "name": "洋洋百货超市(顺达商业广场店)",
+      "lat": 31.286726,
+      "lon": 120.728037,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 3296.89,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:30.427669+00:00"
+    },
+    {
+      "id": "amap:B0FFLAGVKE",
+      "name": "群谊烟酒店",
+      "lat": 31.286756,
+      "lon": 120.663683,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3490.12,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:31.800940+00:00"
+    },
+    {
+      "id": "amap:B0FFLAKLRM",
+      "name": "优小佳生活超市",
+      "lat": 31.30029,
+      "lon": 120.649598,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4503.58,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:38.277484+00:00"
+    },
+    {
+      "id": "amap:B0FFLC4RAY",
+      "name": "沛鑫烟酒商行·蓝色经典·天之蓝(苏州华东大厦店)",
+      "lat": 31.310211,
+      "lon": 120.650767,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4537.2,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:39.647215+00:00"
+    },
+    {
+      "id": "amap:B0FFLJHHPU",
+      "name": "鑫喜发酒业(金鸡湖商业广场店)",
+      "lat": 31.322047,
+      "lon": 120.720053,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3289.47,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:29.041969+00:00"
+    },
+    {
+      "id": "amap:B0FFLOWSVM",
+      "name": "苏泰烟酒商贸(双银国际金融城店)",
+      "lat": 31.266593,
+      "lon": 120.683743,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3919.88,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:37.059259+00:00"
+    },
+    {
+      "id": "amap:B0FFLPCJL2",
+      "name": "1919.cn隔壁仓库烟酒批发(嘉瑞路店)",
+      "lat": 31.324205,
+      "lon": 120.718212,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3364.57,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:29.041969+00:00"
+    },
+    {
+      "id": "amap:B0FFM356DN",
+      "name": "周金喜烟杂店",
+      "lat": 31.284473,
+      "lon": 120.648318,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;便民商店/便利店;便民商店/便利店",
+        "typecode": "060200"
+      },
+      "distance_m": 4936.24,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:44.108909+00:00"
+    },
+    {
+      "id": "amap:B0FFM4QBDW",
+      "name": "屈臣氏(园区奥体中心店)",
+      "lat": 31.307384,
+      "lon": 120.74657,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4781.32,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:40.852023+00:00"
+    },
+    {
+      "id": "amap:B0FFM7VS8B",
+      "name": "庆吉烟酒商行",
+      "lat": 31.279217,
+      "lon": 120.663863,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3903.98,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:34.427499+00:00"
+    },
+    {
+      "id": "amap:B0FFMEP2C6",
+      "name": "玖零后的生鲜超市(莲花商业街店)",
+      "lat": 31.286488,
+      "lon": 120.740105,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4362.0,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:38.277484+00:00"
+    },
+    {
+      "id": "amap:B0FFMFE46N",
+      "name": "城市生活超市(海悦馨园店)",
+      "lat": 31.31175,
+      "lon": 120.747627,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4985.12,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:40.852023+00:00"
+    },
+    {
+      "id": "amap:B0G03LGV42",
+      "name": "优宜家世纪华联超市(东方大道店)",
+      "lat": 31.263463,
+      "lon": 120.68392,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市|购物服务;便民商店/便利店;便民商店/便利店",
+        "typecode": "060400|060200"
+      },
+      "distance_m": 4245.99,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:35.837538+00:00"
+    },
+    {
+      "id": "amap:B0G0AMRZNI",
+      "name": "佳隆超市(跨南路店)",
+      "lat": 31.34423,
+      "lon": 120.691604,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市|购物服务;便民商店/便利店;便民商店/便利店",
+        "typecode": "060400|060200"
+      },
+      "distance_m": 4947.42,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:40.852023+00:00"
+    },
+    {
+      "id": "amap:B0G0AUUEE1",
+      "name": "辰洋烟酒店",
+      "lat": 31.31616,
+      "lon": 120.667814,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3305.33,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:29.041969+00:00"
+    },
+    {
+      "id": "amap:B0G0D655KC",
+      "name": "韵达超市(湖滨花园店)",
+      "lat": 31.282765,
+      "lon": 120.680152,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 2494.9,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:27.599217+00:00"
+    },
+    {
+      "id": "amap:B0G0K5SGVA",
+      "name": "逸真酒水直供中心(方洲邻里中心店)",
+      "lat": 31.314621,
+      "lon": 120.742426,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4612.95,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:42.048034+00:00"
+    },
+    {
+      "id": "amap:B0G0XSYNY4",
+      "name": "城市优购(澳韵花园店)",
+      "lat": 31.307776,
+      "lon": 120.734229,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 3642.11,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:33.098786+00:00"
+    },
+    {
+      "id": "amap:B0G0YSLDA9",
+      "name": "乾丰烟酒(双湖湾花园1期店)",
+      "lat": 31.290882,
+      "lon": 120.723913,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 2750.11,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:21.554208+00:00"
+    },
+    {
+      "id": "amap:B0G13KZDJP",
+      "name": "泰山原浆啤酒(娄葑文体中心店)",
+      "lat": 31.288601,
+      "lon": 120.662392,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店|购物服务;便民商店/便利店;便民商店/便利店",
+        "typecode": "061210|060200"
+      },
+      "distance_m": 3522.96,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:31.800940+00:00"
+    },
+    {
+      "id": "amap:B0G1GZO2XK",
+      "name": "苏州茗酒荟(金象城店)",
+      "lat": 31.291098,
+      "lon": 120.656448,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3977.27,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:37.059259+00:00"
+    },
+    {
+      "id": "amap:B0G23AAVH7",
+      "name": "红星平价生活超市(莲花商业街店)",
+      "lat": 31.285735,
+      "lon": 120.737904,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4197.12,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:35.837538+00:00"
+    },
+    {
+      "id": "amap:B0G257WF7P",
+      "name": "苏品汇烟酒商行(葑谊新村南区店)",
+      "lat": 31.288821,
+      "lon": 120.656306,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4060.44,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:37.059259+00:00"
+    },
+    {
+      "id": "amap:B0G2M10DIA",
+      "name": "星惠乐超市(丰隆城市中心店)",
+      "lat": 31.317596,
+      "lon": 120.718092,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 2802.68,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:27.599217+00:00"
+    },
+    {
+      "id": "amap:B0G33NU3IK",
+      "name": "酒玩家(苏州奥体中心店)",
+      "lat": 31.307575,
+      "lon": 120.746928,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4818.5,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:42.048034+00:00"
+    },
+    {
+      "id": "amap:B0G395N51V",
+      "name": "Gmart(中天湖畔广场店)",
+      "lat": 31.324542,
+      "lon": 120.67863,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 3241.33,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:30.427669+00:00"
+    },
+    {
+      "id": "amap:B0G39BLXVQ",
+      "name": "塘北烟酒粮油店",
+      "lat": 31.282402,
+      "lon": 120.677744,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;专营店",
+        "typecode": "061200"
+      },
+      "distance_m": 2676.84,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:21.554208+00:00"
+    },
+    {
+      "id": "amap:B0G3JN3327",
+      "name": "大润发(星塘店)",
+      "lat": 31.29809,
+      "lon": 120.74722,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市|生活服务;生活服务场所;生活服务场所",
+        "typecode": "060400|070000"
+      },
+      "distance_m": 4776.42,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:38.277484+00:00"
+    },
+    {
+      "id": "amap:B0GDVZ7586",
+      "name": "泰山原浆啤酒(庄先湾路店)",
+      "lat": 31.305391,
+      "lon": 120.649449,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4557.43,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:39.647215+00:00"
+    },
+    {
+      "id": "amap:B0GR3SHIM6",
+      "name": "现代花园兰园华联超市",
+      "lat": 31.283491,
+      "lon": 120.649929,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4833.47,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:40.852023+00:00"
+    },
+    {
+      "id": "amap:B0GUA1CJYV",
+      "name": "食刻八食品超市",
+      "lat": 31.305617,
+      "lon": 120.65533,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;便民商店/便利店;便民商店/便利店|购物服务;超级市场;超市",
+        "typecode": "060200|060400"
+      },
+      "distance_m": 4008.12,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:35.837538+00:00"
+    },
+    {
+      "id": "amap:B0GUNHGVQ5",
+      "name": "豪庭烟酒(新未来花园潇邦西区店)",
+      "lat": 31.32993,
+      "lon": 120.702748,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3375.25,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:31.800940+00:00"
+    },
+    {
+      "id": "amap:B0H01RSXXA",
+      "name": "吖噢优乐市国际精品超市(久光百货店)",
+      "lat": 31.319716,
+      "lon": 120.714931,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 2778.63,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:27.599217+00:00"
+    },
+    {
+      "id": "amap:B0H04S7HTX",
+      "name": "品尚超市棋牌(联丰广场店)",
+      "lat": 31.297243,
+      "lon": 120.734655,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;服装鞋帽皮具店;服装鞋帽皮具店|购物服务;超级市场;超市",
+        "typecode": "061100|060400"
+      },
+      "distance_m": 3590.88,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:30.427669+00:00"
+    },
+    {
+      "id": "amap:B0H06CFB8S",
+      "name": "茅台文化体验馆",
+      "lat": 31.302789,
+      "lon": 120.682624,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 1400.95,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:21.554208+00:00"
+    },
+    {
+      "id": "amap:B0H0RSDIL1",
+      "name": "玖品堂老酒(星尚邻里店)",
+      "lat": 31.300975,
+      "lon": 120.683375,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 1299.0,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:21.554208+00:00"
+    },
+    {
+      "id": "amap:B0H0VAWC6I",
+      "name": "魔女喝喝精酿酒屋(园区店)",
+      "lat": 31.306992,
+      "lon": 120.732951,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3503.88,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:31.800940+00:00"
+    },
+    {
+      "id": "amap:B0H129C904",
+      "name": "肆拾玖坊良益思堂体验店(尚品大厦店)",
+      "lat": 31.289051,
+      "lon": 120.664876,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3284.93,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:29.041969+00:00"
+    },
+    {
+      "id": "amap:B0H1BA4I61",
+      "name": "顽啤精酿超市(华成大厦店)",
+      "lat": 31.288832,
+      "lon": 120.662064,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3543.0,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:31.800940+00:00"
+    },
+    {
+      "id": "amap:B0H1XM3RAT",
+      "name": "泰山原浆啤酒(联丰广场店)",
+      "lat": 31.297626,
+      "lon": 120.735666,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;专营店",
+        "typecode": "061200"
+      },
+      "distance_m": 3683.33,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:34.427499+00:00"
+    },
+    {
+      "id": "amap:B0H26X742G",
+      "name": "恒品烟酒商贸(中央景城店)",
+      "lat": 31.328486,
+      "lon": 120.722536,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3992.01,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:37.059259+00:00"
+    },
+    {
+      "id": "amap:B0H2AC5R8K",
+      "name": "泸州老窖(苏州中心广场A/B座店)",
+      "lat": 31.319194,
+      "lon": 120.677187,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;专营店",
+        "typecode": "061200"
+      },
+      "distance_m": 2847.53,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:21.554208+00:00"
+    },
+    {
+      "id": "amap:B0H2X7FXXE",
+      "name": "嗨皮烟酒便利店(金悦花园二期北门)",
+      "lat": 31.270495,
+      "lon": 120.679512,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;便民商店/便利店;便民商店/便利店",
+        "typecode": "060200"
+      },
+      "distance_m": 3675.18,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:34.427499+00:00"
+    },
+    {
+      "id": "amap:B0H2XSH5TM",
+      "name": "东方名酒汇·烟酒茶礼(星尚邻里店)",
+      "lat": 31.300938,
+      "lon": 120.682814,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 1351.78,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:21.554208+00:00"
+    },
+    {
+      "id": "amap:B0H32D5LWY",
+      "name": "苏州丹宇酒业",
+      "lat": 31.270455,
+      "lon": 120.681556,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3595.61,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:31.800940+00:00"
+    },
+    {
+      "id": "amap:B0H3ZRFFEV",
+      "name": "苏州亿玖汇商贸有限公司",
+      "lat": 31.316979,
+      "lon": 120.668028,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3338.99,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:29.041969+00:00"
+    },
+    {
+      "id": "amap:B0H67Z0MM7",
+      "name": "致枫酒库(赛格·天翼数码广场店)",
+      "lat": 31.317065,
+      "lon": 120.668809,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3283.63,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:29.041969+00:00"
+    },
+    {
+      "id": "amap:B0HBBY0CYK",
+      "name": "利客莱超市(金象城店)",
+      "lat": 31.291775,
+      "lon": 120.655925,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4007.62,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:35.837538+00:00"
+    },
+    {
+      "id": "amap:B0HBKXTR9V",
+      "name": "津源烟酒商行批发零售",
+      "lat": 31.305359,
+      "lon": 120.649296,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4571.38,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:42.048034+00:00"
+    },
+    {
+      "id": "amap:B0HBPMBNYQ",
+      "name": "蒙特泉老酒坊(葑门店)",
+      "lat": 31.299126,
+      "lon": 120.645365,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4906.57,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:44.108909+00:00"
+    },
+    {
+      "id": "amap:B0HBRP4SZM",
+      "name": "乐购express(玲珑美好荟店)",
+      "lat": 31.26606,
+      "lon": 120.68132,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4054.88,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:35.837538+00:00"
+    },
+    {
+      "id": "amap:B0HDZMZIHX",
+      "name": "正元名饮",
+      "lat": 31.330671,
+      "lon": 120.71033,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3640.56,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:34.427499+00:00"
+    },
+    {
+      "id": "amap:B0HGVSPD19",
+      "name": "蒋平香烟店",
+      "lat": 31.290902,
+      "lon": 120.651894,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4402.69,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:39.647215+00:00"
+    },
+    {
+      "id": "amap:B0HGY5X1CZ",
+      "name": "恒悦心驿慈善超市(苏州中心商场北区店)",
+      "lat": 31.316914,
+      "lon": 120.676807,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 2688.2,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:27.599217+00:00"
+    },
+    {
+      "id": "amap:B0HK5DM47K",
+      "name": "亿玖汇烟酒商行(中央景城店)",
+      "lat": 31.328491,
+      "lon": 120.7224,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3984.61,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:37.059259+00:00"
+    },
+    {
+      "id": "amap:B0HKXCPOFJ",
+      "name": "苏韵烟酒(海尚·壹品店)",
+      "lat": 31.327594,
+      "lon": 120.718302,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3677.94,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:34.427499+00:00"
+    },
+    {
+      "id": "amap:B0HRDXXEK1",
+      "name": "泰山原浆啤酒(金鸡湖商业广场店)",
+      "lat": 31.321473,
+      "lon": 120.718822,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3164.3,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:29.041969+00:00"
+    },
+    {
+      "id": "amap:B0HRV7V7RY",
+      "name": "兔喜生活(东环路店)",
+      "lat": 31.290308,
+      "lon": 120.6568,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 3967.79,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:33.098786+00:00"
+    },
+    {
+      "id": "amap:B0HUMZT3OQ",
+      "name": "鑫合泰烟酒商行(湖东新街口店)",
+      "lat": 31.312638,
+      "lon": 120.734864,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3863.26,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:34.427499+00:00"
+    },
+    {
+      "id": "amap:B0HUVZ301E",
+      "name": "正元名饮东环路店",
+      "lat": 31.292804,
+      "lon": 120.655792,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3995.5,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:37.059259+00:00"
+    },
+    {
+      "id": "amap:B0I11M7BG7",
+      "name": "泰山原浆啤酒(觅渡桥直营店)",
+      "lat": 31.291936,
+      "lon": 120.646498,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "体育休闲服务;娱乐场所;酒吧",
+        "typecode": "080304"
+      },
+      "distance_m": 4880.77,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:42.048034+00:00"
+    },
+    {
+      "id": "amap:B0I1CZ6UUY",
+      "name": "百士联生活超市(东湖林语店)",
+      "lat": 31.310797,
+      "lon": 120.741872,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4429.94,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:38.277484+00:00"
+    },
+    {
+      "id": "amap:B0I1JZCBR9",
+      "name": "1919酒类直供(苏州星湖街店)",
+      "lat": 31.29323,
+      "lon": 120.725349,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 2796.35,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:21.554208+00:00"
+    },
+    {
+      "id": "amap:B0I1RD434T",
+      "name": "嘉汇城烟酒商行",
+      "lat": 31.293548,
+      "lon": 120.681444,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 1641.55,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:21.554208+00:00"
+    },
+    {
+      "id": "amap:B0I1UZVWVA",
+      "name": "酒头人(悦湖店)",
+      "lat": 31.282195,
+      "lon": 120.673409,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 2988.78,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:29.041969+00:00"
+    },
+    {
+      "id": "amap:B0I3VDBYNU",
+      "name": "五粮春",
+      "lat": 31.27918,
+      "lon": 120.663269,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3952.05,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:37.059259+00:00"
+    },
+    {
+      "id": "amap:B0I6ZZFPTD",
+      "name": "万家LiFE(玲珑邻里中心店)",
+      "lat": 31.33018,
+      "lon": 120.70111,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;华润",
+        "typecode": "060403"
+      },
+      "distance_m": 3381.19,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:30.427669+00:00"
+    },
+    {
+      "id": "amap:B0IADKU1SJ",
+      "name": "金秋生鲜",
+      "lat": 31.269142,
+      "lon": 120.661191,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4830.38,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:40.852023+00:00"
+    },
+    {
+      "id": "amap:B0IAJZTHNY",
+      "name": "全家便利店(苏州大学独墅湖校区二店)",
+      "lat": 31.273275,
+      "lon": 120.734775,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4658.56,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:38.277484+00:00"
+    },
+    {
+      "id": "amap:B0ID7CKSHC",
+      "name": "江苏华润万家超市有限公司玲珑美好荟店",
+      "lat": 31.267099,
+      "lon": 120.681143,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 3954.03,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:33.098786+00:00"
+    },
+    {
+      "id": "amap:B0IDKNDM0Y",
+      "name": "生活良友便利超市",
+      "lat": 31.329364,
+      "lon": 120.710487,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市|购物服务;便民商店/便利店;便民商店/便利店",
+        "typecode": "060400|060200"
+      },
+      "distance_m": 3510.1,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:30.427669+00:00"
+    },
+    {
+      "id": "amap:B0IG76MAYN",
+      "name": "优之家便利超市(海尚·壹品店)",
+      "lat": 31.32763,
+      "lon": 120.718896,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 3712.6,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:33.098786+00:00"
+    },
+    {
+      "id": "amap:B0IK9SVXO0",
+      "name": "李公堤三期中古之茄CIGAR LOUNGE",
+      "lat": 31.297946,
+      "lon": 120.695321,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "体育休闲服务;娱乐场所;酒吧",
+        "typecode": "080304"
+      },
+      "distance_m": 276.24,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:21.554208+00:00"
+    },
+    {
+      "id": "amap:B0IKBRFSP6",
+      "name": "贵州茅台(月亮湾路店)",
+      "lat": 31.261447,
+      "lon": 120.720878,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4848.2,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:42.048034+00:00"
+    },
+    {
+      "id": "amap:B0IKF569Y1",
+      "name": "双拥生活超市(便立选郭巷店)",
+      "lat": 31.265717,
+      "lon": 120.676737,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4268.31,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:35.837538+00:00"
+    },
+    {
+      "id": "amap:B0IKGUAQRW",
+      "name": "信安生活超市(杨枝店)",
+      "lat": 31.293612,
+      "lon": 120.653928,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4152.93,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:35.837538+00:00"
+    },
+    {
+      "id": "amap:B0IKXUXHGP",
+      "name": "苏禾汇烟酒",
+      "lat": 31.322487,
+      "lon": 120.718829,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3250.73,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:29.041969+00:00"
+    },
+    {
+      "id": "amap:B0IR5MZDYL",
+      "name": "华联盈创生活超市(恒润后街商业广场店)",
+      "lat": 31.291974,
+      "lon": 120.655751,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4018.76,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:35.837538+00:00"
+    },
+    {
+      "id": "amap:B0IUG7NO85",
+      "name": "杭商华联",
+      "lat": 31.305666,
+      "lon": 120.656216,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 3925.87,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:33.098786+00:00"
+    },
+    {
+      "id": "amap:B0IUZS6WHR",
+      "name": "魔酒屋(金象城店)",
+      "lat": 31.290725,
+      "lon": 120.657275,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3911.91,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:34.427499+00:00"
+    },
+    {
+      "id": "amap:B0J0415SXL",
+      "name": "山姆超市云仓提货点(苏州中园大厦店)",
+      "lat": 31.326341,
+      "lon": 120.676601,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;便民商店/便利店;便民商店/便利店|购物服务;超级市场;超市",
+        "typecode": "060200|060400"
+      },
+      "distance_m": 3514.09,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:30.427669+00:00"
+    },
+    {
+      "id": "amap:B0J0CC7LMS",
+      "name": "贵福酒业(玩美天地店)",
+      "lat": 31.269825,
+      "lon": 120.659359,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4902.29,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:44.108909+00:00"
+    },
+    {
+      "id": "amap:B0J0Y4B1HC",
+      "name": "快客达环球超市(金鸡湖店)",
+      "lat": 31.327627,
+      "lon": 120.717457,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 3637.48,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:33.098786+00:00"
+    },
+    {
+      "id": "amap:B0J1T7IABT",
+      "name": "贵州茅台专卖店(领汇广场店)",
+      "lat": 31.325416,
+      "lon": 120.732611,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4410.07,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:39.647215+00:00"
+    },
+    {
+      "id": "amap:B0J22AU1V5",
+      "name": "豪惠购生活超市(金鸡湖店)",
+      "lat": 31.293165,
+      "lon": 120.661191,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 3485.39,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:30.427669+00:00"
+    },
+    {
+      "id": "amap:B0J27BWI82",
+      "name": "王茅茅台烟酒店(苏州国际财富广场店)",
+      "lat": 31.315497,
+      "lon": 120.672573,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 2891.84,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:29.041969+00:00"
+    },
+    {
+      "id": "amap:B0J27UGYFP",
+      "name": "华致酒行(通达路店)",
+      "lat": 31.278546,
+      "lon": 120.678229,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 2976.36,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:29.041969+00:00"
+    },
+    {
+      "id": "amap:B0J3CSCV9R",
+      "name": "百食轩生活超市(新街口店)",
+      "lat": 31.3129,
+      "lon": 120.736433,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4012.78,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:35.837538+00:00"
+    },
+    {
+      "id": "amap:B0J3D7LAMP",
+      "name": "哔茄所雪茄俱乐部(双银国际金融城店)",
+      "lat": 31.26597,
+      "lon": 120.683585,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3990.32,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:37.059259+00:00"
+    },
+    {
+      "id": "amap:B0J3XU2KL4",
+      "name": "藏酒库名酒折扣店",
+      "lat": 31.300067,
+      "lon": 120.681129,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 1507.68,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:21.554208+00:00"
+    },
+    {
+      "id": "amap:B0J6AHZLSX",
+      "name": "百老泉老酒客(国泰新村店)",
+      "lat": 31.256194,
+      "lon": 120.686112,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4977.03,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:44.108909+00:00"
+    },
+    {
+      "id": "amap:B0JA7Z09PZ",
+      "name": "泰山原浆啤酒(苏州中心店)",
+      "lat": 31.316228,
+      "lon": 120.666177,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3440.78,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:31.800940+00:00"
+    },
+    {
+      "id": "amap:B0JAN5I7EO",
+      "name": "苏州苏糖名酒销售有限公司(姑苏分公司)",
+      "lat": 31.311661,
+      "lon": 120.648283,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4807.04,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:42.048034+00:00"
+    },
+    {
+      "id": "amap:B0JAXM4SKE",
+      "name": "玖源精品超市(金象城店)",
+      "lat": 31.291189,
+      "lon": 120.656149,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4002.31,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:33.098786+00:00"
+    },
+    {
+      "id": "amap:B0JB1UH6P4",
+      "name": "五粮液专卖店(星湖街店)",
+      "lat": 31.294334,
+      "lon": 120.724189,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 2658.71,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:21.554208+00:00"
+    },
+    {
+      "id": "amap:B0JB99YVBF",
+      "name": "今世缘国缘(莫邪路店)",
+      "lat": 31.298959,
+      "lon": 120.645384,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4905.17,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:44.108909+00:00"
+    },
+    {
+      "id": "amap:B0JBARKSOO",
+      "name": "久品源烟酒商贸(国酒旗舰店)",
+      "lat": 31.314941,
+      "lon": 120.7209,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 2815.3,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:21.554208+00:00"
+    },
+    {
+      "id": "amap:B0JD912T2Z",
+      "name": "1号酒库(苏州园区店)",
+      "lat": 31.314848,
+      "lon": 120.720866,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 2806.59,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:21.554208+00:00"
+    },
+    {
+      "id": "amap:B0JD9RV4FD",
+      "name": "泽之乐超市(出彩生活社区店)",
+      "lat": 31.296777,
+      "lon": 120.748784,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;便民商店/便利店;便民商店/便利店|购物服务;超级市场;超市",
+        "typecode": "060200|060400"
+      },
+      "distance_m": 4933.29,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:40.852023+00:00"
+    },
+    {
+      "id": "amap:B0JDPDKN3Z",
+      "name": "润小发超市(怡葑庭店)",
+      "lat": 31.289475,
+      "lon": 120.663332,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;便民商店/便利店;便民商店/便利店|购物服务;超级市场;超市",
+        "typecode": "060200|060400"
+      },
+      "distance_m": 3405.2,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:30.427669+00:00"
+    },
+    {
+      "id": "amap:B0JG1LLFUZ",
+      "name": "Dr.ink筑与行酒窖",
+      "lat": 31.320154,
+      "lon": 120.705833,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 2395.58,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:21.554208+00:00"
+    },
+    {
+      "id": "amap:B0JG5C70O7",
+      "name": "可麦生活超市(泊云庭店)",
+      "lat": 31.292878,
+      "lon": 120.747405,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4854.12,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:40.852023+00:00"
+    },
+    {
+      "id": "amap:B0JG6SJ7Q5",
+      "name": "泰山原浆啤酒(沈浒路店)",
+      "lat": 31.329728,
+      "lon": 120.709643,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3519.64,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:31.800940+00:00"
+    },
+    {
+      "id": "amap:B0JK29132V",
+      "name": "红星百货超市(顺达商业广场店)",
+      "lat": 31.287177,
+      "lon": 120.72805,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 3275.89,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:30.427669+00:00"
+    },
+    {
+      "id": "amap:B0JKSO57G1",
+      "name": "星叶烟酒贸易商行(星叶生活广场店)",
+      "lat": 31.278199,
+      "lon": 120.655517,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4625.94,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:42.048034+00:00"
+    },
+    {
+      "id": "amap:B0JRKBL674",
+      "name": "洞庭山天然泉水",
+      "lat": 31.287563,
+      "lon": 120.661777,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;专营店",
+        "typecode": "061200"
+      },
+      "distance_m": 3620.0,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:26.359885+00:00"
+    },
+    {
+      "id": "amap:B0JRYDB37B",
+      "name": "朗乐购超市(朗诗·国际街区店)",
+      "lat": 31.304762,
+      "lon": 120.741284,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4241.19,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:35.837538+00:00"
+    },
+    {
+      "id": "amap:B0JU5H800V",
+      "name": "Dr.ink葡萄酒学院",
+      "lat": 31.320239,
+      "lon": 120.705757,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;购物相关场所;购物相关场所",
+        "typecode": "060000"
+      },
+      "distance_m": 2401.93,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:21.554208+00:00"
+    },
+    {
+      "id": "amap:B0JULRRZS5",
+      "name": "购享超市(临芳苑二区店)",
+      "lat": 31.339809,
+      "lon": 120.684885,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市|购物服务;便民商店/便利店;便民商店/便利店",
+        "typecode": "060400|060200"
+      },
+      "distance_m": 4576.23,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:38.277484+00:00"
+    },
+    {
+      "id": "amap:B0K0APRF42",
+      "name": "屈臣氏(凯德苏州中心店)",
+      "lat": 31.31863,
+      "lon": 120.678482,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;屈臣氏",
+        "typecode": "060411"
+      },
+      "distance_m": 2719.63,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:27.599217+00:00"
+    },
+    {
+      "id": "amap:B0K0S9622O",
+      "name": "恒晟酒庄",
+      "lat": 31.321506,
+      "lon": 120.705313,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 2521.02,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:21.554208+00:00"
+    },
+    {
+      "id": "amap:B0K0VZF1V5",
+      "name": "onesuper精致超市(星汇生活广场店)",
+      "lat": 31.32975,
+      "lon": 120.708366,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 3482.43,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:30.427669+00:00"
+    },
+    {
+      "id": "amap:B0K1AUKCCX",
+      "name": "茅言馆",
+      "lat": 31.264838,
+      "lon": 120.694618,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "风景名胜;风景名胜相关;旅游景点",
+        "typecode": "110000"
+      },
+      "distance_m": 3913.71,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:34.427499+00:00"
+    },
+    {
+      "id": "amap:B0K1UBECZG",
+      "name": "小象超市(百安居苏州园区店)",
+      "lat": 31.307857,
+      "lon": 120.657925,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 3814.18,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:33.098786+00:00"
+    },
+    {
+      "id": "amap:B0K2GSJS78",
+      "name": "华来客生活超市",
+      "lat": 31.286473,
+      "lon": 120.738233,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4196.02,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:35.837538+00:00"
+    },
+    {
+      "id": "amap:B0K2U5UA95",
+      "name": "歪马送酒(湖东邻里中心店)",
+      "lat": 31.31704,
+      "lon": 120.726221,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;购物相关场所;购物相关场所",
+        "typecode": "060000"
+      },
+      "distance_m": 3362.81,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:29.041969+00:00"
+    },
+    {
+      "id": "amap:B0K3B7G12P",
+      "name": "盒马鲜生(印象城店)",
+      "lat": 31.317411,
+      "lon": 120.657649,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;综合市场;水产海鲜市场|购物服务;超级市场;超市",
+        "typecode": "060706|060400"
+      },
+      "distance_m": 4210.99,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:35.837538+00:00"
+    },
+    {
+      "id": "amap:B0K60D1MNS",
+      "name": "酒来玖往烟酒商行(华成大厦店)",
+      "lat": 31.288622,
+      "lon": 120.66211,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3547.15,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:31.800940+00:00"
+    },
+    {
+      "id": "amap:B0KDNMSBB3",
+      "name": "臻选酒世界(半月湾店)",
+      "lat": 31.261742,
+      "lon": 120.719553,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4761.23,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:42.048034+00:00"
+    },
+    {
+      "id": "amap:B0KG7KXCKM",
+      "name": "大双烟酒",
+      "lat": 31.256536,
+      "lon": 120.685791,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4946.32,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:44.108909+00:00"
+    },
+    {
+      "id": "amap:B0KKM5BHU5",
+      "name": "兰坪烟酒行",
+      "lat": 31.26852,
+      "lon": 120.664213,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4684.0,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:42.048034+00:00"
+    },
+    {
+      "id": "amap:B0KKUG6AT5",
+      "name": "飞腾烟酒",
+      "lat": 31.288929,
+      "lon": 120.653632,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4299.62,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:39.647215+00:00"
+    },
+    {
+      "id": "amap:B0KRGZQMI7",
+      "name": "星湖生活超市(独墅湖店)",
+      "lat": 31.283543,
+      "lon": 120.725562,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 3272.01,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:30.427669+00:00"
+    },
+    {
+      "id": "amap:B0KRKOCWQJ",
+      "name": "智宸生活超市",
+      "lat": 31.309314,
+      "lon": 120.651002,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4491.51,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:38.277484+00:00"
+    },
+    {
+      "id": "amap:B0KRPRM0C4",
+      "name": "歪马送酒星海广场店",
+      "lat": 31.318183,
+      "lon": 120.662757,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;购物相关场所;购物相关场所",
+        "typecode": "060000"
+      },
+      "distance_m": 3831.45,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:34.427499+00:00"
+    },
+    {
+      "id": "amap:B0KRYD00MF",
+      "name": "歪马送酒(娄葑店)",
+      "lat": 31.280013,
+      "lon": 120.66743,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;购物相关场所;购物相关场所",
+        "typecode": "060000"
+      },
+      "distance_m": 3580.61,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:31.800940+00:00"
+    },
+    {
+      "id": "amap:B0KUNUPAPR",
+      "name": "苏州工业园区捌叁零烟酒商行",
+      "lat": 31.289053,
+      "lon": 120.664768,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3294.38,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:29.041969+00:00"
+    },
+    {
+      "id": "amap:B0L0DNLTNE",
+      "name": "蜀香迎纯粮酒坊",
+      "lat": 31.271398,
+      "lon": 120.660536,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4701.32,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:42.048034+00:00"
+    },
+    {
+      "id": "amap:B0L0HBON1O",
+      "name": "欧麦德Euromart(百合街店)",
+      "lat": 31.324575,
+      "lon": 120.665475,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4055.76,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:35.837538+00:00"
+    },
+    {
+      "id": "amap:B0L0L5AI58",
+      "name": "葡轩红酒(苏州印象城店)",
+      "lat": 31.317084,
+      "lon": 120.657182,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4233.97,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:37.059259+00:00"
+    },
+    {
+      "id": "amap:B0L1FUYQK4",
+      "name": "小象超市(联丰广场斜塘店)",
+      "lat": 31.297799,
+      "lon": 120.736824,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 3791.81,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:33.098786+00:00"
+    },
+    {
+      "id": "amap:B0L1V1BJZN",
+      "name": "世纪华联超市(星湖街店)",
+      "lat": 31.285127,
+      "lon": 120.725723,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 3190.07,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:30.427669+00:00"
+    },
+    {
+      "id": "amap:B0L2AH25RI",
+      "name": "玖上酉拾晋选超市",
+      "lat": 31.302272,
+      "lon": 120.681068,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 1534.8,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:27.599217+00:00"
+    },
+    {
+      "id": "amap:B0L2L5OEGD",
+      "name": "ALDI奥乐齐超市(景城邻里中心店)",
+      "lat": 31.327107,
+      "lon": 120.724877,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4014.48,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:35.837538+00:00"
+    },
+    {
+      "id": "amap:B0L2YCWLLN",
+      "name": "苏州盒马鲜生(奥体中心店)",
+      "lat": 31.307413,
+      "lon": 120.746642,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4788.61,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:40.852023+00:00"
+    },
+    {
+      "id": "amap:B0L35RFFRW",
+      "name": "古月酒居",
+      "lat": 31.270108,
+      "lon": 120.67512,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "餐饮服务;餐饮相关场所;餐饮相关",
+        "typecode": "050000"
+      },
+      "distance_m": 3918.17,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:37.059259+00:00"
+    },
+    {
+      "id": "amap:B0L3AZRG7H",
+      "name": "酒仙森精酿啤酒洋酒(园区店)",
+      "lat": 31.324625,
+      "lon": 120.719275,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3462.85,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:31.800940+00:00"
+    },
+    {
+      "id": "amap:B0L3MUK522",
+      "name": "奇玉烟酒食品",
+      "lat": 31.288925,
+      "lon": 120.655425,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店|购物服务;便民商店/便利店;便民商店/便利店",
+        "typecode": "061210|060200"
+      },
+      "distance_m": 4136.78,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:37.059259+00:00"
+    },
+    {
+      "id": "amap:B0L6ASW72N",
+      "name": "澳比园雪茄吧",
+      "lat": 31.324225,
+      "lon": 120.735075,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "体育休闲服务;娱乐场所;酒吧",
+        "typecode": "080304"
+      },
+      "distance_m": 4511.75,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:39.647215+00:00"
+    },
+    {
+      "id": "amap:B0L6O7CO8B",
+      "name": "泰山原浆啤酒(方洲路店)",
+      "lat": 31.313073,
+      "lon": 120.736615,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4035.83,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:37.059259+00:00"
+    },
+    {
+      "id": "amap:B0L6RU2Y46",
+      "name": "贵州茅台(葑门路专卖店)",
+      "lat": 31.300717,
+      "lon": 120.651966,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4279.25,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:39.647215+00:00"
+    },
+    {
+      "id": "amap:B0LALBLFQE",
+      "name": "邻里物语精品超市(金鸡湖店)",
+      "lat": 31.291975,
+      "lon": 120.655725,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4021.14,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:35.837538+00:00"
+    },
+    {
+      "id": "amap:B0LAMH0TRJ",
+      "name": "泰山原浆啤酒(顺达广场店)",
+      "lat": 31.287421,
+      "lon": 120.728186,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3275.88,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:29.041969+00:00"
+    },
+    {
+      "id": "amap:B0LBSCHOHF",
+      "name": "泰山原浆啤酒(沈浒路店)",
+      "lat": 31.329728,
+      "lon": 120.709643,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3519.64,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:31.800940+00:00"
+    },
+    {
+      "id": "amap:B0LBUU4QIJ",
+      "name": "苏叶烟酒(园区奥体店)",
+      "lat": 31.317258,
+      "lon": 120.657006,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4257.61,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:39.647215+00:00"
+    },
+    {
+      "id": "amap:B0LDGDDJD3",
+      "name": "烟酒便利店",
+      "lat": 31.287218,
+      "lon": 120.664726,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;便民商店/便利店;便民商店/便利店",
+        "typecode": "060200"
+      },
+      "distance_m": 3378.59,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:31.800940+00:00"
+    },
+    {
+      "id": "amap:B0LDTS68KF",
+      "name": "国窖1573直营店(斜塘老街店)",
+      "lat": 31.303452,
+      "lon": 120.738149,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3928.91,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:37.059259+00:00"
+    },
+    {
+      "id": "amap:B0LDXU73X0",
+      "name": "雨润发超市手机店",
+      "lat": 31.287084,
+      "lon": 120.727639,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市|购物服务;家电电子卖场;家电电子卖场",
+        "typecode": "060400|060300"
+      },
+      "distance_m": 3245.32,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:30.427669+00:00"
+    },
+    {
+      "id": "amap:B0LGO55C71",
+      "name": "持茄荟一站式雪茄俱乐部",
+      "lat": 31.297247,
+      "lon": 120.696817,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "体育休闲服务;运动场馆;运动场所",
+        "typecode": "080100"
+      },
+      "distance_m": 303.93,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:21.554208+00:00"
+    },
+    {
+      "id": "amap:B0LK34Y2OI",
+      "name": "苏州工业园区无问超市",
+      "lat": 31.326325,
+      "lon": 120.714175,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 3353.69,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:30.427669+00:00"
+    },
+    {
+      "id": "amap:B0LK3Z01XB",
+      "name": "嗨啤时光精酿啤酒",
+      "lat": 31.288875,
+      "lon": 120.662175,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;专营店",
+        "typecode": "061200"
+      },
+      "distance_m": 3531.45,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:31.800940+00:00"
+    },
+    {
+      "id": "amap:B0LK7H3X6Z",
+      "name": "天尚精酿啤酒体验馆",
+      "lat": 31.30348,
+      "lon": 120.73923,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "体育休闲服务;娱乐场所;酒吧",
+        "typecode": "080304"
+      },
+      "distance_m": 4031.42,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:37.059259+00:00"
+    },
+    {
+      "id": "amap:B0LKDBLANP",
+      "name": "家惠生鲜超市(徐家浜店)",
+      "lat": 31.308275,
+      "lon": 120.653525,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市|购物服务;综合市场;农副产品市场",
+        "typecode": "060400|060703"
+      },
+      "distance_m": 4232.0,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:35.837538+00:00"
+    },
+    {
+      "id": "amap:B0LKN7QKYF",
+      "name": "即达生活超市(工业园区店)",
+      "lat": 31.310775,
+      "lon": 120.734975,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 3802.71,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:33.098786+00:00"
+    },
+    {
+      "id": "amap:B0LKPCZOX1",
+      "name": "快购熊超市",
+      "lat": 31.310875,
+      "lon": 120.734725,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;便民商店/便利店;便民商店/便利店|购物服务;超级市场;超市",
+        "typecode": "060200|060400"
+      },
+      "distance_m": 3783.73,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:33.098786+00:00"
+    },
+    {
+      "id": "amap:B0LKRS62BX",
+      "name": "ALDI奥乐齐超市(墅浦生活荟店)",
+      "lat": 31.279114,
+      "lon": 120.674493,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 3154.98,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:27.599217+00:00"
+    },
+    {
+      "id": "amap:B0LKSMHG2F",
+      "name": "益生鲜超市",
+      "lat": 31.293648,
+      "lon": 120.682564,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 1541.33,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:27.599217+00:00"
+    },
+    {
+      "id": "amap:B0LKZBEDLB",
+      "name": "元素生鲜超市",
+      "lat": 31.312675,
+      "lon": 120.739875,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4311.43,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:38.277484+00:00"
+    },
+    {
+      "id": "amap:B0LRO6VY38",
+      "name": "茅台王子酒(华池街店)",
+      "lat": 31.322924,
+      "lon": 120.712582,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 2950.14,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:29.041969+00:00"
+    },
+    {
+      "id": "amap:B0LRXMYBNN",
+      "name": "世纪华联超市(淞江路店)",
+      "lat": 31.299527,
+      "lon": 120.725989,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 2755.04,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:27.599217+00:00"
+    },
+    {
+      "id": "amap:B0LRZ531DF",
+      "name": "传承酒庄(苏州中锐星汇生活广场店)",
+      "lat": 31.32973,
+      "lon": 120.708334,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3479.37,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:31.800940+00:00"
+    },
+    {
+      "id": "amap:B0LU4XYZ8W",
+      "name": "转转烟酒零食",
+      "lat": 31.284875,
+      "lon": 120.737975,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;专营店",
+        "typecode": "061200"
+      },
+      "distance_m": 4240.34,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:37.059259+00:00"
+    },
+    {
+      "id": "amap:B0M62SU5G8",
+      "name": "天猫超市",
+      "lat": 31.343105,
+      "lon": 120.685102,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4927.04,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:40.852023+00:00"
+    },
+    {
+      "id": "amap:B0M69B8O3B",
+      "name": "金瑞达生鲜超市(中新城商务楼店)",
+      "lat": 31.307579,
+      "lon": 120.651629,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4392.44,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:38.277484+00:00"
+    },
+    {
+      "id": "amap:B0M69DBLM8",
+      "name": "NightBreeze晚风",
+      "lat": 31.303375,
+      "lon": 120.739288,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "餐饮服务;餐饮相关场所;餐饮相关",
+        "typecode": "050000"
+      },
+      "distance_m": 4035.8,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:37.059259+00:00"
+    },
+    {
+      "id": "amap:B0M6AUZ9Z6",
+      "name": "欧尚超市星塘店(西门)",
+      "lat": 31.298102,
+      "lon": 120.747314,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4785.29,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:40.852023+00:00"
+    },
+    {
+      "id": "amap:B0M6P7MYEN",
+      "name": "精品百货超市",
+      "lat": 31.292902,
+      "lon": 120.650493,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4488.06,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:38.277484+00:00"
+    },
+    {
+      "id": "amap:B0M6PHLEO9",
+      "name": "嘉妠汇奢侈品黄金名表包包汽车抵押",
+      "lat": 31.296321,
+      "lon": 120.737253,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "汽车服务;汽车服务相关;汽车服务相关",
+        "typecode": "010000"
+      },
+      "distance_m": 3846.39,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:34.427499+00:00"
+    },
+    {
+      "id": "amap:B0M6S744XD",
+      "name": "ALDI奥乐齐超市(建屋乐活城店)",
+      "lat": 31.289927,
+      "lon": 120.723988,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 2797.45,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:27.599217+00:00"
+    },
+    {
+      "id": "amap:B0M6VPHPYH",
+      "name": "啤酒仓库",
+      "lat": 31.324342,
+      "lon": 120.678346,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;购物相关场所;购物相关场所",
+        "typecode": "060000"
+      },
+      "distance_m": 3237.3,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:29.041969+00:00"
+    },
+    {
+      "id": "amap:B0MA29SLVX",
+      "name": "嘉醇葡萄酒西班牙火腿",
+      "lat": 31.323024,
+      "lon": 120.71586,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3127.18,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:29.041969+00:00"
+    },
+    {
+      "id": "amap:B0MAF9UBO2",
+      "name": "惠百姓烟酒食品商行",
+      "lat": 31.286575,
+      "lon": 120.738175,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;购物相关场所;购物相关场所",
+        "typecode": "060000"
+      },
+      "distance_m": 4186.82,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:37.059259+00:00"
+    },
+    {
+      "id": "amap:B0MAGUY2MJ",
+      "name": "苏州市中旅蓝岸国际南门超市",
+      "lat": 31.299541,
+      "lon": 120.729375,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 3076.67,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:27.599217+00:00"
+    },
+    {
+      "id": "amap:B0MAHRMK3M",
+      "name": "如海家超市",
+      "lat": 31.298675,
+      "lon": 120.728025,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 2951.59,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:27.599217+00:00"
+    },
+    {
+      "id": "amap:B0MARC4LVM",
+      "name": "酒头人酒类直供",
+      "lat": 31.283625,
+      "lon": 120.724325,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3169.94,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:29.041969+00:00"
+    },
+    {
+      "id": "amap:B0MAZLEK2K",
+      "name": "旺岗酒水店",
+      "lat": 31.290975,
+      "lon": 120.655975,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4024.2,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:37.059259+00:00"
+    },
+    {
+      "id": "amap:B0MBKUQ809",
+      "name": "华致优选(李公堤店)",
+      "lat": 31.301015,
+      "lon": 120.683377,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;购物相关场所;购物相关场所",
+        "typecode": "060000"
+      },
+      "distance_m": 1299.2,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:21.554208+00:00"
+    },
+    {
+      "id": "amap:B0MD37FT1O",
+      "name": "哈皮熊精酿鲜啤联丰店",
+      "lat": 31.297615,
+      "lon": 120.735668,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3683.61,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:34.427499+00:00"
+    },
+    {
+      "id": "amap:B0MD4RJDGA",
+      "name": "便利店(24h营业)",
+      "lat": 31.270027,
+      "lon": 120.675165,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;便民商店/便利店;便民商店/便利店",
+        "typecode": "060200"
+      },
+      "distance_m": 3923.54,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:37.059259+00:00"
+    },
+    {
+      "id": "amap:B0MD649PP9",
+      "name": "羚时购超市(金象城店)",
+      "lat": 31.290975,
+      "lon": 120.655975,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市|购物服务;便民商店/便利店;便民商店/便利店",
+        "typecode": "060400|060200"
+      },
+      "distance_m": 4024.2,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:35.837538+00:00"
+    },
+    {
+      "id": "amap:B0MDJDIUV8",
+      "name": "湖畔天城生鲜超市",
+      "lat": 31.318832,
+      "lon": 120.737617,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4391.8,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:38.277484+00:00"
+    },
+    {
+      "id": "amap:B0MDJDJKAR",
+      "name": "掌柜烟酒商行",
+      "lat": 31.286468,
+      "lon": 120.739148,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4277.51,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:39.647215+00:00"
+    },
+    {
+      "id": "amap:B0MDXNYBZ3",
+      "name": "茅台酒肆",
+      "lat": 31.297162,
+      "lon": 120.645505,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4902.41,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:44.108909+00:00"
+    },
+    {
+      "id": "amap:B0MG0CHJXT",
+      "name": "民生烟酒茶超市",
+      "lat": 31.313925,
+      "lon": 120.670725,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 2938.64,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:29.041969+00:00"
+    },
+    {
+      "id": "amap:B0MGB1UYKC",
+      "name": "云之祥烟酒商行",
+      "lat": 31.297425,
+      "lon": 120.735875,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3704.79,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:34.427499+00:00"
+    },
+    {
+      "id": "amap:B0MGDGP0S8",
+      "name": "乐佳家超市(高尔夫花园店)",
+      "lat": 31.294469,
+      "lon": 120.686383,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 1179.84,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:27.599217+00:00"
+    },
+    {
+      "id": "amap:B0MGMZ93ZU",
+      "name": "茄香威士忌雪茄",
+      "lat": 31.292808,
+      "lon": 120.688986,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "体育休闲服务;娱乐场所;酒吧",
+        "typecode": "080304"
+      },
+      "distance_m": 1102.12,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:21.554208+00:00"
+    },
+    {
+      "id": "amap:B0MGSCMLKI",
+      "name": "睦邻时代生鲜超市(双银乐汇店)",
+      "lat": 31.267425,
+      "lon": 120.682525,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 3871.97,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:33.098786+00:00"
+    },
+    {
+      "id": "amap:B0MGVLGJFK",
+      "name": "便利超市(玲珑邻里中心店)",
+      "lat": 31.329225,
+      "lon": 120.703625,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 3312.73,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:30.427669+00:00"
+    },
+    {
+      "id": "amap:B0MR15DILQ",
+      "name": "苏叶烟酒(园区天虹店)",
+      "lat": 31.316066,
+      "lon": 120.66461,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3559.24,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:31.800940+00:00"
+    },
+    {
+      "id": "amap:B0MRCRU1AZ",
+      "name": "利民超市",
+      "lat": 31.313779,
+      "lon": 120.67,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 2989.0,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:27.599217+00:00"
+    },
+    {
+      "id": "amap:B0MRHUEA0C",
+      "name": "沛嘉烟酒",
+      "lat": 31.310175,
+      "lon": 120.650775,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;专营店",
+        "typecode": "061200"
+      },
+      "distance_m": 4535.47,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:39.647215+00:00"
+    },
+    {
+      "id": "amap:B0MRLS3F90",
+      "name": "今世缘国缘",
+      "lat": 31.2931,
+      "lon": 120.660584,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3543.26,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:31.800940+00:00"
+    },
+    {
+      "id": "amap:B0MRLX5WP9",
+      "name": "万合优选生活超市(联丰广场店)",
+      "lat": 31.297575,
+      "lon": 120.737575,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 3864.66,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:33.098786+00:00"
+    },
+    {
+      "id": "amap:B0MRZZ2S63",
+      "name": "贵州纯粮酒",
+      "lat": 31.300125,
+      "lon": 120.648675,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4591.18,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:42.048034+00:00"
+    },
+    {
+      "id": "amap:B0MU2RF9M0",
+      "name": "玩茄雪茄威士忌吧",
+      "lat": 31.315875,
+      "lon": 120.683425,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;购物相关场所;购物相关场所",
+        "typecode": "060000"
+      },
+      "distance_m": 2188.14,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:21.554208+00:00"
+    },
+    {
+      "id": "amap:B0MU9HYZ1U",
+      "name": "旭品多生活超市",
+      "lat": 31.287025,
+      "lon": 120.727725,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 3255.55,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:30.427669+00:00"
+    },
+    {
+      "id": "amap:B0MUBD5VVS",
+      "name": "华润万家",
+      "lat": 31.29969,
+      "lon": 120.731559,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;华润",
+        "typecode": "060403"
+      },
+      "distance_m": 3283.95,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:30.427669+00:00"
+    },
+    {
+      "id": "amap:B0MUDUJBIX",
+      "name": "京东酒世界(独墅湖店)",
+      "lat": 31.26761,
+      "lon": 120.682556,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3851.7,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:34.427499+00:00"
+    },
+    {
+      "id": "amap:B0MUF7HM2P",
+      "name": "茅台馆",
+      "lat": 31.304387,
+      "lon": 120.736142,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 3751.35,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:34.427499+00:00"
+    },
+    {
+      "id": "amap:B0MUJDS1V7",
+      "name": "佳木禾便利店,长城雪茄",
+      "lat": 31.289941,
+      "lon": 120.64687,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;便民商店/便利店;便民商店/便利店",
+        "typecode": "060200"
+      },
+      "distance_m": 4891.86,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:44.108909+00:00"
+    },
+    {
+      "id": "amap:B0MUN52UYL",
+      "name": "鲜啤福鹿家(庄先湾路宏葑店)",
+      "lat": 31.305358,
+      "lon": 120.649382,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4563.26,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:39.647215+00:00"
+    },
+    {
+      "id": "amap:B0MUPDE8BB",
+      "name": "家鲜家生鲜超市店",
+      "lat": 31.263425,
+      "lon": 120.681775,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4314.04,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:38.277484+00:00"
+    },
+    {
+      "id": "amap:B0MUSUCCP4",
+      "name": "万茅汇老酒馆",
+      "lat": 31.261775,
+      "lon": 120.719475,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;专卖店;烟酒专卖店",
+        "typecode": "061210"
+      },
+      "distance_m": 4754.62,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:42.048034+00:00"
+    },
+    {
+      "id": "amap:B0MUYLR78L",
+      "name": "福满多超市",
+      "lat": 31.344142,
+      "lon": 120.693664,
+      "coordinate_system": "GCJ-02",
+      "source": "AMap",
+      "tags": {
+        "type": "购物服务;超级市场;超市",
+        "typecode": "060400"
+      },
+      "distance_m": 4921.24,
+      "capture_manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json",
+      "fetched_at": "2026-10-24T06:20:40.852023+00:00"
+    }
+  ],
+  "coverage": {
+    "source": "AMap",
+    "coordinate_system": "GCJ-02",
+    "site": {
+      "lat": 31.299976,
+      "lon": 120.696997,
+      "coordinate_system": "GCJ-02",
+      "location_query": "苏州工业园区李公堤",
+      "location_source": "AMap geocode",
+      "location_evidence": "data\\raw\\amap\\62a12bfee89b45bd935f2667b1e84d14\\geocode.json",
+      "location_note": "高德地理编码返回的商圈参考中心，非经销商门店；匹配级别：兴趣点",
+      "display_name": "江苏省苏州市吴中区工业园区李公堤",
+      "site_note": "商圈演示参考中心",
+      "geocode_candidates": 2,
+      "geocode_selection": "唯一兴趣点优先于住宅区等结果；否则同名同级别按API排序取首项；项目参考中心规则，非精确场地定位"
+    },
+    "competitor_radius_m": 3000,
+    "partner_radius_m": 5000,
+    "truncated": false,
+    "jobs": [
+      {
+        "area": "ligongdi",
+        "keyword": "农夫山泉",
+        "types": "",
+        "role": "competitor",
+        "brand": "农夫山泉",
+        "next_page": 1,
+        "calls": 1,
+        "truncated": false,
+        "reason": null,
+        "seen": [
+          "B0IKUCEL5S",
+          "B0KU9CNVPB"
+        ],
+        "job_id": 2
+      },
+      {
+        "area": "ligongdi",
+        "keyword": "怡宝",
+        "types": "",
+        "role": "competitor",
+        "brand": "怡宝",
+        "next_page": 1,
+        "calls": 1,
+        "truncated": false,
+        "reason": null,
+        "seen": [],
+        "job_id": 5
+      },
+      {
+        "area": "ligongdi",
+        "keyword": "屈臣氏苏打水",
+        "types": "",
+        "role": "competitor",
+        "brand": "屈臣氏",
+        "next_page": 1,
+        "calls": 1,
+        "truncated": false,
+        "reason": null,
+        "seen": [],
+        "job_id": 8
+      },
+      {
+        "area": "ligongdi",
+        "keyword": "酒水批发",
+        "types": "",
+        "role": "partner",
+        "next_page": 8,
+        "calls": 8,
+        "truncated": false,
+        "reason": null,
+        "seen": [
+          "B020005QNL",
+          "B020005SSJ",
+          "B02000HUKJ",
+          "B02000JD92",
+          "B02000K0JK",
+          "B0200169H6",
+          "B020016HEA",
+          "B0200183BL",
+          "B02001B6YI",
+          "B02001B7N0",
+          "B02001BB1V",
+          "B02001BHDY",
+          "B02001FYTP",
+          "B0FFF2L50N",
+          "B0FFF9C915",
+          "B0FFFCOMBA",
+          "B0FFFCOU1W",
+          "B0FFFCP0M2",
+          "B0FFFDC6BE",
+          "B0FFFDKRXW",
+          "B0FFFRZY65",
+          "B0FFFS0ON4",
+          "B0FFFVI8VF",
+          "B0FFFVUMMS",
+          "B0FFFZ58J3",
+          "B0FFG49MSE",
+          "B0FFG49OSA",
+          "B0FFG55KPX",
+          "B0FFG9ZB3W",
+          "B0FFGC8L2I",
+          "B0FFGFACYD",
+          "B0FFGFB79D",
+          "B0FFGFCBYJ",
+          "B0FFGFOU4A",
+          "B0FFGJQ3XX",
+          "B0FFHDLL2V",
+          "B0FFHF1VJQ",
+          "B0FFHFP835",
+          "B0FFHNH50G",
+          "B0FFHNKCQV",
+          "B0FFHOZO4O",
+          "B0FFHP0KZ6",
+          "B0FFHP7X1T",
+          "B0FFHQ0094",
+          "B0FFHQ5P77",
+          "B0FFHS8XVP",
+          "B0FFHS929M",
+          "B0FFI7ULV4",
+          "B0FFICBUKA",
+          "B0FFIPBLE5",
+          "B0FFIRR1RW",
+          "B0FFIRTBXZ",
+          "B0FFIRTKJO",
+          "B0FFIVQ8M3",
+          "B0FFJ0A0QC",
+          "B0FFJP0DEQ",
+          "B0FFK4WOVF",
+          "B0FFK94OLI",
+          "B0FFKAYR4L",
+          "B0FFKS8F7X",
+          "B0FFKT1E7K",
+          "B0FFL26ZG4",
+          "B0FFL2LQD0",
+          "B0FFL2UVEP",
+          "B0FFL9CSS3",
+          "B0FFLAGVKE",
+          "B0FFLC4RAY",
+          "B0FFLJHHPU",
+          "B0FFLOWSVM",
+          "B0FFLPCJL2",
+          "B0FFM356DN",
+          "B0FFM7VS8B",
+          "B0G0AUUEE1",
+          "B0G0K5SGVA",
+          "B0G0YSLDA9",
+          "B0G13KZDJP",
+          "B0G1GZO2XK",
+          "B0G257WF7P",
+          "B0G33NU3IK",
+          "B0G39BLXVQ",
+          "B0GDVZ7586",
+          "B0GUNHGVQ5",
+          "B0H06CFB8S",
+          "B0H0RSDIL1",
+          "B0H0VAWC6I",
+          "B0H129C904",
+          "B0H1BA4I61",
+          "B0H1XM3RAT",
+          "B0H26X742G",
+          "B0H2AC5R8K",
+          "B0H2X7FXXE",
+          "B0H2XSH5TM",
+          "B0H32D5LWY",
+          "B0H3ZRFFEV",
+          "B0H67Z0MM7",
+          "B0HBKXTR9V",
+          "B0HBPMBNYQ",
+          "B0HDZMZIHX",
+          "B0HGVSPD19",
+          "B0HK5DM47K",
+          "B0HKXCPOFJ",
+          "B0HRDXXEK1",
+          "B0HUMZT3OQ",
+          "B0HUVZ301E",
+          "B0I11M7BG7",
+          "B0I1JZCBR9",
+          "B0I1RD434T",
+          "B0I1UZVWVA",
+          "B0I3VDBYNU",
+          "B0IK9SVXO0",
+          "B0IKBRFSP6",
+          "B0IKXUXHGP",
+          "B0IUZS6WHR",
+          "B0J0CC7LMS",
+          "B0J1T7IABT",
+          "B0J27BWI82",
+          "B0J27UGYFP",
+          "B0J3D7LAMP",
+          "B0J3XU2KL4",
+          "B0J6AHZLSX",
+          "B0JA7Z09PZ",
+          "B0JAN5I7EO",
+          "B0JB1UH6P4",
+          "B0JB99YVBF",
+          "B0JBARKSOO",
+          "B0JD912T2Z",
+          "B0JG1LLFUZ",
+          "B0JG6SJ7Q5",
+          "B0JKSO57G1",
+          "B0JU5H800V",
+          "B0K0S9622O",
+          "B0K1AUKCCX",
+          "B0K2U5UA95",
+          "B0K60D1MNS",
+          "B0KDNMSBB3",
+          "B0KG7KXCKM",
+          "B0KKM5BHU5",
+          "B0KKUG6AT5",
+          "B0KRPRM0C4",
+          "B0KRYD00MF",
+          "B0KUNUPAPR",
+          "B0L0DNLTNE",
+          "B0L0L5AI58",
+          "B0L35RFFRW",
+          "B0L3AZRG7H",
+          "B0L3MUK522",
+          "B0L6ASW72N",
+          "B0L6O7CO8B",
+          "B0L6RU2Y46",
+          "B0LAMH0TRJ",
+          "B0LBSCHOHF",
+          "B0LBUU4QIJ",
+          "B0LDGDDJD3",
+          "B0LDTS68KF",
+          "B0LGO55C71",
+          "B0LK3Z01XB",
+          "B0LK7H3X6Z",
+          "B0LRO6VY38",
+          "B0LRZ531DF",
+          "B0LU4XYZ8W",
+          "B0M69DBLM8",
+          "B0M6PHLEO9",
+          "B0M6VPHPYH",
+          "B0MA29SLVX",
+          "B0MAF9UBO2",
+          "B0MARC4LVM",
+          "B0MAZLEK2K",
+          "B0MBKUQ809",
+          "B0MD37FT1O",
+          "B0MD4RJDGA",
+          "B0MDJDJKAR",
+          "B0MDXNYBZ3",
+          "B0MG0CHJXT",
+          "B0MGB1UYKC",
+          "B0MGMZ93ZU",
+          "B0MR15DILQ",
+          "B0MRHUEA0C",
+          "B0MRLS3F90",
+          "B0MRZZ2S63",
+          "B0MU2RF9M0",
+          "B0MUDUJBIX",
+          "B0MUF7HM2P",
+          "B0MUJDS1V7",
+          "B0MUN52UYL",
+          "B0MUSUCCP4"
+        ],
+        "job_id": 11
+      },
+      {
+        "area": "ligongdi",
+        "keyword": "烟酒副食批发",
+        "types": "",
+        "role": "partner",
+        "next_page": 1,
+        "calls": 1,
+        "truncated": false,
+        "reason": null,
+        "seen": [
+          "B0FFG49OSA"
+        ],
+        "job_id": 14
+      },
+      {
+        "area": "ligongdi",
+        "keyword": "餐饮供应链",
+        "types": "",
+        "role": "partner",
+        "next_page": 1,
+        "calls": 1,
+        "truncated": false,
+        "reason": null,
+        "seen": [],
+        "job_id": 17
+      },
+      {
+        "area": "ligongdi",
+        "keyword": "食材配送",
+        "types": "",
+        "role": "partner",
+        "next_page": 1,
+        "calls": 1,
+        "truncated": false,
+        "reason": null,
+        "seen": [
+          "B0FFKSK8IY"
+        ],
+        "job_id": 20
+      },
+      {
+        "area": "ligongdi",
+        "keyword": "洞庭山泉",
+        "types": "",
+        "role": "partner",
+        "next_page": 1,
+        "calls": 1,
+        "truncated": false,
+        "reason": null,
+        "seen": [
+          "B02001GR77",
+          "B02001GRFT",
+          "B0FFF2CYWM",
+          "B0FFHCMN37",
+          "B0FFHXMQJD",
+          "B0FFI70FDT",
+          "B0JRKBL674"
+        ],
+        "job_id": 23
+      },
+      {
+        "area": "ligongdi",
+        "keyword": "",
+        "types": "060400",
+        "role": "partner",
+        "next_page": 6,
+        "calls": 6,
+        "truncated": false,
+        "reason": null,
+        "seen": [
+          "B020005Z38",
+          "B020006W2M",
+          "B02000J1W1",
+          "B02000JDSG",
+          "B02000KA2A",
+          "B02000KA3T",
+          "B0200168Z0",
+          "B0200172J4",
+          "B020017QSJ",
+          "B020017QWY",
+          "B02001BT9P",
+          "B02001BTOB",
+          "B02001E0P1",
+          "B0FFF06RBB",
+          "B0FFF34HFN",
+          "B0FFFCLUAI",
+          "B0FFFFBAK9",
+          "B0FFFOKSZ8",
+          "B0FFFRYKNO",
+          "B0FFFV413H",
+          "B0FFFV54I7",
+          "B0FFFZU3XO",
+          "B0FFG21T9F",
+          "B0FFG61P6Q",
+          "B0FFGAMTM9",
+          "B0FFGC76C8",
+          "B0FFGFCBYJ",
+          "B0FFGG5ARH",
+          "B0FFGG890D",
+          "B0FFGIHZ0G",
+          "B0FFGYWU0W",
+          "B0FFH3YJUZ",
+          "B0FFH9G8IM",
+          "B0FFHB8RP1",
+          "B0FFHED95M",
+          "B0FFHLMVPU",
+          "B0FFHMU3IM",
+          "B0FFHMZ8EZ",
+          "B0FFHOZS0F",
+          "B0FFHS928U",
+          "B0FFI01C6X",
+          "B0FFI0A4HY",
+          "B0FFIBJ4S2",
+          "B0FFIPM3WU",
+          "B0FFIVQ5JB",
+          "B0FFIVQ8IT",
+          "B0FFIZMGVS",
+          "B0FFJ4BZJB",
+          "B0FFJCK0BM",
+          "B0FFJHKUV9",
+          "B0FFK1JMQY",
+          "B0FFKTQEP3",
+          "B0FFKY33KK",
+          "B0FFL3F1TB",
+          "B0FFL7A97O",
+          "B0FFLAF3PK",
+          "B0FFLAKLRM",
+          "B0FFM4QBDW",
+          "B0FFMEP2C6",
+          "B0FFMFE46N",
+          "B0G03LGV42",
+          "B0G0AMRZNI",
+          "B0G0D655KC",
+          "B0G0XSYNY4",
+          "B0G23AAVH7",
+          "B0G2M10DIA",
+          "B0G395N51V",
+          "B0G3JN3327",
+          "B0GR3SHIM6",
+          "B0GUA1CJYV",
+          "B0H01RSXXA",
+          "B0H04S7HTX",
+          "B0HBBY0CYK",
+          "B0HBRP4SZM",
+          "B0HGY5X1CZ",
+          "B0HRV7V7RY",
+          "B0I1CZ6UUY",
+          "B0I6ZZFPTD",
+          "B0IADKU1SJ",
+          "B0IAJZTHNY",
+          "B0ID7CKSHC",
+          "B0IDKNDM0Y",
+          "B0IG76MAYN",
+          "B0IKF569Y1",
+          "B0IKGUAQRW",
+          "B0IR5MZDYL",
+          "B0IUG7NO85",
+          "B0J0415SXL",
+          "B0J0Y4B1HC",
+          "B0J22AU1V5",
+          "B0J3CSCV9R",
+          "B0JAXM4SKE",
+          "B0JD9RV4FD",
+          "B0JDPDKN3Z",
+          "B0JG5C70O7",
+          "B0JK29132V",
+          "B0JRYDB37B",
+          "B0JULRRZS5",
+          "B0K0APRF42",
+          "B0K0VZF1V5",
+          "B0K1UBECZG",
+          "B0K2GSJS78",
+          "B0K3B7G12P",
+          "B0KRGZQMI7",
+          "B0KRKOCWQJ",
+          "B0L0HBON1O",
+          "B0L1FUYQK4",
+          "B0L1V1BJZN",
+          "B0L2AH25RI",
+          "B0L2L5OEGD",
+          "B0L2YCWLLN",
+          "B0LALBLFQE",
+          "B0LDXU73X0",
+          "B0LK34Y2OI",
+          "B0LKDBLANP",
+          "B0LKN7QKYF",
+          "B0LKPCZOX1",
+          "B0LKRS62BX",
+          "B0LKSMHG2F",
+          "B0LKZBEDLB",
+          "B0LRXMYBNN",
+          "B0M62SU5G8",
+          "B0M69B8O3B",
+          "B0M6AUZ9Z6",
+          "B0M6P7MYEN",
+          "B0M6S744XD",
+          "B0MAGUY2MJ",
+          "B0MAHRMK3M",
+          "B0MD649PP9",
+          "B0MDJDIUV8",
+          "B0MG0CHJXT",
+          "B0MGDGP0S8",
+          "B0MGSCMLKI",
+          "B0MGVLGJFK",
+          "B0MRCRU1AZ",
+          "B0MRLX5WP9",
+          "B0MU9HYZ1U",
+          "B0MUBD5VVS",
+          "B0MUPDE8BB",
+          "B0MUYLR78L"
+        ],
+        "job_id": 26
+      }
+    ],
+    "calls": 21,
+    "manifest": "data\\raw\\amap\\market-2643c6b8b57c4c2a96ec9d4739003347\\manifest.json"
+  },
+  "open": [
+    "来源：高德关键词/周边搜索；截断原因见coverage.jobs；零结果不代表不存在，点位不证明营业或供货资质。",
+    "来源：.work/handbook/dongting-brief.md文字未列竞品；其他苏打水/送水站品牌未找到公开来源，待业务员补充。"
+  ]
+}

@@ -1,0 +1,52 @@
+version: 3
+competition:
+  medium_min: 2
+  high_min: 5
+  source: 项目假设；500米网格缓存品牌点位计数合计0-1低、2-4中、5及以上高；非现实竞争普查
+partners:
+  search_radius_m: 5000
+  coverage_radius_m: 3000
+  priority_min: 5
+  source: 项目假设；5公里搜索、3公里覆盖；覆盖5家及以上优先，1-4备选，0暂缓；供货资格未确认
+  classification:
+    - {kind: 品牌自有网点, keywords: [洞庭山泉], typecodes: []}
+    - {kind: 餐饮供应链, keywords: [餐饮供应链, 食材配送, 食材, 食品配送], typecodes: []}
+    - {kind: 酒水批发, keywords: [酒水批发, 烟酒副食批发, 酒水, 烟酒, 副食], typecodes: ['060400']}
+  queries:
+    - {keyword: 酒水批发, types: '', role: partner}
+    - {keyword: 烟酒副食批发, types: '', role: partner}
+    - {keyword: 餐饮供应链, types: '', role: partner}
+    - {keyword: 食材配送, types: '', role: partner}
+    - {keyword: 洞庭山泉, types: '', role: partner}
+    - {keyword: '', types: '060400', role: partner}
+  typecode_source: https://a.amap.com/lbs/static/code_resource/Amap_poicode.zip ; 060400烟酒专卖店仅为候选，不证明批发资质；关键词不加类型过滤避免漏查
+note: 所有排序和执行数值是项目假设，非行业统计；来源 params.yaml，执行前固定。
+execution:
+  visits_per_person_day: {default: 20, source: 项目执行假设，待经销商校准}
+  workdays_week: {default: 5, source: 项目执行假设，待经销商校准}
+priority_weights: {P1: 1.0, P2: 0.65, P3: 0.3, excluded: 0.0}
+priority_cutoffs: {P1: 0.8, P2: 0.6, P3: 0.3}
+max_selected_zones: 4
+min_terminals_per_zone: 1
+max_backtracks: 2
+confidence_threshold: 0.7
+budget: {amap_calls: 80}
+scoring:
+  grade_shares: {A: 0.2, B: 0.3, C: 0.5}
+  rank_rule: score降序、distance_m升序、poi_id升序；累计分位边界向上取整；封顶后不补位
+  component_weights: {channel_weight: 0.4, zone_rank: 0.2, distance_decay: 0.25, data_completeness: 0.15}
+  source: 项目排序假设，执行前固定；非销量预测
+first_visits_per_day: 10
+amap_classification:
+  typecode_subtypes: {'050119': 海鲜, '050117': 火锅, '050101': 酒楼, '050300': 简餐}
+  type_keywords: [海鲜, 火锅, 烧烤, 烤肉, 酒楼, 酒家, 夜宵, 宵夜]
+  source: 项目映射规则；高德type明确子类型优先，再类型码，再档案名称规则；050118不直接推断烧烤；不证明营业时段或宴会能力
+sources:
+  first_visits_per_day: 项目首访容量假设；每人每天10家，每周5天，执行前固定
+  priority_weights: 项目渠道排序假设，待品牌方校准
+  priority_cutoffs: 项目规则版依据档案rules_fit分档的假设，待品牌方校准
+  max_selected_zones: 项目地推聚焦上限假设
+  min_terminals_per_zone: 项目最低可访终端数假设
+  max_backtracks: market-entry-v2任务限制
+  confidence_threshold: 项目人工复核阈值假设
+  budget: market-entry-v2任务默认预算

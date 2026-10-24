@@ -1,0 +1,38 @@
+{
+  "count": "2",
+  "infocode": "10000",
+  "status": "1",
+  "info": "OK",
+  "pois": [
+    {
+      "address": "城邦花园西区36栋楼",
+      "distance": "1915",
+      "pcode": "320000",
+      "adcode": "320506",
+      "pname": "江苏省",
+      "cityname": "苏州市",
+      "type": "生活服务;生活服务场所;生活服务场所",
+      "typecode": "070000",
+      "adname": "吴中区",
+      "citycode": "0512",
+      "name": "农夫山泉(城邦店)",
+      "location": "120.678371,31.293429",
+      "id": "B0KU9CNVPB"
+    },
+    {
+      "address": "苏州工业园区中新大道东1201号南山·丽舍",
+      "distance": "2795",
+      "pcode": "320000",
+      "adcode": "320506",
+      "pname": "江苏省",
+      "cityname": "苏州市",
+      "type": "生活服务;生活服务场所;生活服务场所",
+      "typecode": "070000",
+      "adname": "吴中区",
+      "citycode": "0512",
+      "name": "农夫山泉(南山·丽舍店)",
+      "location": "120.725209,31.307021",
+      "id": "B0IKUCEL5S"
+    }
+  ]
+}

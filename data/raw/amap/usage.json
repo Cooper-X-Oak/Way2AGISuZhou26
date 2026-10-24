@@ -1,0 +1,13 @@
+{
+  "months": {
+    "2026-10": 298
+  },
+  "tasks": {
+    "amap-fetch": 99,
+    "grading-fix": 132,
+    "competition-partners": 67
+  },
+  "note": "本地请求尝试数（失败也计入），不含控制台其他调用；初始外部用量未知。",
+  "monthly_limit": 5000,
+  "updated_at": "2026-10-24T06:20:44.909341+00:00"
+}

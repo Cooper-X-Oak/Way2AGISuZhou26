@@ -1,0 +1,65 @@
+[
+  {
+    "place_id": 224142072,
+    "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+    "osm_type": "node",
+    "osm_id": 4625473979,
+    "lat": "31.2834209",
+    "lon": "120.5556663",
+    "category": "railway",
+    "type": "station",
+    "place_rank": 30,
+    "importance": 6.82757305256278e-05,
+    "addresstype": "railway",
+    "name": "落星桥",
+    "display_name": "落星桥, 竹园路, 狮山社区, 狮山街道, 虎丘区, 苏州市, 江苏省, 215129, 中国",
+    "boundingbox": [
+      "31.2784209",
+      "31.2884209",
+      "120.5506663",
+      "120.5606663"
+    ]
+  },
+  {
+    "place_id": 224176982,
+    "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+    "osm_type": "node",
+    "osm_id": 12084624889,
+    "lat": "31.2835190",
+    "lon": "120.5557120",
+    "category": "railway",
+    "type": "stop",
+    "place_rank": 30,
+    "importance": 6.82757305256278e-05,
+    "addresstype": "railway",
+    "name": "落星桥",
+    "display_name": "落星桥, 塔园路, 狮山社区, 狮山街道, 虎丘区, 苏州市, 江苏省, 215129, 中国",
+    "boundingbox": [
+      "31.2834690",
+      "31.2835690",
+      "120.5556620",
+      "120.5557620"
+    ]
+  },
+  {
+    "place_id": 224616726,
+    "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+    "osm_type": "node",
+    "osm_id": 12084624648,
+    "lat": "31.2833918",
+    "lon": "120.5556992",
+    "category": "railway",
+    "type": "stop",
+    "place_rank": 30,
+    "importance": 6.82757305256278e-05,
+    "addresstype": "railway",
+    "name": "落星桥",
+    "display_name": "落星桥, 竹园路, 狮山社区, 狮山街道, 虎丘区, 苏州市, 江苏省, 215129, 中国",
+    "boundingbox": [
+      "31.2833418",
+      "31.2834418",
+      "120.5556492",
+      "120.5557492"
+    ]
+  }
+]

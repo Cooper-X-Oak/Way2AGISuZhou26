@@ -1,0 +1,83 @@
+{
+  "count": "5",
+  "infocode": "10000",
+  "status": "1",
+  "info": "OK",
+  "pois": [
+    {
+      "address": "定慧寺巷与叶家弄交叉口东40米",
+      "distance": "1041",
+      "pcode": "320000",
+      "adcode": "320508",
+      "pname": "江苏省",
+      "cityname": "苏州市",
+      "type": "购物服务;便民商店/便利店;便民商店/便利店",
+      "typecode": "060200",
+      "adname": "姑苏区",
+      "citycode": "0512",
+      "name": "康宝烟酒食品店",
+      "location": "120.635624,31.306262",
+      "id": "B0FFFCVRG5"
+    },
+    {
+      "address": "金狮河沿1号金狮大楼F1层",
+      "distance": "1589",
+      "pcode": "320000",
+      "adcode": "320508",
+      "pname": "江苏省",
+      "cityname": "苏州市",
+      "type": "购物服务;便民商店/便利店;便民商店/便利店",
+      "typecode": "060200",
+      "adname": "姑苏区",
+      "citycode": "0512",
+      "name": "新富余批发商行(金狮小区店)",
+      "location": "120.620441,31.297920",
+      "id": "B020005NVH"
+    },
+    {
+      "address": "东港新村十二组团西南门西50米",
+      "distance": "2446",
+      "pcode": "320000",
+      "adcode": "320505",
+      "pname": "江苏省",
+      "cityname": "苏州市",
+      "type": "购物服务;专卖店;烟酒专卖店",
+      "typecode": "061210",
+      "adname": "虎丘区",
+      "citycode": "0512",
+      "name": "明达烟酒店",
+      "location": "120.647995,31.323171",
+      "id": "B0FFFSYFAH"
+    },
+    {
+      "address": "东港新村十二组团西区南门西170米",
+      "distance": "2541",
+      "pcode": "320000",
+      "adcode": "320505",
+      "pname": "江苏省",
+      "cityname": "苏州市",
+      "type": "购物服务;专卖店;烟酒专卖店",
+      "typecode": "061210",
+      "adname": "虎丘区",
+      "citycode": "0512",
+      "name": "祥英名酒批发部(东港新村十二组团西区店)",
+      "location": "120.649041,31.323352",
+      "id": "B02001BD44"
+    },
+    {
+      "address": "新市路403号(新市桥地铁站1东南口步行310米)",
+      "distance": "2567",
+      "pcode": "320000",
+      "adcode": "320508",
+      "pname": "江苏省",
+      "cityname": "苏州市",
+      "type": "购物服务;专卖店;烟酒专卖店",
+      "typecode": "061210",
+      "adname": "姑苏区",
+      "citycode": "0512",
+      "name": "大不同烟酒批发部(画锦坊小区店)",
+      "location": "120.614642,31.290491",
+      "id": "B0FFKOUL6N"
+    }
+  ]
+}

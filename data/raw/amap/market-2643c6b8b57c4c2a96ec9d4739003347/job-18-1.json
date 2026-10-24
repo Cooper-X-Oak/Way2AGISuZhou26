@@ -1,0 +1,53 @@
+{
+  "count": "3",
+  "infocode": "10000",
+  "status": "1",
+  "info": "OK",
+  "pois": [
+    {
+      "address": "金枫一路与丽水街交叉口南100米",
+      "distance": "2280",
+      "pcode": "320000",
+      "adcode": "320508",
+      "pname": "江苏省",
+      "cityname": "苏州市",
+      "type": "生活服务;物流速递;物流速递",
+      "typecode": "070500",
+      "adname": "姑苏区",
+      "citycode": "0512",
+      "name": "亚晴休闲食品配送中心",
+      "location": "120.578375,31.310375",
+      "id": "B0MD4XKNKN"
+    },
+    {
+      "address": "金门商业街(金门国际商业广场店)",
+      "distance": "2396",
+      "pcode": "320000",
+      "adcode": "320508",
+      "pname": "江苏省",
+      "cityname": "苏州市",
+      "type": "购物服务;综合市场;果品市场",
+      "typecode": "060704",
+      "adname": "姑苏区",
+      "citycode": "0512",
+      "name": "亚晴食品(金门商业街副食品店)",
+      "location": "120.578210,31.311740",
+      "id": "B0FFL063P6"
+    },
+    {
+      "address": "支英街85-3",
+      "distance": "4855",
+      "pcode": "320000",
+      "adcode": "320505",
+      "pname": "江苏省",
+      "cityname": "苏州市",
+      "type": "公司企业;公司;公司",
+      "typecode": "170200",
+      "adname": "虎丘区",
+      "citycode": "0512",
+      "name": "苏州市名洋食品科技有限公司",
+      "location": "120.513807,31.299521",
+      "id": "B02001BJWB"
+    }
+  ]
+}

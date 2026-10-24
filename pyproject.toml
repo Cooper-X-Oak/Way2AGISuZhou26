@@ -1,0 +1,21 @@
+[project]
+name = "dongting-prospect-pipeline"
+version = "0.1.0"
+description = "Auditable profile-driven FMCG market entry pipeline L0-L4 and PACK"
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic>=2.10,<3",
+    "httpx[socks]>=0.28,<1",
+    "PyYAML>=6,<7",
+]
+
+[dependency-groups]
+dev = ["pytest>=8,<10"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-p no:cacheprovider"
+
+[tool.uv]
+cache-dir = ".work/tmp/uv-cache"

@@ -1,0 +1,227 @@
+id: jiangnan-gongquan
+source: .work/handbook/dongting-brief.md
+product:
+  name: 江南贡泉·天然苏打矿泉水
+  specification:
+    volume: null
+    pack_size: null
+    note: brief 文字未提供容量及箱规；不从未识别图片推断
+    facts:
+    - pH 8.1±0.5
+    - 碳酸氢根≥350mg/L
+    - 【无气】
+    source: .work/handbook/dongting-brief.md#B-产品简介
+  official_slogan: 应酬多，常喝酒；吃海鲜，配啤酒。常备江南贡泉天然苏打矿泉水
+selling_points:
+- id: natural-soda
+  name: 天然苏打
+  fact: 具有天然苏打水特色的复合型天然矿泉水
+  source: .work/handbook/dongting-brief.md#B-卖点/1
+  scene_ids:
+  - scene-1
+  - scene-2
+  - scene-3
+  - scene-4
+  - scene-5
+  mapping_source: 项目适用场景映射假设；引用该卖点原文，不代表档案已验证渠道表现
+- id: low-sodium
+  name: 低钠弱碱 pH8.1
+  fact: pH 8.1±0.5、碳酸氢根≥350mg/L
+  source: .work/handbook/dongting-brief.md#B-卖点/2
+  scene_ids:
+  - scene-1
+  - scene-2
+  - scene-3
+  - scene-4
+  - scene-5
+  mapping_source: 项目适用场景映射假设；引用该卖点原文，不代表档案已验证渠道表现
+- id: meal-companion
+  name: 场景标配
+  fact: 应酬、宴席、海鲜大餐的常备佐餐水
+  source: .work/handbook/dongting-brief.md#B-卖点/3
+  scene_ids:
+  - scene-1
+  - scene-2
+  mapping_source: 项目适用场景映射假设；引用该卖点原文，不代表档案已验证渠道表现
+scenes:
+- id: scene-1
+  name: 应酬酒局
+  visual_keywords: 商务宴请、举杯碰盏、酒瓶旁立着一瓶贡泉
+  emotion: '"应酬多，常喝酒"——桌上常备，喝好酒更要配好水'
+  source: .work/handbook/dongting-brief.md#B-使用场景/序号1
+- id: scene-2
+  name: 海鲜配啤酒
+  visual_keywords: 夜宵大排档、蟹虾贝类、冰啤与贡泉同框
+  emotion: '"吃海鲜，配啤酒"——尽兴有度，贡泉兜底'
+  source: .work/handbook/dongting-brief.md#B-使用场景/序号2
+- id: scene-3
+  name: 家庭常备
+  visual_keywords: 冰箱、餐桌、父母长辈的日常饮水
+  emotion: 给家人的贴心常备，长寿之乡的水养一家人
+  source: .work/handbook/dongting-brief.md#B-使用场景/序号3
+- id: scene-4
+  name: 火锅烧烤重口味
+  visual_keywords: 辣锅、烤串、油腻后的顺口一瓶
+  emotion: 重口味餐桌的"解腻顺口"搭档
+  source: .work/handbook/dongting-brief.md#B-使用场景/序号4
+- id: scene-5
+  name: 节庆送礼
+  visual_keywords: 黑金礼盒、春节/中秋伴手礼
+  emotion: 把"长寿之乡"送进家门，有面子更有心意
+  source: .work/handbook/dongting-brief.md#B-使用场景/序号5
+compliance_rules:
+- id: brief-extreme-a
+  terms:
+  - 最甜
+  - 最好喝
+  - 第一
+  - 顶级
+  source: .work/handbook/dongting-brief.md#A-合规红线
+- id: brief-extreme-b
+  terms:
+  - 最佳
+  - 长寿神水
+  source: .work/handbook/dongting-brief.md#B-合规红线
+- id: brief-function
+  terms:
+  - 排尿酸
+  - 缓痛风
+  - 调胃酸
+  - 促消化
+  - 强代谢
+  - 护血管
+  - 弱碱中和酸性体质
+  source: .work/handbook/dongting-brief.md#B-功能转译及B-合规红线
+- id: law-9-3
+  terms:
+  - 国家级
+  - 最高级
+  source: https://www.samr.gov.cn/zw/zfxxgk/fdzdgknr/fgs/art/2023/art_5474cf75173c45d6a0379730fb4e8d97.html
+    第九条第三项（最佳另由 brief-extreme-b 扫描）
+- id: project-conservative
+  terms:
+  - 最解腻
+  - 治疗
+  - 预防疾病
+  - 治愈
+  - 降血糖
+  - 降血压
+  - 解酒
+  - 排毒
+  - 防癌
+  - 抗癌
+  - 第一品牌
+  - 世界第一
+  source: 项目保守禁用词表；依据 brief 功效禁令及广告法第九/十七条扩展，非法律穷举；https://www.samr.gov.cn/zw/zfxxgk/fdzdgknr/fgs/art/2023/art_5474cf75173c45d6a0379730fb4e8d97.html
+channels:
+- id: seafood
+  name: 海鲜/大排档
+  categories:
+  - restaurant
+  pattern: 海鲜|大排档|seafood
+  scene_ids:
+  - scene-2
+  rules_fit: 0.95
+  rules_reason: 海鲜用餐与海鲜配啤酒场景相符，建议作为餐桌常备水。
+  grid_type: 夜宵餐饮街
+  source: 项目渠道假设，非 brief 已验证结论；待品牌方/经销商校准
+- id: hotpot
+  name: 火锅
+  categories:
+  - restaurant
+  pattern: 火锅|hot_?pot
+  scene_ids:
+  - scene-4
+  rules_fit: 0.9
+  rules_reason: 火锅用餐对应火锅烧烤重口味场景，供顾客佐餐饮用。
+  grid_type: 夜宵餐饮街
+  source: 项目渠道假设，非 brief 已验证结论；待品牌方/经销商校准
+- id: bbq
+  name: 烧烤
+  categories:
+  - restaurant
+  pattern: 烧烤|烤肉|barbecue|bbq
+  scene_ids:
+  - scene-4
+  rules_fit: 0.9
+  rules_reason: 烧烤用餐对应火锅烧烤重口味场景，适合餐桌摆放。
+  grid_type: 夜宵餐饮街
+  source: 项目渠道假设，非 brief 已验证结论；待品牌方/经销商校准
+- id: banquet
+  name: 商务酒楼/宴席
+  categories:
+  - restaurant
+  pattern: 酒楼|酒家|宴|banquet
+  scene_ids:
+  - scene-1
+  rules_fit: 0.95
+  rules_reason: 宴请餐桌与应酬酒局场景相符，便于备水待客。
+  grid_type: 商务宴请区
+  source: 项目渠道假设，非 brief 已验证结论；待品牌方/经销商校准
+- id: late_meal
+  name: 夜宵
+  categories:
+  - restaurant
+  pattern: 夜宵|宵夜
+  scene_ids:
+  - scene-2
+  rules_fit: 0.8
+  rules_reason: 夜间用餐与夜宵大排档画面相符，作为佐餐备水候选。
+  grid_type: 夜宵餐饮街
+  source: 项目渠道假设，非 brief 已验证结论；待品牌方/经销商校准
+- id: canteen
+  name: 食堂/简餐
+  categories:
+  - restaurant
+  pattern: 食堂|简餐|盖码饭|canteen
+  scene_ids:
+  - scene-3
+  rules_fit: 0.65
+  rules_reason: 日常用餐与家庭常备中的餐桌画面相符，匹配度需走访验证。
+  grid_type: 产业园食堂/简餐
+  source: 项目渠道假设，非 brief 已验证结论；待品牌方/经销商校准
+- id: restaurant_other
+  name: 其他餐饮（细分待核实）
+  categories:
+  - restaurant
+  pattern: null
+  scene_ids:
+  - scene-3
+  rules_fit: 0.65
+  rules_reason: 业态不明，不能当作场景匹配的证据；仅保留待核实的场景假设，首访了解需求。
+  grid_type: 社区餐饮
+  source: 项目渠道假设，非 brief 已验证结论；待品牌方/经销商校准
+material:
+  selling_point_ids:
+  - natural-soda
+  pitch: 老板/店长您好，我们想了解贵店佐餐用水安排。{product}的资料卖点是“{fact}”。可否沟通试陈列位置和补货需求？
+  display: 建议在餐桌备水区或收银台旁设置清晰价签，规格与零售价由门店核实后填写。
+  table_copy: '{product}，餐桌常备一瓶。'
+
+competitors:
+- brand: 农夫山泉
+  category: 瓶装水
+  source: https://www.nongfuspring.com/goods/detail-all.html?id=6
+  status: 待核实
+  keywords:
+  - 农夫山泉
+  source_note: 公开品牌水类页面；不证明本地在售
+- brand: 怡宝
+  category: 瓶装水
+  source: https://tzzgx.crbeverage.com/media/d23jrxdp/2024-annual-report.pdf
+  status: 待核实
+  keywords:
+  - 怡宝
+  source_note: 华润饮料2024年报公司简介；不证明本地在售
+- brand: 屈臣氏
+  category: 苏打水
+  source: https://www.watsons.com.hk/zh-cn/屈臣氏-屈臣氏苏打水-330毫升/p/BP_120353
+  status: 待核实
+  keywords:
+  - 屈臣氏苏打水
+  source_note: 公开产品页面；仅搜索水产品相关词，个人护理店不计竞品水网点
+competitors_open:
+- 来源：.work/handbook/dongting-brief.md文字未列竞品；其他苏打水/送水站品牌未找到公开来源，待业务员补充。
+own_brand:
+  name: 洞庭山泉
+  source: .work/handbook/handbook.md#品牌命题与赛道说明

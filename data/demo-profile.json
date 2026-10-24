@@ -1,0 +1,4 @@
+{
+  "profile": {"product": "两者", "delivery_people": 1, "visits_per_person_day": 20},
+  "assumptions": ["离线演示预设：主推两者、配送员1人、每人每天可拜访20次；不是从用户需求中推断的事实，实际使用须替换或用 --no-demo-profile 触发澄清。", "配送点采用任务授权的示例位置，半径默认3000米。"]
+}

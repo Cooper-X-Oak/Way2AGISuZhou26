@@ -1,0 +1,53 @@
+{
+  "count": "3",
+  "infocode": "10000",
+  "status": "1",
+  "info": "OK",
+  "pois": [
+    {
+      "address": "现代大道1699号MA栋第L1层第01-K22号",
+      "distance": "2991",
+      "pcode": "320000",
+      "adcode": "320506",
+      "pname": "江苏省",
+      "cityname": "苏州市",
+      "type": "餐饮服务;休闲餐饮场所;休闲餐饮场所",
+      "typecode": "050400",
+      "adname": "吴中区",
+      "citycode": "0512",
+      "name": "LELECHA乐乐茶(苏州印象城店)",
+      "location": "120.656937,31.317633",
+      "id": "B0K119U93Z"
+    },
+    {
+      "address": "双塔街道集二期",
+      "distance": "1073",
+      "pcode": "320000",
+      "adcode": "320508",
+      "pname": "江苏省",
+      "cityname": "苏州市",
+      "type": "餐饮服务;休闲餐饮场所;休闲餐饮场所",
+      "typecode": "050400",
+      "adname": "姑苏区",
+      "citycode": "0512",
+      "name": "露露大王(双塔店)(暂停营业)",
+      "location": "120.636044,31.306290",
+      "id": "B0L07O3BJG"
+    },
+    {
+      "address": "平江街道渔郎桥浜16号德必姑苏WE17号101室",
+      "distance": "1601",
+      "pcode": "320000",
+      "adcode": "320508",
+      "pname": "江苏省",
+      "cityname": "苏州市",
+      "type": "餐饮服务;休闲餐饮场所;休闲餐饮场所",
+      "typecode": "050400",
+      "adname": "姑苏区",
+      "citycode": "0512",
+      "name": "ZeroLab(拙政园店)(暂停营业)",
+      "location": "120.627813,31.325597",
+      "id": "B0L1A5JEJ9"
+    }
+  ]
+}

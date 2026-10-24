@@ -1,0 +1,46 @@
+{
+  "started_at": "2026-10-24T05:51:25.406503+00:00",
+  "status": "failed",
+  "area_id": "shishan",
+  "type_codes": [
+    "050119",
+    "050117",
+    "050118",
+    "050101",
+    "050100",
+    "050200",
+    "050300",
+    "050400"
+  ],
+  "type_source": "https://a.amap.com/lbs/static/code_resource/Amap_poicode.zip",
+  "pages": [],
+  "requests": [
+    {
+      "endpoint": "/v3/geocode/geo",
+      "params": {
+        "address": "苏州高新区狮山路商圈",
+        "city": "苏州",
+        "output": "JSON",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:51:25.553460+00:00",
+      "path": "geocode.json",
+      "status": "success",
+      "infocode": "10000"
+    }
+  ],
+  "calls": 0,
+  "budget": 80,
+  "params": {
+    "budget": {
+      "amap_calls": 80
+    }
+  },
+  "policy": "基础响应白名单；丢弃全部联系方式与扩展字段；key打码；失败保留旧缓存",
+  "mapping": "rules：高德050119海鲜、050117火锅、050101酒楼、050300快餐映射简餐；050118为特色地方风味，不直接映射烧烤；烧烤和夜宵等由档案名称规则匹配，未知归其他餐饮；不推断营业时段或宴会能力。",
+  "page_ceiling": 8,
+  "page_ceiling_source": "项目保守截断上限，每类型8页，每页25；不宣称全量",
+  "finished_at": "2026-10-24T05:51:25.756163+00:00",
+  "error_type": "RuntimeError",
+  "error": "采集失败；旧缓存未替换"
+}

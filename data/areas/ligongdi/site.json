@@ -1,0 +1,13 @@
+{
+  "lat": 31.299976,
+  "lon": 120.696997,
+  "coordinate_system": "GCJ-02",
+  "location_query": "苏州工业园区李公堤",
+  "location_source": "AMap geocode",
+  "location_evidence": "data\\raw\\amap\\62a12bfee89b45bd935f2667b1e84d14\\geocode.json",
+  "location_note": "高德地理编码返回的商圈参考中心，非经销商门店；匹配级别：兴趣点",
+  "display_name": "江苏省苏州市吴中区工业园区李公堤",
+  "site_note": "商圈演示参考中心",
+  "geocode_candidates": 2,
+  "geocode_selection": "唯一兴趣点优先于住宅区等结果；否则同名同级别按API排序取首项；项目参考中心规则，非精确场地定位"
+}

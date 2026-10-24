@@ -1,0 +1,38 @@
+{
+  "count": "2",
+  "infocode": "10000",
+  "status": "1",
+  "info": "OK",
+  "pois": [
+    {
+      "address": "平江街道苏站路588号梅巷花园",
+      "distance": "",
+      "pcode": "320000",
+      "adcode": "320508",
+      "pname": "江苏省",
+      "cityname": "苏州市",
+      "type": "餐饮服务;快餐厅;快餐厅",
+      "typecode": "050300",
+      "adname": "姑苏区",
+      "citycode": "0512",
+      "name": "优米快餐盒饭工作餐(梅巷花园店)",
+      "location": "120.625321,31.335315",
+      "id": "B0LAHY9R1K"
+    },
+    {
+      "address": "人民路1543号坤元广场F2层",
+      "distance": "",
+      "pcode": "320000",
+      "adcode": "320508",
+      "pname": "江苏省",
+      "cityname": "苏州市",
+      "type": "餐饮服务;中餐厅;中餐厅|餐饮服务;快餐厅;快餐厅",
+      "typecode": "050100|050300",
+      "adname": "姑苏区",
+      "citycode": "0512",
+      "name": "超下饭番茄拉丝鸡蛋饭宴小白",
+      "location": "120.620425,31.313775",
+      "id": "B0MDH6R2SA"
+    }
+  ]
+}

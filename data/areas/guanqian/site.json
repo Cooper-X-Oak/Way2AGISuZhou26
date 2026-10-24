@@ -1,0 +1,13 @@
+{
+  "lat": 31.311266,
+  "lon": 120.626373,
+  "coordinate_system": "GCJ-02",
+  "location_query": "苏州姑苏区观前街",
+  "location_source": "AMap geocode",
+  "location_evidence": "data\\raw\\amap\\c6c05aff1baa4092b64e41078bafd98f\\geocode.json",
+  "location_note": "高德地理编码返回的商圈参考中心，非经销商门店；匹配级别：道路",
+  "display_name": "江苏省苏州市姑苏区观前街",
+  "site_note": "商圈演示参考中心",
+  "geocode_candidates": 2,
+  "geocode_selection": "同名同级别结果按API排序取首项；项目参考中心选择规则，非精确场地定位"
+}

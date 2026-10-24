@@ -1,0 +1,195 @@
+id: xinxian-huoquan
+source: .work/handbook/dongting-brief.md
+product:
+  name: 洞庭山·新鲜活泉
+  specification:
+    volume: null
+    pack_size: null
+    note: brief 文字未提供容量及箱规，不编造规格
+    facts:
+    - 源自苏州碧螺春核心产区大山地下180米深泉
+    source: .work/handbook/dongting-brief.md#A-产品简介
+  official_slogan: 水源到水杯，最快3天
+selling_points:
+- id: spring-source
+  name: 新鲜活泉
+  fact: 源自碧螺春核心产区大山地下180米深泉
+  source: .work/handbook/dongting-brief.md#A-卖点/新鲜活泉
+  scene_ids:
+  - scene-1
+  - scene-2
+  - scene-3
+  - scene-4
+  - scene-5
+  mapping_source: 项目适用场景映射假设；引用该卖点原文，不代表档案已验证渠道表现
+- id: fresh-delivery
+  name: 新鲜速达
+  fact: 源头工厂直接灌装
+  source: .work/handbook/dongting-brief.md#A-卖点/1
+  scene_ids:
+  - scene-1
+  - scene-2
+  - scene-3
+  - scene-4
+  - scene-5
+  mapping_source: 项目适用场景映射假设；引用该卖点原文，不代表档案已验证渠道表现
+- id: fresh-taste
+  name: 新鲜品饮
+  fact: 新鲜活泉，喝水讲究新鲜的，新鲜活泉新鲜饮。
+  source: .work/handbook/dongting-brief.md#A-卖点/4
+  scene_ids:
+  - scene-1
+  - scene-2
+  - scene-3
+  - scene-4
+  - scene-5
+  mapping_source: 项目适用场景映射假设；引用该卖点原文，不代表档案已验证渠道表现
+- id: brand-trust
+  name: 品牌信任
+  fact: 28年专注、长三角桶装水销量领先（沙利文认证）、绿色食品认证、众多赛事指定用水
+  source: .work/handbook/dongting-brief.md#A-卖点/5
+  scene_ids:
+  - scene-1
+  - scene-2
+  - scene-3
+  - scene-4
+  - scene-5
+  mapping_source: 项目适用场景映射假设；引用该卖点原文，不代表档案已验证渠道表现
+scenes:
+- id: scene-1
+  name: 直饮
+  visual_keywords: 下班回家、运动归来、孩子放学，接一杯就喝，
+  emotion: 新鲜的水不需要等待，入口即甘甜、健康饮水、喝大水
+  source: .work/handbook/dongting-brief.md#A-使用场景/序号1
+- id: scene-2
+  name: 泡茶
+  visual_keywords: 茶席、紫砂壶、明前碧螺春，好水配好茶
+  emotion: 水新鲜，茶才鲜活；产区同源的双重讲究
+  source: .work/handbook/dongting-brief.md#A-使用场景/序号2
+- id: scene-3
+  name: 煮饭
+  visual_keywords: 厨房、电饭煲、当季新米，点按式取水器
+  emotion: 新鲜水煮新鲜米，饭更香甜
+  source: .work/handbook/dongting-brief.md#A-使用场景/序号3
+- id: scene-4
+  name: 煲汤
+  visual_keywords: 砂锅慢炖、家常餐桌
+  emotion: 好水吊出食材本味，汤更鲜
+  source: .work/handbook/dongting-brief.md#A-使用场景/序号4
+- id: scene-5
+  name: 待客/日常养成
+  visual_keywords: 饮水机常备、一家人的日常
+  emotion: 好水养人每一天，品质生活的隐形标配
+  source: .work/handbook/dongting-brief.md#A-使用场景/序号5
+compliance_rules:
+- id: brief-extreme-a
+  terms:
+  - 最甜
+  - 最好喝
+  - 第一
+  - 顶级
+  source: .work/handbook/dongting-brief.md#A-合规红线
+- id: brief-extreme-b
+  terms:
+  - 最佳
+  - 长寿神水
+  source: .work/handbook/dongting-brief.md#B-合规红线
+- id: brief-function
+  terms:
+  - 排尿酸
+  - 缓痛风
+  - 调胃酸
+  - 促消化
+  - 强代谢
+  - 护血管
+  - 弱碱中和酸性体质
+  source: .work/handbook/dongting-brief.md#B-功能转译及B-合规红线
+- id: law-9-3
+  terms:
+  - 国家级
+  - 最高级
+  source: https://www.samr.gov.cn/zw/zfxxgk/fdzdgknr/fgs/art/2023/art_5474cf75173c45d6a0379730fb4e8d97.html
+    第九条第三项（最佳另由 brief-extreme-b 扫描）
+- id: project-conservative
+  terms:
+  - 最解腻
+  - 治疗
+  - 预防疾病
+  - 治愈
+  - 降血糖
+  - 降血压
+  - 解酒
+  - 排毒
+  - 防癌
+  - 抗癌
+  - 第一品牌
+  - 世界第一
+  source: 项目保守禁用词表；依据 brief 功效禁令及广告法第九/十七条扩展，非法律穷举；https://www.samr.gov.cn/zw/zfxxgk/fdzdgknr/fgs/art/2023/art_5474cf75173c45d6a0379730fb4e8d97.html
+channels:
+- id: tea_channel
+  name: 茶馆/茶店
+  categories:
+  - tea
+  pattern: null
+  scene_ids:
+  - scene-2
+  rules_fit: 0.95
+  rules_reason: 茶席与泡茶场景直接相符，可沟通日常备水需求。
+  grid_type: 混合
+  source: 项目渠道假设，非 brief 已验证结论；待品牌方/经销商校准
+- id: office_channel
+  name: 办公
+  categories:
+  - office
+  pattern: null
+  scene_ids:
+  - scene-5
+  rules_fit: 0.8
+  rules_reason: 办公饮水与待客及日常养成场景相符，可沟通常备饮水安排。
+  grid_type: 混合
+  source: 项目渠道假设，非 brief 已验证结论；待品牌方/经销商校准
+- id: gym_channel
+  name: 健身
+  categories:
+  - gym
+  pattern: null
+  scene_ids:
+  - scene-1
+  rules_fit: 0.85
+  rules_reason: 健身后的饮水与直饮场景中的运动归来画面相符。
+  grid_type: 混合
+  source: 项目渠道假设，非 brief 已验证结论；待品牌方/经销商校准
+material:
+  selling_point_ids:
+  - fresh-delivery
+  pitch: 老板/店长您好，想了解贵店日常饮水安排。{product}的资料卖点是“{fact}”。可否沟通常备饮水位置与补货需求？
+  display: 建议在饮水区或茶席旁展示产品信息，设备、容器规格及配送承诺由品牌方核实后填写。
+  table_copy: '{product}，日常饮水常备。'
+
+competitors:
+- brand: 农夫山泉
+  category: 瓶装水
+  source: https://www.nongfuspring.com/goods/detail-all.html?id=6
+  status: 待核实
+  keywords:
+  - 农夫山泉
+  source_note: 公开品牌水类页面；不证明本地在售
+- brand: 怡宝
+  category: 瓶装水
+  source: https://tzzgx.crbeverage.com/media/d23jrxdp/2024-annual-report.pdf
+  status: 待核实
+  keywords:
+  - 怡宝
+  source_note: 华润饮料2024年报公司简介；不证明本地在售
+- brand: 屈臣氏
+  category: 苏打水
+  source: https://www.watsons.com.hk/zh-cn/屈臣氏-屈臣氏苏打水-330毫升/p/BP_120353
+  status: 待核实
+  keywords:
+  - 屈臣氏苏打水
+  source_note: 公开产品页面；仅搜索水产品相关词，个人护理店不计竞品水网点
+competitors_open:
+- 来源：.work/handbook/dongting-brief.md文字未列竞品；其他苏打水/送水站品牌未找到公开来源，待业务员补充。
+own_brand:
+  name: 洞庭山泉
+  source: .work/handbook/handbook.md#品牌命题与赛道说明

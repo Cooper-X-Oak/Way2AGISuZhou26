@@ -1,0 +1,1033 @@
+{
+  "started_at": "2026-10-24T05:52:19.420527+00:00",
+  "status": "completed",
+  "area_id": "guanqian",
+  "type_codes": [
+    "050119",
+    "050117",
+    "050118",
+    "050101",
+    "050100",
+    "050200",
+    "050300",
+    "050400"
+  ],
+  "type_source": "https://a.amap.com/lbs/static/code_resource/Amap_poicode.zip",
+  "pages": [
+    {
+      "type_code": "050119",
+      "page": 1,
+      "count": 25
+    },
+    {
+      "type_code": "050119",
+      "page": 2,
+      "count": 25
+    },
+    {
+      "type_code": "050119",
+      "page": 3,
+      "count": 0
+    },
+    {
+      "type_code": "050117",
+      "page": 1,
+      "count": 25
+    },
+    {
+      "type_code": "050117",
+      "page": 2,
+      "count": 25
+    },
+    {
+      "type_code": "050117",
+      "page": 3,
+      "count": 25
+    },
+    {
+      "type_code": "050117",
+      "page": 4,
+      "count": 25
+    },
+    {
+      "type_code": "050117",
+      "page": 5,
+      "count": 25
+    },
+    {
+      "type_code": "050117",
+      "page": 6,
+      "count": 25
+    },
+    {
+      "type_code": "050117",
+      "page": 7,
+      "count": 22
+    },
+    {
+      "type_code": "050118",
+      "page": 1,
+      "count": 25
+    },
+    {
+      "type_code": "050118",
+      "page": 2,
+      "count": 25
+    },
+    {
+      "type_code": "050118",
+      "page": 3,
+      "count": 25
+    },
+    {
+      "type_code": "050118",
+      "page": 4,
+      "count": 25
+    },
+    {
+      "type_code": "050118",
+      "page": 5,
+      "count": 25
+    },
+    {
+      "type_code": "050118",
+      "page": 6,
+      "count": 25
+    },
+    {
+      "type_code": "050118",
+      "page": 7,
+      "count": 25
+    },
+    {
+      "type_code": "050118",
+      "page": 8,
+      "count": 25
+    },
+    {
+      "type_code": "050101",
+      "page": 1,
+      "count": 25
+    },
+    {
+      "type_code": "050101",
+      "page": 2,
+      "count": 2
+    },
+    {
+      "type_code": "050100",
+      "page": 1,
+      "count": 25
+    },
+    {
+      "type_code": "050100",
+      "page": 2,
+      "count": 25
+    },
+    {
+      "type_code": "050100",
+      "page": 3,
+      "count": 25
+    },
+    {
+      "type_code": "050100",
+      "page": 4,
+      "count": 25
+    },
+    {
+      "type_code": "050100",
+      "page": 5,
+      "count": 25
+    },
+    {
+      "type_code": "050100",
+      "page": 6,
+      "count": 25
+    },
+    {
+      "type_code": "050100",
+      "page": 7,
+      "count": 25
+    },
+    {
+      "type_code": "050100",
+      "page": 8,
+      "count": 25
+    },
+    {
+      "type_code": "050200",
+      "page": 1,
+      "count": 25
+    },
+    {
+      "type_code": "050200",
+      "page": 2,
+      "count": 25
+    },
+    {
+      "type_code": "050200",
+      "page": 3,
+      "count": 25
+    },
+    {
+      "type_code": "050200",
+      "page": 4,
+      "count": 25
+    },
+    {
+      "type_code": "050200",
+      "page": 5,
+      "count": 25
+    },
+    {
+      "type_code": "050200",
+      "page": 6,
+      "count": 5
+    },
+    {
+      "type_code": "050300",
+      "page": 1,
+      "count": 25
+    },
+    {
+      "type_code": "050300",
+      "page": 2,
+      "count": 25
+    },
+    {
+      "type_code": "050300",
+      "page": 3,
+      "count": 25
+    },
+    {
+      "type_code": "050300",
+      "page": 4,
+      "count": 25
+    },
+    {
+      "type_code": "050300",
+      "page": 5,
+      "count": 25
+    },
+    {
+      "type_code": "050300",
+      "page": 6,
+      "count": 25
+    },
+    {
+      "type_code": "050300",
+      "page": 7,
+      "count": 25
+    },
+    {
+      "type_code": "050300",
+      "page": 8,
+      "count": 25
+    },
+    {
+      "type_code": "050400",
+      "page": 1,
+      "count": 25
+    },
+    {
+      "type_code": "050400",
+      "page": 2,
+      "count": 3
+    }
+  ],
+  "requests": [
+    {
+      "endpoint": "/v3/geocode/geo",
+      "params": {
+        "address": "苏州姑苏区观前街",
+        "city": "苏州",
+        "output": "JSON",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:19.601213+00:00",
+      "path": "geocode.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050119",
+        "page_size": 25,
+        "page_num": 1,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:20.010735+00:00",
+      "path": "050119-1.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050119",
+        "page_size": 25,
+        "page_num": 2,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:20.397641+00:00",
+      "path": "050119-2.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050119",
+        "page_size": 25,
+        "page_num": 3,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:20.822985+00:00",
+      "path": "050119-3.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050117",
+        "page_size": 25,
+        "page_num": 1,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:21.203030+00:00",
+      "path": "050117-1.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050117",
+        "page_size": 25,
+        "page_num": 2,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:21.600834+00:00",
+      "path": "050117-2.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050117",
+        "page_size": 25,
+        "page_num": 3,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:22.008907+00:00",
+      "path": "050117-3.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050117",
+        "page_size": 25,
+        "page_num": 4,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:22.415583+00:00",
+      "path": "050117-4.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050117",
+        "page_size": 25,
+        "page_num": 5,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:22.825789+00:00",
+      "path": "050117-5.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050117",
+        "page_size": 25,
+        "page_num": 6,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:23.237459+00:00",
+      "path": "050117-6.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050117",
+        "page_size": 25,
+        "page_num": 7,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:23.628200+00:00",
+      "path": "050117-7.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050118",
+        "page_size": 25,
+        "page_num": 1,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:24.047692+00:00",
+      "path": "050118-1.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050118",
+        "page_size": 25,
+        "page_num": 2,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:24.441686+00:00",
+      "path": "050118-2.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050118",
+        "page_size": 25,
+        "page_num": 3,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:24.857128+00:00",
+      "path": "050118-3.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050118",
+        "page_size": 25,
+        "page_num": 4,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:25.256916+00:00",
+      "path": "050118-4.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050118",
+        "page_size": 25,
+        "page_num": 5,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:25.666378+00:00",
+      "path": "050118-5.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050118",
+        "page_size": 25,
+        "page_num": 6,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:26.062010+00:00",
+      "path": "050118-6.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050118",
+        "page_size": 25,
+        "page_num": 7,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:26.464649+00:00",
+      "path": "050118-7.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050118",
+        "page_size": 25,
+        "page_num": 8,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:26.868374+00:00",
+      "path": "050118-8.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050101",
+        "page_size": 25,
+        "page_num": 1,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:27.276076+00:00",
+      "path": "050101-1.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050101",
+        "page_size": 25,
+        "page_num": 2,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:27.684484+00:00",
+      "path": "050101-2.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050100",
+        "page_size": 25,
+        "page_num": 1,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:28.077673+00:00",
+      "path": "050100-1.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050100",
+        "page_size": 25,
+        "page_num": 2,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:28.482615+00:00",
+      "path": "050100-2.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050100",
+        "page_size": 25,
+        "page_num": 3,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:28.945424+00:00",
+      "path": "050100-3.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050100",
+        "page_size": 25,
+        "page_num": 4,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:29.576520+00:00",
+      "path": "050100-4.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050100",
+        "page_size": 25,
+        "page_num": 5,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:30.104934+00:00",
+      "path": "050100-5.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050100",
+        "page_size": 25,
+        "page_num": 6,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:30.580880+00:00",
+      "path": "050100-6.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050100",
+        "page_size": 25,
+        "page_num": 7,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:31.085625+00:00",
+      "path": "050100-7.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050100",
+        "page_size": 25,
+        "page_num": 8,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:31.581235+00:00",
+      "path": "050100-8.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050200",
+        "page_size": 25,
+        "page_num": 1,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:32.004140+00:00",
+      "path": "050200-1.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050200",
+        "page_size": 25,
+        "page_num": 2,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:32.413735+00:00",
+      "path": "050200-2.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050200",
+        "page_size": 25,
+        "page_num": 3,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:32.816470+00:00",
+      "path": "050200-3.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050200",
+        "page_size": 25,
+        "page_num": 4,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:33.210104+00:00",
+      "path": "050200-4.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050200",
+        "page_size": 25,
+        "page_num": 5,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:33.680831+00:00",
+      "path": "050200-5.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050200",
+        "page_size": 25,
+        "page_num": 6,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:34.081287+00:00",
+      "path": "050200-6.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050300",
+        "page_size": 25,
+        "page_num": 1,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:34.478855+00:00",
+      "path": "050300-1.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050300",
+        "page_size": 25,
+        "page_num": 2,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:34.884930+00:00",
+      "path": "050300-2.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050300",
+        "page_size": 25,
+        "page_num": 3,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:35.283849+00:00",
+      "path": "050300-3.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050300",
+        "page_size": 25,
+        "page_num": 4,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:35.672653+00:00",
+      "path": "050300-4.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050300",
+        "page_size": 25,
+        "page_num": 5,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:36.071536+00:00",
+      "path": "050300-5.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050300",
+        "page_size": 25,
+        "page_num": 6,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:36.479079+00:00",
+      "path": "050300-6.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050300",
+        "page_size": 25,
+        "page_num": 7,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:36.889487+00:00",
+      "path": "050300-7.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050300",
+        "page_size": 25,
+        "page_num": 8,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:37.308001+00:00",
+      "path": "050300-8.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050400",
+        "page_size": 25,
+        "page_num": 1,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:37.939862+00:00",
+      "path": "050400-1.json",
+      "status": "success",
+      "infocode": "10000"
+    },
+    {
+      "endpoint": "/v5/place/around",
+      "params": {
+        "location": "120.626373,31.311266",
+        "radius": 3000,
+        "types": "050400",
+        "page_size": 25,
+        "page_num": 2,
+        "sortrule": "distance",
+        "key": "[REDACTED]"
+      },
+      "fetched_at": "2026-10-24T05:52:38.338977+00:00",
+      "path": "050400-2.json",
+      "status": "success",
+      "infocode": "10000"
+    }
+  ],
+  "calls": 44,
+  "budget": 80,
+  "params": {
+    "budget": {
+      "amap_calls": 80
+    }
+  },
+  "policy": "基础响应白名单；丢弃全部联系方式与扩展字段；key打码；失败保留旧缓存",
+  "mapping": "rules：高德050119海鲜、050117火锅、050101酒楼、050300快餐映射简餐；050118为特色地方风味，不直接映射烧烤；烧烤和夜宵等由档案名称规则匹配，未知归其他餐饮；不推断营业时段或宴会能力。",
+  "page_ceiling": 8,
+  "page_ceiling_source": "项目保守截断上限，每类型8页，每页25；不宣称全量",
+  "site": {
+    "lat": 31.311266,
+    "lon": 120.626373,
+    "coordinate_system": "GCJ-02",
+    "location_query": "苏州姑苏区观前街",
+    "location_source": "AMap geocode",
+    "location_evidence": "data\\raw\\amap\\c6c05aff1baa4092b64e41078bafd98f\\geocode.json",
+    "location_note": "高德地理编码返回的商圈参考中心，非经销商门店；匹配级别：道路",
+    "display_name": "江苏省苏州市姑苏区观前街",
+    "site_note": "商圈演示参考中心",
+    "geocode_candidates": 2,
+    "geocode_selection": "同名同级别结果按API排序取首项；项目参考中心选择规则，非精确场地定位"
+  },
+  "finished_at": "2026-10-24T05:52:38.569698+00:00",
+  "poi_count": 905,
+  "type_coverage": {
+    "050119": {
+      "calls": 3,
+      "returned": 50,
+      "truncated": false,
+      "reason": null
+    },
+    "050117": {
+      "calls": 7,
+      "returned": 172,
+      "truncated": false,
+      "reason": null
+    },
+    "050118": {
+      "calls": 8,
+      "returned": 200,
+      "truncated": true,
+      "reason": "page_ceiling"
+    },
+    "050101": {
+      "calls": 2,
+      "returned": 27,
+      "truncated": false,
+      "reason": null
+    },
+    "050100": {
+      "calls": 8,
+      "returned": 200,
+      "truncated": true,
+      "reason": "page_ceiling"
+    },
+    "050200": {
+      "calls": 6,
+      "returned": 130,
+      "truncated": false,
+      "reason": null
+    },
+    "050300": {
+      "calls": 8,
+      "returned": 200,
+      "truncated": true,
+      "reason": "page_ceiling"
+    },
+    "050400": {
+      "calls": 2,
+      "returned": 28,
+      "truncated": false,
+      "reason": null
+    }
+  }
+}

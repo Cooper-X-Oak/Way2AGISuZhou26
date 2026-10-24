@@ -1,0 +1,48 @@
+{
+  "radius_m": 3000,
+  "site": {
+    "lat": 31.2834209,
+    "lon": 120.5556663,
+    "site_note": "示例配送点：比赛场地，非洞庭山泉真实门店",
+    "coordinate_system": "WGS84",
+    "location_source": "Nominatim",
+    "location_query": "落星桥 苏州",
+    "location_evidence": "data\\raw\\geocode-1.json",
+    "location_note": "比赛场地未精确定位，按任务授权采用落星桥地铁站附近坐标",
+    "display_name": "落星桥, 竹园路, 狮山社区, 狮山街道, 虎丘区, 苏州市, 江苏省, 215129, 中国"
+  },
+  "categories": {
+    "office": 1,
+    "office_building": 1,
+    "industrial_park": 88,
+    "school": 41,
+    "hospital": 3,
+    "gym": 1,
+    "tea": 0,
+    "restaurant": 7,
+    "water_station": 0
+  },
+  "total": 142,
+  "unnamed": 40,
+  "limitation": "OSM 点位与建筑/用地混合，覆盖不完整；不等于完整商户清单。建筑/园区不当作公司重复计入容量。",
+  "channel_counts": {
+    "jiangnan-gongquan": {
+      "seafood": 0,
+      "hotpot": 0,
+      "bbq": 0,
+      "banquet": 0,
+      "late_meal": 0,
+      "canteen": 1,
+      "restaurant_other": 6
+    },
+    "xinxian-huoquan": {
+      "tea_channel": 0,
+      "office_channel": 1,
+      "gym_channel": 1
+    }
+  },
+  "classification_note": "按档案候选顺序互斥归类；没有明确细分标签的餐饮归其他餐饮（细分待核实）；计数为已映射点位，非真实商户总量。",
+  "source": "OpenStreetMap",
+  "fetched_at": "2026-10-24T02:35:17.191495+00:00",
+  "source_evidence": "data/raw/provenance.json"
+}

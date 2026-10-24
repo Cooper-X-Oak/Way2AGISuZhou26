@@ -1,0 +1,38 @@
+{
+  "count": "2",
+  "infocode": "10000",
+  "status": "1",
+  "info": "OK",
+  "pois": [
+    {
+      "address": "新风巷78-79号院北门东北140米",
+      "distance": "2310",
+      "pcode": "320000",
+      "adcode": "320508",
+      "pname": "江苏省",
+      "cityname": "苏州市",
+      "type": "餐饮服务;中餐厅;综合酒楼",
+      "typecode": "050101",
+      "adname": "姑苏区",
+      "citycode": "0512",
+      "name": "蠡口肉串(上塘街店)(暂停营业)",
+      "location": "120.602354,31.314403",
+      "id": "B0JGML5UAI"
+    },
+    {
+      "address": "留园街道留园路6号(锦江之星旁边)",
+      "distance": "2712",
+      "pcode": "320000",
+      "adcode": "320508",
+      "pname": "江苏省",
+      "cityname": "苏州市",
+      "type": "餐饮服务;中餐厅;综合酒楼",
+      "typecode": "050101",
+      "adname": "姑苏区",
+      "citycode": "0512",
+      "name": "民肴故事(留园店)(暂停营业)",
+      "location": "120.598131,31.314649",
+      "id": "B0FFHL2J8M"
+    }
+  ]
+}

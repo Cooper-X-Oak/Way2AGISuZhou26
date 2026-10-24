@@ -1,0 +1,2579 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.11 87bfad18",
+  "osm3s": {
+    "timestamp_osm_base": "2026-10-24T02:33:08Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "item",
+  "id": 9768295,
+  "tags": {
+    "_osm_type": "relation",
+    "_lat": "31.2637777",
+    "_lon": "120.5367136",
+    "name": "",
+    "office": "",
+    "building": "",
+    "landuse": "industrial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 10248301,
+  "tags": {
+    "_osm_type": "relation",
+    "_lat": "31.2981519",
+    "_lon": "120.5790429",
+    "name": "苏州大学附属第二医院",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "hospital",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 20353337,
+  "tags": {
+    "_osm_type": "relation",
+    "_lat": "31.2885831",
+    "_lon": "120.5391444",
+    "name": "荣庄",
+    "office": "",
+    "building": "yes",
+    "landuse": "",
+    "amenity": "restaurant",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 267241709,
+  "tags": {
+    "_osm_type": "node",
+    "_lat": "31.2964048",
+    "_lon": "120.5632899",
+    "name": "必胜客",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "restaurant",
+    "leisure": "",
+    "shop": "",
+    "cuisine": "pizza"
+  }
+},
+{
+  "type": "item",
+  "id": 295232407,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2789075",
+    "_lon": "120.5346598",
+    "name": "苏州高新区创业园（财富广场）",
+    "office": "",
+    "building": "commercial",
+    "landuse": "",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 317492503,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2944468",
+    "_lon": "120.5575257",
+    "name": "朝日屋",
+    "office": "",
+    "building": "yes",
+    "landuse": "",
+    "amenity": "restaurant",
+    "leisure": "",
+    "shop": "",
+    "cuisine": "japanese"
+  }
+},
+{
+  "type": "item",
+  "id": 358576598,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2774274",
+    "_lon": "120.5393095",
+    "name": "苏州高新区第一中学",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "school",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 358576603,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2791554",
+    "_lon": "120.5389662",
+    "name": "苏州外国语学校",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "school",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 358577511,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2991952",
+    "_lon": "120.5470324",
+    "name": "江苏省苏州实验中学-南京大学苏州附属中学",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "school",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 449485033,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.3047581",
+    "_lon": "120.5740072",
+    "name": "田家炳实验高级中学",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "school",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 449485117,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2909301",
+    "_lon": "120.5816373",
+    "name": "苏州市胥江实验中学校",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "school",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 476308599,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2997464",
+    "_lon": "120.5507985",
+    "name": "苏州新草桥中学-",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "school",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 478152191,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.3047244",
+    "_lon": "120.5566760",
+    "name": "苏州高新区实验小学校（邓尉路校区）",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "school",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 478152198,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.3058827",
+    "_lon": "120.5566606",
+    "name": "苏州科技大学（江枫校区）",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "university",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 667130712,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2810541",
+    "_lon": "120.5568359",
+    "name": "蘇州瑚北光電子有限公司",
+    "office": "",
+    "building": "",
+    "landuse": "industrial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 702853227,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2624610",
+    "_lon": "120.5350171",
+    "name": "",
+    "office": "",
+    "building": "",
+    "landuse": "industrial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 702853229,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2750641",
+    "_lon": "120.5286643",
+    "name": "",
+    "office": "",
+    "building": "",
+    "landuse": "industrial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 702853236,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2807904",
+    "_lon": "120.5519566",
+    "name": "",
+    "office": "",
+    "building": "",
+    "landuse": "industrial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 702853237,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2857944",
+    "_lon": "120.5644691",
+    "name": "",
+    "office": "",
+    "building": "",
+    "landuse": "industrial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 702853238,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2854117",
+    "_lon": "120.5604833",
+    "name": "",
+    "office": "",
+    "building": "",
+    "landuse": "industrial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 702853239,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2880041",
+    "_lon": "120.5600300",
+    "name": "",
+    "office": "",
+    "building": "",
+    "landuse": "industrial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 741047512,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.3043764",
+    "_lon": "120.5760147",
+    "name": "移动大厦",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 741214428,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2988659",
+    "_lon": "120.5747755",
+    "name": "万通大厦",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 741214429,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2995848",
+    "_lon": "120.5751705",
+    "name": "",
+    "office": "",
+    "building": "",
+    "landuse": "industrial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 741214430,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2994267",
+    "_lon": "120.5778339",
+    "name": "",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 741214431,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2996787",
+    "_lon": "120.5782720",
+    "name": "鑫宇幼儿园",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "kindergarten",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 741214435,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2994389",
+    "_lon": "120.5766048",
+    "name": "苏州革命博物馆",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 741214437,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.3026010",
+    "_lon": "120.5758584",
+    "name": "苏州市阊西实验幼儿园",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "kindergarten",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 741214439,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.3034793",
+    "_lon": "120.5748520",
+    "name": "江苏省苏州市区航道管理站",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 741214440,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.3033536",
+    "_lon": "120.5739467",
+    "name": "苏州市三元大厦",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 741214442,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.3000473",
+    "_lon": "120.5796169",
+    "name": "中国电信(苏州分公司)",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 741252448,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2910306",
+    "_lon": "120.5777071",
+    "name": "双桥868",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 741252451,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2930673",
+    "_lon": "120.5765860",
+    "name": "金螳螂",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 741252456,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2938149",
+    "_lon": "120.5815216",
+    "name": "姑香苑幼儿园",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "kindergarten",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 741252461,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2933345",
+    "_lon": "120.5828932",
+    "name": "姑香苑小学校",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "school",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 741252462,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2925922",
+    "_lon": "120.5830340",
+    "name": "",
+    "office": "",
+    "building": "",
+    "landuse": "industrial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 741252488,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2987708",
+    "_lon": "120.5812285",
+    "name": "非矿大厦",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 741662822,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2808226",
+    "_lon": "120.5857873",
+    "name": "鸿华大厦",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 741797076,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.3087891",
+    "_lon": "120.5666229",
+    "name": "金运商务大厦",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 741797077,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.3066791",
+    "_lon": "120.5683277",
+    "name": "三元第三小学校",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "school",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 741797078,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.3059332",
+    "_lon": "120.5686144",
+    "name": "花朵幼儿园",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "kindergarten",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 741882113,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2947588",
+    "_lon": "120.5728874",
+    "name": "苏州市水政监察支队",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "park",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 741882133,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2991037",
+    "_lon": "120.5720772",
+    "name": "恒业·铂金",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 741882146,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.3013879",
+    "_lon": "120.5722596",
+    "name": "中国广核集团苏州热工研究院",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "research_institute",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 741882147,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2992360",
+    "_lon": "120.5731200",
+    "name": "国际经贸大厦",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 742194925,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2786724",
+    "_lon": "120.5839701",
+    "name": "费家村小学",
+    "office": "",
+    "building": "",
+    "landuse": "greenfield",
+    "amenity": "school",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 742194926,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2805246",
+    "_lon": "120.5846721",
+    "name": "",
+    "office": "",
+    "building": "",
+    "landuse": "industrial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 742194936,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2864591",
+    "_lon": "120.5788028",
+    "name": "苏州燃气集团",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 742194942,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2869617",
+    "_lon": "120.5766866",
+    "name": "阳光大厦",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 742194943,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2881267",
+    "_lon": "120.5774694",
+    "name": "苏州市市容市政管理局",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 742194946,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2895466",
+    "_lon": "120.5763902",
+    "name": "金鑫大厦",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 742557445,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2760154",
+    "_lon": "120.5824178",
+    "name": "苏州市河道管理处管理养护所",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 742557448,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2749036",
+    "_lon": "120.5830088",
+    "name": "",
+    "office": "",
+    "building": "",
+    "landuse": "industrial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 745607498,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2783349",
+    "_lon": "120.5852482",
+    "name": "",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 745607500,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2784294",
+    "_lon": "120.5866568",
+    "name": "",
+    "office": "",
+    "building": "",
+    "landuse": "industrial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 745607501,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2790988",
+    "_lon": "120.5862527",
+    "name": "",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 792029290,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2981170",
+    "_lon": "120.5684986",
+    "name": "",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 792029291,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.3002771",
+    "_lon": "120.5658763",
+    "name": "",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 792029292,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.3012065",
+    "_lon": "120.5654843",
+    "name": "",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 792029293,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.3004512",
+    "_lon": "120.5647307",
+    "name": "苏州高新技术创业服务中心",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 792029295,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.3012505",
+    "_lon": "120.5643907",
+    "name": "苏州永和创新工场",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 792029297,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.3009537",
+    "_lon": "120.5632454",
+    "name": "锦和越界X2创意街区",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 792029298,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2972598",
+    "_lon": "120.5647520",
+    "name": "苏州高新广场",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 792029301,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.3027041",
+    "_lon": "120.5662445",
+    "name": "苏州市工业展览馆",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 792029302,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.3026117",
+    "_lon": "120.5648076",
+    "name": "",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 792029304,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.3025179",
+    "_lon": "120.5634740",
+    "name": "润捷广场",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 792029305,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.3052529",
+    "_lon": "120.5629608",
+    "name": "",
+    "office": "",
+    "building": "",
+    "landuse": "industrial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 792029306,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.3081345",
+    "_lon": "120.5633392",
+    "name": "苏高新科技产业研发大楼",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 803670078,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2871843",
+    "_lon": "120.5737217",
+    "name": "",
+    "office": "",
+    "building": "",
+    "landuse": "industrial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 803670086,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2889524",
+    "_lon": "120.5705271",
+    "name": "苏州高新区实验小学滨河路校区",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "school",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 803670089,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2912393",
+    "_lon": "120.5666700",
+    "name": "",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 803670090,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2915154",
+    "_lon": "120.5676850",
+    "name": "苏州市水务局",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 803670094,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2957924",
+    "_lon": "120.5660020",
+    "name": "",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 803670095,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2954887",
+    "_lon": "120.5649907",
+    "name": "金河国际大厦",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 803670097,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2948573",
+    "_lon": "120.5680445",
+    "name": "金诚之星",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 803670098,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2958795",
+    "_lon": "120.5674088",
+    "name": "新城花园酒店",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 803670100,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2972031",
+    "_lon": "120.5668193",
+    "name": "",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 803670101,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2971733",
+    "_lon": "120.5674611",
+    "name": "新创大厦",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 803670102,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2977463",
+    "_lon": "120.5670583",
+    "name": "方圆大厦",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 803670103,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2980756",
+    "_lon": "120.5669616",
+    "name": "苏州体彩大厦",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 803670104,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.3017054",
+    "_lon": "120.5661602",
+    "name": "苏州高新区地方海事所",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 803670105,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2978820",
+    "_lon": "120.5661803",
+    "name": "人才广场",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 803670106,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2984410",
+    "_lon": "120.5639353",
+    "name": "",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 803670107,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2990695",
+    "_lon": "120.5637923",
+    "name": "",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 803670108,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2997791",
+    "_lon": "120.5636588",
+    "name": "韩星文创园",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 803670109,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2991822",
+    "_lon": "120.5649049",
+    "name": "青年电子商务创业园",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 803670110,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2991145",
+    "_lon": "120.5662756",
+    "name": "乐嘉汇",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 803670111,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2978712",
+    "_lon": "120.5640050",
+    "name": "",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 849711211,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2806429",
+    "_lon": "120.5486135",
+    "name": "明基医院",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "hospital",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 864991345,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2803014",
+    "_lon": "120.5276539",
+    "name": "苏州高新区自来水有限公司",
+    "office": "",
+    "building": "",
+    "landuse": "industrial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 864992897,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2896385",
+    "_lon": "120.5570449",
+    "name": "苏州日本人学校",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "school",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1013416295,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2543534",
+    "_lon": "120.5621068",
+    "name": "苏州经贸职业技术学院",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "school",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1013416296,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2567970",
+    "_lon": "120.5671154",
+    "name": "苏州技师学院",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "school",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1013488752,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2635049",
+    "_lon": "120.5760926",
+    "name": "苏州卫生职业技术学院（学府校区）",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "school",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1059454170,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2624272",
+    "_lon": "120.5639843",
+    "name": "华能苏州热电有限责任公司燃机电厂",
+    "office": "",
+    "building": "",
+    "landuse": "industrial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1185299631,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2654514",
+    "_lon": "120.5648446",
+    "name": "苏州高新区中医医院",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "hospital",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1185299637,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2788993",
+    "_lon": "120.5752221",
+    "name": "苏州高新区第一初级中学（滨河路校区）",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "school",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1185299638,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2777142",
+    "_lon": "120.5779431",
+    "name": "苏州高新区成大实验幼儿园",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "kindergarten",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1185299640,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2766779",
+    "_lon": "120.5786205",
+    "name": "苏州高新区实验小学（成大校区）",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "school",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1193375541,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2688056",
+    "_lon": "120.5451089",
+    "name": "木渎南行中学",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "school",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1193375542,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2686634",
+    "_lon": "120.5434888",
+    "name": "华中师范大学附属南行实验小学",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "school",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1193375545,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2777829",
+    "_lon": "120.5467665",
+    "name": "",
+    "office": "",
+    "building": "",
+    "landuse": "industrial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1193375549,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2806735",
+    "_lon": "120.5437812",
+    "name": "苏州高新区狮山实验小学校（竹园校区）",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "school",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1193375551,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2768120",
+    "_lon": "120.5369483",
+    "name": "苏州市第二青少年业余体校",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "school",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1193375553,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2786082",
+    "_lon": "120.5350801",
+    "name": "中国苏州创业园",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1193375554,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2800273",
+    "_lon": "120.5309348",
+    "name": "恩智浦半导体",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1193375555,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2809251",
+    "_lon": "120.5299967",
+    "name": "中科院声学所电声产业孵化基地狮山创新中心",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1193375556,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2811343",
+    "_lon": "120.5312043",
+    "name": "创新中心大厦",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1193375558,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2810816",
+    "_lon": "120.5222055",
+    "name": "苏州东创科技园",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1193375599,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2903581",
+    "_lon": "120.5260867",
+    "name": "苏州高新区第一初级中学校（珠江路校区）",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "school",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1193375603,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2867116",
+    "_lon": "120.5287115",
+    "name": "苏州高新区金色小学",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "school",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1193375605,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2980706",
+    "_lon": "120.5272454",
+    "name": "",
+    "office": "",
+    "building": "",
+    "landuse": "industrial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1193375606,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2939497",
+    "_lon": "120.5283558",
+    "name": "",
+    "office": "",
+    "building": "",
+    "landuse": "industrial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1202226738,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2794056",
+    "_lon": "120.5268746",
+    "name": "狮山当代MOMA",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1202226739,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2763662",
+    "_lon": "120.5263012",
+    "name": "金枫国际",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1202227531,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2637640",
+    "_lon": "120.5325562",
+    "name": "东门町",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1218784269,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2866195",
+    "_lon": "120.5690474",
+    "name": "",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1230041851,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2981531",
+    "_lon": "120.5523535",
+    "name": "苏州龙湖中心",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1230041860,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2860031",
+    "_lon": "120.5481264",
+    "name": "苏州高新区景明幼儿园",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "kindergarten",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1230041862,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2870700",
+    "_lon": "120.5485515",
+    "name": "苏州高新区狮山中心幼儿园",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "kindergarten",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1230041863,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2874975",
+    "_lon": "120.5495212",
+    "name": "苏州高新区狮山实验小学校",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "school",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1230041879,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2833326",
+    "_lon": "120.5443659",
+    "name": "天都大厦",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1238606073,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2922238",
+    "_lon": "120.5335084",
+    "name": "苏州高新区实验小学校（珠江路校区）",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "school",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1239373733,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2979032",
+    "_lon": "120.5365431",
+    "name": "",
+    "office": "",
+    "building": "",
+    "landuse": "industrial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1239373734,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2983799",
+    "_lon": "120.5340126",
+    "name": "",
+    "office": "",
+    "building": "",
+    "landuse": "industrial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1239373737,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2896255",
+    "_lon": "120.5408761",
+    "name": "狮山悦椿酒店",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1239374826,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2829016",
+    "_lon": "120.5616850",
+    "name": "苏州高新区第一初级中学",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "school",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1239374827,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2828421",
+    "_lon": "120.5599013",
+    "name": "苏州高新区实验小学校（竹园路校区）",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "school",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1239374828,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2776844",
+    "_lon": "120.5604297",
+    "name": "",
+    "office": "",
+    "building": "",
+    "landuse": "industrial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1239374829,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2767582",
+    "_lon": "120.5579809",
+    "name": "",
+    "office": "",
+    "building": "",
+    "landuse": "industrial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1239374830,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2745873",
+    "_lon": "120.5554757",
+    "name": "",
+    "office": "",
+    "building": "",
+    "landuse": "industrial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1239374831,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2741540",
+    "_lon": "120.5519029",
+    "name": "",
+    "office": "",
+    "building": "",
+    "landuse": "industrial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1239374838,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2739591",
+    "_lon": "120.5585334",
+    "name": "苏州高等职业技术学校",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "school",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1239374843,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2678861",
+    "_lon": "120.5530939",
+    "name": "苏州科技大学（天平校区）",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "university",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1240437719,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2828288",
+    "_lon": "120.5339857",
+    "name": "苏州高新区新升实验小学校",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "school",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1240925602,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2787030",
+    "_lon": "120.5814866",
+    "name": "驿亭实验幼儿园",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "kindergarten",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1275775095,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2965880",
+    "_lon": "120.5518163",
+    "name": "",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1304028817,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2603684",
+    "_lon": "120.5701876",
+    "name": "新锐科创中心",
+    "office": "",
+    "building": "",
+    "landuse": "commercial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1304028819,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2698576",
+    "_lon": "120.5606899",
+    "name": "",
+    "office": "",
+    "building": "",
+    "landuse": "industrial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1304028820,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2614517",
+    "_lon": "120.5612746",
+    "name": "",
+    "office": "",
+    "building": "",
+    "landuse": "industrial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1370775655,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.3033423",
+    "_lon": "120.5272695",
+    "name": "苏州佳世达电通",
+    "office": "",
+    "building": "",
+    "landuse": "industrial",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 1490911185,
+  "tags": {
+    "_osm_type": "way",
+    "_lat": "31.2914668",
+    "_lon": "120.5400260",
+    "name": "姑苏桥·文人苏式面馆",
+    "office": "",
+    "building": "yes",
+    "landuse": "",
+    "amenity": "restaurant",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 3634831390,
+  "tags": {
+    "_osm_type": "node",
+    "_lat": "31.2829790",
+    "_lon": "120.5345717",
+    "name": "苏州高新区新升实验小学",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "school",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 3634835924,
+  "tags": {
+    "_osm_type": "node",
+    "_lat": "31.2801466",
+    "_lon": "120.5435581",
+    "name": "苏州新区第一中学初中部",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "school",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 3634835927,
+  "tags": {
+    "_osm_type": "node",
+    "_lat": "31.2843910",
+    "_lon": "120.5363312",
+    "name": "苏州新升幼儿园",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "kindergarten",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 3634841679,
+  "tags": {
+    "_osm_type": "node",
+    "_lat": "31.2876551",
+    "_lon": "120.5500426",
+    "name": "苏州高新区狮山实验小学",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "school",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 4931727422,
+  "tags": {
+    "_osm_type": "node",
+    "_lat": "31.2953677",
+    "_lon": "120.5506838",
+    "name": "若谷瑜伽",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "",
+    "leisure": "fitness_centre",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 5228271721,
+  "tags": {
+    "_osm_type": "node",
+    "_lat": "31.2951201",
+    "_lon": "120.5528844",
+    "name": "",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "restaurant",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 6246412644,
+  "tags": {
+    "_osm_type": "node",
+    "_lat": "31.2807652",
+    "_lon": "120.5561761",
+    "name": "蘇州瑚北光電子有限公司",
+    "office": "company",
+    "building": "",
+    "landuse": "",
+    "amenity": "",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 8714685217,
+  "tags": {
+    "_osm_type": "node",
+    "_lat": "31.2952197",
+    "_lon": "120.5576257",
+    "name": "",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "restaurant",
+    "leisure": "",
+    "shop": "",
+    "cuisine": ""
+  }
+},
+{
+  "type": "item",
+  "id": 11559125858,
+  "tags": {
+    "_osm_type": "node",
+    "_lat": "31.2958345",
+    "_lon": "120.5459010",
+    "name": "霸碗盖码饭",
+    "office": "",
+    "building": "",
+    "landuse": "",
+    "amenity": "restaurant",
+    "leisure": "",
+    "shop": "",
+    "cuisine": "chinese"
+  }
+}
+
+  ]
+}
