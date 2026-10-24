@@ -220,6 +220,25 @@ competitors:
   keywords:
   - 屈臣氏苏打水
   source_note: 公开产品页面；仅搜索水产品相关词，个人护理店不计竞品水网点
+- brand: 名仁
+  category: 苏打水
+  source: https://www.jzmryy.com/
+  status: 待核实
+  keywords: [名仁苏打水]
+  source_note: 品牌生产企业官网产品推荐列有名仁苏打水饮料；2026-10-24搜索索引核实，直接抓取超时；不证明本地在售
+- brand: 依能
+  category: 苏打水
+  source: https://item.jd.com/10117404308228.html
+  status: 待核实
+  keywords: [依能苏打水]
+  source_note: 2026-10-24依能官方旗舰店品牌介绍及在售商品链接列有天然苏打水400ml；详情抓取未成功，不证明本地在售
+  corroborating_source: https://mall.jd.com/introduction-600981.html
+- brand: 怡泉
+  category: 苏打水
+  source: https://www.coca-cola.com/cn/zh/brands/schweppes
+  status: 待核实
+  keywords: [怡泉苏打水]
+  source_note: 品牌官网列有苏打水汽水及多种口味；2026-10-24核实；不证明本地在售
 competitors_open:
 - 来源：.work/handbook/dongting-brief.md文字未列竞品；其他苏打水/送水站品牌未找到公开来源，待业务员补充。
 own_brand:

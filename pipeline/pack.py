@@ -106,6 +106,15 @@ def business(a,c):
     if a['coverage']!=c['coverage'] or a['planning_note']!=NOTE:out.append(violation('provenance','coverage','覆盖或路线假设被更改'))
     if a['review_queue']!=[r for report in c['checks'].values() for r in report['review_queue']]:out.append(violation('review_queue','review_queue','待复核项遗漏'))
     if a['supply_assignments']!=l3p.assignments(c) or a['recruitment_gaps']!=l3p.gaps(c):out.append(violation('supply_assignment','supply_assignments','建议供货方或招商缺口与代码重算不一致'))
+    # Recount uncovered A/B terminals from source geometry, independently of PACK output.
+    selected=l3p.recommended(c)
+    partners=l3p.candidates(c)
+    covered={z:{pid for partner in ids for pid in l3p.coverage(partners[partner],c)} for z,ids in selected.items()}
+    missing=sorted(t['poi_id'] for t in c['l3']['items'] if t['grade'] in ('A','B') and t['poi_id'] not in covered.get(t['zone_id'],set()))
+    missing_ids=set(missing)
+    zones=sorted({t['zone_id'] for t in c['l3']['items'] if t['poi_id'] in missing_ids})
+    if a['recruitment_gaps']!=dict(terminal_count=len(missing),terminal_ids=missing,zone_ids=zones):
+        out.append(violation('recruitment_gap_recount','recruitment_gaps','招商缺口与推荐伙伴几何覆盖独立重算不一致'))
     return out
 
 

@@ -110,6 +110,7 @@ class Partner(Evidence):
     covered_terminal_ids: list[str]
     coverage_count: int = Field(ge=0)
     recommendation: Literal['优先','备选','暂缓']
+    recommended_zone_ids: list[str]
     reason: str
 
 

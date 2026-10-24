@@ -1,6 +1,7 @@
 """Candidate partners and geometric coverage; supply capability remains unverified."""
+import math
 from pipeline.common import decide
-from pipeline.geo import distance
+from pipeline.geo import distance, EARTH_M
 from pipeline.contracts import violation
 from pipeline.v2_contracts import Partners
 from pipeline.quality import meta,envelope,evaluate,errors,equal_ids
@@ -23,24 +24,44 @@ def coverage(p,c):
         distance(p['lat'],p['lon'],pois[t['poi_id']]['lat'],pois[t['poi_id']]['lon'])<=c['params']['partners']['coverage_radius_m'])
 
 
-def recommendation(n,c):return '优先' if n>=c['params']['partners']['priority_min'] else '备选' if n else '暂缓'
-def reason(p,k,ids):return f"POI={p['id']}；名称/类型规则分类={k}；3000米内A/B终端数={len(ids)}；供货资质待核实。"
+def recommended(c):
+    """Independent greedy cover for each selected grid; marginal gain, distance, id."""
+    rows={pid:p for pid,p in candidates(c).items() if kind(p,c) in c['params']['partners']['eligible_types']}
+    covers={pid:set(coverage(p,c)) for pid,p in rows.items()}
+    result={}
+    for z in c['l2']['items']:
+        if not z['selected']: continue
+        zid=z['zone_id'];x,y=map(int,zid.split(':'))
+        lat=c['brief']['lat']+math.degrees((y+.5)*500/EARTH_M)
+        lon=c['brief']['lon']+math.degrees((x+.5)*500/(EARTH_M*math.cos(math.radians(c['brief']['lat']))))
+        uncovered={t['poi_id'] for t in c['l3']['items'] if t['zone_id']==zid and t['grade'] in ('A','B')}
+        chosen=[]
+        while uncovered and len(chosen)<min(3,c['params']['partners']['max_recommended_per_zone']):
+            options=[pid for pid in rows if pid not in chosen and covers[pid]&uncovered]
+            if not options: break
+            best=min(options,key=lambda pid:(-len(covers[pid]&uncovered),distance(lat,lon,rows[pid]['lat'],rows[pid]['lon']),pid))
+            chosen.append(best);uncovered-=covers[best]
+        result[zid]=chosen
+    return result
+
+
+def reason(p,k,ids,c):return f"POI={p['id']}；名称/类型规则分类={k}；{c['params']['partners']['coverage_radius_m']}米内A/B终端数={len(ids)}；供货资质待核实。"
 
 
 def run(c):
-    rows=candidates(c)
+    rows=candidates(c);selection=recommended(c);selected={pid for ids in selection.values() for pid in ids}
     def rules():
         return dict(decision='按名称/类型判断候选伙伴，覆盖和推荐等级由代码重算。',items=[dict(partner_id=pid,type=kind(p,c),
-            reason=reason(p,kind(p,c),coverage(p,c)),**meta(c,['poi:'+pid,'params.partners'],opened=[
+            reason=reason(p,kind(p,c),coverage(p,c),c),**meta(c,['poi:'+pid,'params.partners'],opened=[
                 '来源：高德POI名称/类型；候选供货资质、品牌授权、配送能力和合作条件待首访核实。',
-                '来源：params.partners；3000米球面距离为覆盖假设，不是道路服务承诺。',
+                '来源：params.partners；'+c['params']['partners']['source'],
                 *c.get('market',{}).get('open',[])])) for pid,p in rows.items()])
-    a=decide(c,'L3P',{'candidates':[{**p,'allowed_type':kind(p,c),'allowed_reason':reason(p,kind(p,c),coverage(p,c))} for p in rows.values()]},rules,
+    a=decide(c,'L3P',{'candidates':[{**p,'allowed_type':kind(p,c),'allowed_reason':reason(p,kind(p,c),coverage(p,c),c)} for p in rows.values()]},rules,
              '返回decision,items；每项partner_id,type,reason,evidence,judged_by,confidence,open；type只能酒水批发/餐饮供应链/品牌自有网点/其他，按allowed_type，reason用allowed_reason，不生成覆盖数。')
     for r in a['items']:
         if r['partner_id'] in rows:
             ids=coverage(rows[r['partner_id']],c)
-            r.update(covered_terminal_ids=ids,coverage_count=len(ids),recommendation=recommendation(len(ids),c))
+            r.update(recommended_zone_ids=sorted(z for z,chosen in selection.items() if r['partner_id'] in chosen),covered_terminal_ids=ids,coverage_count=len(ids),recommendation='优先' if r['partner_id'] in selected else '暂缓')
     return envelope(c,a['decision'],a['items'])
 
 
@@ -48,20 +69,25 @@ def references(a,c):return equal_ids(a['items'],'partner_id',candidates(c))
 
 
 def business(a,c):
-    out=[];rows=candidates(c)
+    out=[];rows=candidates(c);selection=recommended(c)
+    selected={pid for ids in selection.values() for pid in ids}
     for r in a['items']:
         p=rows[r['partner_id']];ids=coverage(p,c);k=kind(p,c)
-        expected=dict(type=k,covered_terminal_ids=ids,coverage_count=len(ids),recommendation=recommendation(len(ids),c),reason=reason(p,k,ids))
+        expected=dict(recommended_zone_ids=sorted(z for z,chosen in selection.items() if r['partner_id'] in chosen),type=k,covered_terminal_ids=ids,coverage_count=len(ids),recommendation='优先' if r['partner_id'] in selected else '暂缓',reason=reason(p,k,ids,c))
         if any(r[key]!=value for key,value in expected.items()):out.append(violation('partner_recount','items','伙伴分类、覆盖、推荐或理由与证据重算不符'))
+    for zid in selection:
+        actual=[r for r in a['items'] if zid in r['recommended_zone_ids']]
+        if len(actual)>min(3,c['params']['partners']['max_recommended_per_zone']):
+            out.append(violation('partner_limit','items','每商圈推荐伙伴超过配置上限'))
     return out
 
 
 def assignments(c):
-    pois={p['id']:p for p in c['pois']};partners=candidates(c);result={}
+    pois={p['id']:p for p in c['pois']};partners=candidates(c);result={};selection=recommended(c)
     for t in c['l3']['items']:
         if t['grade'] not in ('A','B'):continue
         p=pois[t['poi_id']]
-        options=[r for r in c['l3p']['items'] if t['poi_id'] in r['covered_terminal_ids']]
+        options=[r for r in c['l3p']['items'] if r['recommendation']=='优先' and t['zone_id'] in r['recommended_zone_ids'] and r['partner_id'] in selection.get(t['zone_id'],[]) and t['poi_id'] in r['covered_terminal_ids']]
         def order(r):
             q=partners[r['partner_id']]
             return ({'优先':0,'备选':1,'暂缓':2}[r['recommendation']],distance(p['lat'],p['lon'],q['lat'],q['lon']),r['partner_id'])

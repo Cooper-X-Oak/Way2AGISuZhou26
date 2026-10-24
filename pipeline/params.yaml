@@ -1,25 +1,30 @@
 version: 3
 competition:
-  medium_min: 2
-  high_min: 5
-  source: 项目假设；500米网格缓存品牌点位计数合计0-1低、2-4中、5及以上高；非现实竞争普查
+  rank_shares: {low: 0.3333333333333333, medium: 0.3333333333333333, high: 0.3333333333333333}
+  strategies: {低: 补位, 中: 正面, 高: 避让}
+  p1_top_share: 0.3333333333333333
+  high_p1_strategy: 正面
+  retail_typecodes: {便利店: ['060200'], 商超: ['0601', '0604']}
+  typecode_source: https://a.amap.com/lbs/static/code_resource/Amap_poicode.zip
+  source: 项目假设；饮品可得性为品牌点位与便利店及商超的去重计数（多品牌同一POI按品牌名排序归首项，仅计一次），代理指标，非竞品实测；仅以本run选中网格为排名参照，升序首位排名三分位，同值同档（可不均分）；非选中网格只投影到该参照；P1正计数降序首位排名前1/3时高竞争改正面
 partners:
   search_radius_m: 5000
-  coverage_radius_m: 3000
-  priority_min: 5
-  source: 项目假设；5公里搜索、3公里覆盖；覆盖5家及以上优先，1-4备选，0暂缓；供货资格未确认
+  coverage_radius_m: 2000
+  max_recommended_per_zone: 3
+  eligible_types: [酒水批发, 餐饮供应链, 品牌自有网点]
+  source: 项目假设；5公里候选搜索、2000米球面供货半径；每选中网格按新增A/B覆盖数贪心推荐最多3家，平局按距网格中心距离再poi_id；零新增覆盖停止；供货资质未确认
   classification:
     - {kind: 品牌自有网点, keywords: [洞庭山泉], typecodes: []}
     - {kind: 餐饮供应链, keywords: [餐饮供应链, 食材配送, 食材, 食品配送], typecodes: []}
-    - {kind: 酒水批发, keywords: [酒水批发, 烟酒副食批发, 酒水, 烟酒, 副食], typecodes: ['060400']}
+    - {kind: 酒水批发, keywords: [酒水批发, 烟酒副食批发, 酒水, 烟酒, 副食], typecodes: ['061210']}
   queries:
     - {keyword: 酒水批发, types: '', role: partner}
     - {keyword: 烟酒副食批发, types: '', role: partner}
     - {keyword: 餐饮供应链, types: '', role: partner}
     - {keyword: 食材配送, types: '', role: partner}
     - {keyword: 洞庭山泉, types: '', role: partner}
-    - {keyword: '', types: '060400', role: partner}
-  typecode_source: https://a.amap.com/lbs/static/code_resource/Amap_poicode.zip ; 060400烟酒专卖店仅为候选，不证明批发资质；关键词不加类型过滤避免漏查
+    - {keyword: '', types: '061210', role: partner}
+  typecode_source: https://a.amap.com/lbs/static/code_resource/Amap_poicode.zip ; 061210烟酒专卖店仅为候选，不证明批发资质；关键词不加类型过滤避免漏查
 note: 所有排序和执行数值是项目假设，非行业统计；来源 params.yaml，执行前固定。
 execution:
   visits_per_person_day: {default: 20, source: 项目执行假设，待经销商校准}
