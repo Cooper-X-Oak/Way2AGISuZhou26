@@ -8,6 +8,8 @@ from copy import deepcopy
 from pathlib import Path
 from pipeline import l0,l1,l2,l2c,l3,l3p,l4,pack
 from pipeline.io import now,write,RunStore
+from pipeline.llm import LLMError
+from pipeline.llm.lifecycle import prepare_run, attempt_records
 
 STAGES=(("L0",l0),("L1",l1),("L2",l2),("L2C",l2c),("L3",l3),("L3P",l3p),("L4",l4),("PACK",pack))
 NAMES={'L0':'brief','L1':'channels','L2':'zones','L2C':'competition','L3':'terminals','L3P':'partners','L4':'materials','PACK':'pack'}
@@ -15,6 +17,7 @@ NAMES={'L0':'brief','L1':'channels','L2':'zones','L2C':'competition','L3':'termi
 
 def execute(inputs,root=Path('.'),stages=STAGES,*,run_id=None,observer=None,approve=None,source_root=Path('.')):
     """Optional service hooks preserve CLI approval and ledger behavior by default."""
+    inputs=prepare_run(inputs)
     run_id=run_id or now().replace(':','').replace('-','').replace('.','')+'-'+uuid.uuid4().hex[:8]
     directory=Path(root)/'runs'/run_id;directory.mkdir(parents=True,exist_ok=False)
     store=RunStore(directory)
@@ -68,6 +71,7 @@ def execute(inputs,root=Path('.'),stages=STAGES,*,run_id=None,observer=None,appr
         restart=False;passed=False
         for attempt in range(1,4):
             c['attempt']=attempt;started=time.perf_counter();artifact=None
+            llm_cursor=len(getattr(c['judge'],'records',[]));fatal=False
             try:
                 artifact=module.run(c);json.dumps(artifact,allow_nan=False)
                 if c.get('auto_approve') and name in ('L2','L3'):c['approvals'][name]='auto (demo)'
@@ -85,15 +89,20 @@ def execute(inputs,root=Path('.'),stages=STAGES,*,run_id=None,observer=None,appr
                         event('gate_approved',stage=name,attempt=attempt,approved_by='human')
                 violations=report['violations']
             except Exception as exc:
-                violations=[dict(code='execution_error',path=name,message=f'{type(exc).__name__}: 执行失败，未生成替代结果')]
+                if isinstance(exc,LLMError):
+                    violations=exc.violations;artifact=exc.previous;fatal=exc.fatal
+                else:
+                    violations=[dict(code='execution_error',path=name,message=f'{type(exc).__name__}: 执行失败，未生成替代结果')]
                 report={'stage':name,'passed':False,'layers':[dict(layer=k,status='failed' if i==0 else 'blocked',violations=violations if i==0 else []) for i,k in enumerate(('structure','references','business','judgment_quality','human_gate'))],'review_queue':[],'violations':violations}
                 try:json.dumps(artifact,allow_nan=False)
                 except (ValueError,TypeError):artifact=None
             filename=f'attempts/{name}-r{revision}-{attempt}.json'
             entry=dict(stage=name,revision=revision,attempt=attempt,status='failed' if violations else 'passed',violations=violations,
                        duration_seconds=round(time.perf_counter()-started,6),artifact_path=filename,check_path=f'checks/{name}-r{revision}-{attempt}.json',
-                       judged_by=artifact.get('judged_by') if artifact else None,approved_by=c['approvals'].get(name),
-                       seeded_for_demo=bool(c.get('seeded_backtrack') or artifact and artifact.get('seeded_for_demo')))
+                       judged_by=artifact.get('judged_by') if isinstance(artifact,dict) else None,approved_by=c['approvals'].get(name),
+                       seeded_for_demo=bool(c.get('seeded_backtrack') or isinstance(artifact,dict) and artifact.get('seeded_for_demo')))
+            calls=attempt_records(c['judge'],llm_cursor)
+            if calls:entry.update(judged_by='llm',llm_calls=calls)
             persist(directory/filename,{'artifact':artifact,'check':report,'violations':violations})
             persist(directory/entry['check_path'],report);persist(directory/f'{name}.check.json',report)
             entry.update(artifact_ref=store.reference(directory/filename),check_ref=store.reference(directory/entry['check_path']))
@@ -103,6 +112,7 @@ def execute(inputs,root=Path('.'),stages=STAGES,*,run_id=None,observer=None,appr
             if artifact is not None:
                 persist(directory/f'{name}.json',artifact)
                 if name=='L0':persist(directory/'brief.json',artifact)
+            if fatal:return stop(name,violations)
             if not violations:
                 key='brief' if name=='L0' else name.lower();c[key]=artifact;c['checks'][name]=report
                 persist(directory/f'{NAMES[name]}.json',artifact)

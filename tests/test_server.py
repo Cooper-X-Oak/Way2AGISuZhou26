@@ -18,6 +18,27 @@ BODY = dict(area='shishan', profile='jiangnan-gongquan',
             input='苏州高新区周边3公里，2个地推，做4周', auto_approve=True)
 
 
+@pytest.mark.parametrize('mode', [None, 'rules', 'llm'])
+def test_manager_selects_requested_mode(tmp_path, monkeypatch, mode):
+    from types import SimpleNamespace
+    monkeypatch.setenv('LLM_BASE_URL', 'https://mock.invalid/v1')
+    monkeypatch.setenv('LLM_API_KEY', 'test-only')
+    monkeypatch.setenv('LLM_MODEL', 'mock-model')
+    captured = []
+    monkeypatch.setattr('server.runs.execute', lambda inputs, *args, **kwargs: captured.append(inputs))
+    body = {**BODY, 'demo_replay': None}
+    if mode is not None:
+        body['mode'] = mode
+    manager = RunManager(tmp_path)
+    try:
+        run_id = manager.start(SimpleNamespace(**body))
+        assert manager.runs[run_id]['done'].wait(10)
+        assert len(captured) == 1
+        assert captured[0]['judge'].offline is (mode != 'llm')
+    finally:
+        manager.close()
+
+
 @pytest.fixture
 def api(tmp_path, monkeypatch):
     def no_network(*args, **kwargs):
