@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>铺市流水线 · 观前街</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700;900&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="tokens.css">
+<style>
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--c-ground);color:var(--c-ink);font:var(--t-md)/var(--lh-body) var(--f-ui);
+  padding-left:max(var(--s-4),env(safe-area-inset-left,0px));padding-right:max(var(--s-4),env(safe-area-inset-right,0px))}
+.mono{font-family:var(--f-data);font-variant-numeric:tabular-nums}
+.shell{max-width:1440px;margin:0 auto;padding-block:var(--s-4) var(--s-10);display:flex;flex-direction:column;gap:var(--s-4)}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--c-brand);outline-offset:2px}
+
+/* ── top bar ── */
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s-3) var(--s-6);padding-bottom:var(--s-3);border-bottom:var(--bw) solid var(--c-line)}
+.mark{font:900 1.375rem/1 var(--f-mark);letter-spacing:.02em;display:flex;align-items:baseline;gap:var(--s-2)}
+.mark small{font:600 var(--t-xs) var(--f-data);color:var(--c-muted);letter-spacing:var(--tr-label)}
+.task{flex:1 1 360px;min-width:0;font-size:var(--t-md);color:var(--c-ink-2);border:var(--bw) solid var(--c-line);background:var(--c-sheet);padding:7px 12px;border-radius:var(--r-1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.task b{color:var(--c-ink);font-weight:500}
+.seg{display:inline-flex;border:var(--bw) solid var(--c-line-strong);border-radius:var(--r-1);overflow:hidden}
+.seg button{border:0;background:var(--c-sheet);padding:6px 12px;font-size:var(--t-sm)}
+.seg button+button{border-left:var(--bw) solid var(--c-line)}
+.seg button[aria-pressed="true"]{background:var(--c-ink);color:var(--c-sheet)}
+.seg button:disabled{color:var(--c-muted);cursor:not-allowed}
+.runmeta{display:flex;gap:var(--s-3);align-items:center;font-size:var(--t-xs);color:var(--c-muted)}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:2px 10px;border-radius:var(--r-pill);font-size:var(--t-xs);font-weight:500;white-space:nowrap}
+.chip.brand{background:var(--c-brand-soft);color:var(--c-brand-ink)}
+.chip.review{background:var(--c-review-soft);color:var(--c-review)}
+.chip.stamp{background:var(--c-stamp-soft);color:var(--c-stamp)}
+.chip.plain{border:var(--bw) solid var(--c-line-strong);color:var(--c-ink-2)}
+.chip .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+
+/* ── production line ── */
+.line{position:relative;overflow-x:auto;padding-bottom:4px}
+.line ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(8,minmax(150px,1fr));position:relative;min-width:1200px}
+.line ol::before{content:"";position:absolute;left:16px;right:calc(100% / 8 - 16px);top:15px;height:2px;background:var(--c-ink)}
+.station{position:relative;padding:0 var(--s-2) 0 0}
+.station button{all:unset;cursor:pointer;display:flex;flex-direction:column;gap:6px;width:100%;padding:0 var(--s-2) var(--s-2) 0;border-radius:var(--r-1)}
+.node{position:relative;z-index:1;width:32px;height:32px;display:grid;place-items:center;background:var(--c-sheet);border:var(--bw-strong) solid var(--c-ink);font:600 10.5px var(--f-data);letter-spacing:-.02em}
+.station.gate .node{transform:rotate(45deg);width:26px;height:26px;margin:3px}
+.station.gate .node span{transform:rotate(-45deg)}
+.station.pack .node{background:var(--c-brand);border-color:var(--c-brand);color:var(--c-sheet)}
+.station[aria-current="true"] .node{background:var(--c-ink);color:var(--c-sheet)}
+.station .q{font-size:var(--t-lg);font-weight:700;line-height:var(--lh-tight)}
+.station .sum{font-size:var(--t-xs);color:var(--c-muted)}
+.station .st{display:flex;flex-wrap:wrap;gap:4px}
+.station button:hover .q{color:var(--c-brand)}
+
+/* ── workspace ── */
+.work{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:var(--s-4);align-items:start}
+.panel{background:var(--c-sheet);border:var(--bw) solid var(--c-line);border-radius:var(--r-1)}
+.panel-h{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--s-2);padding:var(--s-3) var(--s-4);border-bottom:var(--bw) solid var(--c-line)}
+.panel-h h2{margin:0;font-size:var(--t-lg);font-weight:700}
+.panel-h .sub{font-size:var(--t-xs);color:var(--c-muted)}
+.map-wrap{position:relative}
+.map-wrap svg{display:block;width:100%;height:auto;aspect-ratio:1/1;max-height:640px}
+.legend{display:flex;flex-wrap:wrap;gap:var(--s-2) var(--s-4);padding:var(--s-3) var(--s-4);border-top:var(--bw) solid var(--c-line);font-size:var(--t-xs);color:var(--c-ink-2)}
+.legend i{display:inline-block;vertical-align:-2px;margin-right:6px}
+.sw{width:22px;height:10px}
+.cell{stroke:var(--c-sheet);stroke-width:1;fill-opacity:.55}
+.cell.sel{stroke:var(--c-ink);stroke-width:2.5;fill-opacity:1}
+.term{cursor:pointer;transition:r var(--d-fast) var(--ease)}
+.term.A{fill:var(--c-grade-a)}
+.term.B{fill:var(--c-sheet);stroke:var(--c-grade-b);stroke-width:1.6}
+.term.C{fill:var(--c-grade-c)}
+.term.on{stroke:var(--c-ink);stroke-width:2.5}
+.ring{fill:none;stroke:var(--c-ink-2);stroke-dasharray:4 4;stroke-width:1}
+.axis{font:10.5px var(--f-data);fill:var(--c-muted)}
+.rank{font:700 12px var(--f-data);fill:var(--c-ink)}
+
+/* ── inspector ── */
+.insp{display:flex;flex-direction:column}
+.store{padding:var(--s-4);display:grid;grid-template-columns:auto 1fr auto;gap:var(--s-1) var(--s-3);align-items:center;border-bottom:var(--bw) solid var(--c-line)}
+.grade{width:40px;height:40px;display:grid;place-items:center;font:700 1.25rem var(--f-data);color:var(--c-sheet);background:var(--c-grade-a);border-radius:var(--r-1);grid-row:span 2}
+.grade.B{background:var(--c-grade-b)} .grade.C{background:var(--c-grade-c);color:var(--c-ink)}
+.store h3{margin:0;font-size:var(--t-xl);line-height:var(--lh-tight);text-wrap:balance}
+.store .meta{font-size:var(--t-sm);color:var(--c-muted)}
+.score{grid-row:span 2;text-align:right}
+.score b{display:block;font:600 var(--t-2xl)/1 var(--f-data)}
+.score span{font-size:var(--t-xs);color:var(--c-muted)}
+.action{display:flex;align-items:center;gap:var(--s-2);padding:var(--s-3) var(--s-4);background:var(--c-brand-soft);color:var(--c-brand-ink);font-weight:500}
+.action .k{font:600 var(--t-xs) var(--f-data);letter-spacing:var(--tr-label)}
+.chain{list-style:none;margin:0;padding:var(--s-4);display:flex;flex-direction:column;gap:0}
+.chain li{position:relative;display:grid;grid-template-columns:20px 1fr;gap:var(--s-3);padding-bottom:var(--s-4)}
+.chain li::before{content:"";position:absolute;left:9px;top:20px;bottom:0;width:2px;background:var(--c-line)}
+.chain li:last-child{padding-bottom:0}
+.chain li:last-child::before{display:none}
+.chain .pin{width:20px;height:20px;border:var(--bw-strong) solid var(--c-ink);background:var(--c-sheet);display:grid;place-items:center;font:600 10px var(--f-data)}
+.chain .hd{display:flex;flex-wrap:wrap;align-items:baseline;gap:var(--s-2)}
+.chain .hd b{font-size:var(--t-md)}
+.chain .src{font:var(--t-xs) var(--f-data);color:var(--c-muted)}
+.chain p{margin:2px 0 0;color:var(--c-ink-2);font-size:var(--t-sm)}
+.layers{display:inline-flex;gap:3px;margin-left:auto}
+.layers i{width:8px;height:8px;border-radius:50%;background:var(--c-pass)}
+.layers i.rv{background:var(--c-review)} .layers i.fl{background:var(--c-stamp)}
+.bars{display:grid;grid-template-columns:auto 1fr auto;gap:4px var(--s-2);align-items:center;margin-top:6px;font-size:var(--t-xs)}
+.bars .t{height:6px;background:var(--c-sunk)} .bars .t i{display:block;height:100%;background:var(--c-brand)}
+.open{margin:0 var(--s-4) var(--s-4);padding:var(--s-3);border:var(--bw) dashed var(--c-review);background:var(--c-review-soft);font-size:var(--t-sm)}
+.open b{color:var(--c-review)}
+.open ul{margin:4px 0 0;padding-left:1.1em}
+.pitch{margin:0 var(--s-4) var(--s-4);border-top:var(--bw) solid var(--c-line);padding-top:var(--s-3);display:flex;flex-direction:column;gap:var(--s-2);font-size:var(--t-sm)}
+.pitch blockquote{margin:0;padding-left:var(--s-3);border-left:var(--bw-strong) solid var(--c-brand);color:var(--c-ink-2)}
+.card{align-self:flex-start;border:var(--bw-strong) solid var(--c-ink);padding:var(--s-2) var(--s-3);font:700 var(--t-md) var(--f-mark);background:var(--c-sheet)}
+
+/* ── pack ── */
+.filters{display:flex;flex-wrap:wrap;gap:var(--s-2)}
+.filters button{border:var(--bw) solid var(--c-line-strong);background:var(--c-sheet);border-radius:var(--r-pill);padding:2px 10px;font-size:var(--t-xs)}
+.filters button[aria-pressed="true"]{background:var(--c-ink);border-color:var(--c-ink);color:var(--c-sheet)}
+.tbl{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:var(--t-md)}
+th,td{padding:8px var(--s-3);text-align:left;border-bottom:var(--bw) solid var(--c-line);white-space:nowrap}
+th{font-size:var(--t-xs);font-weight:500;color:var(--c-muted);letter-spacing:var(--tr-label);background:var(--c-sunk);position:sticky;top:0}
+td.num{text-align:right}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:var(--c-sunk)}
+tbody tr.on{background:var(--c-brand-soft)}
+.g{display:inline-grid;place-items:center;width:22px;height:22px;font:600 var(--t-xs) var(--f-data);color:var(--c-sheet);background:var(--c-grade-a);border-radius:var(--r-1)}
+.g.B{background:var(--c-grade-b)} .g.C{background:var(--c-grade-c);color:var(--c-ink)}
+.foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:var(--s-2);padding:var(--s-3) var(--s-4);font-size:var(--t-xs);color:var(--c-muted)}
+.foot>div{display:flex;flex-wrap:wrap;gap:var(--s-2) var(--s-4);align-items:center}
+.pager{display:inline-flex;align-items:center;gap:var(--s-2)}
+.pager button{border:var(--bw) solid var(--c-line-strong);background:var(--c-sheet);padding:2px 10px;border-radius:var(--r-1);font-size:var(--t-xs)}
+.pager button:disabled{color:var(--c-muted);border-color:var(--c-line);cursor:default}
+.ch-m{display:none;color:var(--c-muted)}
+.sub{font-size:var(--t-xs);color:var(--c-muted);margin:0}
+@media (max-width:560px){.c-ch,.c-z,.c-d,th:nth-child(3),th:nth-child(4),th:nth-child(5){display:none}.ch-m{display:inline}td.nm{white-space:normal}}
+
+@media (max-width:1080px){.work{grid-template-columns:1fr}}
+@media (max-width:560px){
+  .task{flex-basis:100%;white-space:normal}
+  .store{grid-template-columns:auto 1fr}
+  .score{grid-row:auto;grid-column:1/-1;text-align:left;display:flex;gap:var(--s-2);align-items:baseline}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <header class="bar">
+    <div class="mark">铺市流水线 <small>MARKET ENTRY</small></div>
+    <div class="task" title="任务">任务：<b>把江南贡泉铺进观前街周边 3 公里的餐馆，2 个地推，做 4 周</b></div>
+    <div class="seg" role="group" aria-label="商圈">
+      <button type="button" disabled>狮山</button><button type="button" aria-pressed="true">观前街</button><button type="button" disabled>李公堤</button>
+    </div>
+    <div class="runmeta"><span class="chip plain">回放</span><span class="chip brand"><span class="dot"></span>判断者 规则</span><span class="mono" id="runid"></span></div>
+  </header>
+
+  <nav class="line" aria-label="关卡">
+    <ol id="stations"></ol>
+  </nav>
+
+  <div class="work">
+    <section class="panel" aria-labelledby="map-t">
+      <div class="panel-h">
+        <div><h2 id="map-t">去哪里 · 商圈与终端</h2><div class="sub" id="map-sub"></div></div>
+        <div class="seg" role="group" aria-label="网格着色">
+          <button type="button" aria-pressed="true" data-color="n">目标店密度</button><button type="button" aria-pressed="false" data-color="int">竞争强度</button>
+        </div>
+      </div>
+      <div class="map-wrap"><svg id="map" viewBox="0 0 640 640" role="img" aria-label="观前街周边 3 公里网格地图"></svg></div>
+      <div class="legend" id="legend"></div>
+    </section>
+
+    <aside class="panel insp" aria-label="终端详情" id="insp"></aside>
+  </div>
+
+  <section class="panel" aria-labelledby="pack-t">
+    <div class="panel-h">
+      <div><h2 id="pack-t">作战包 · 终端清单</h2><div class="sub" id="pack-sub"></div></div>
+      <div class="filters" id="filters"></div>
+    </div>
+    <div class="tbl"><table>
+      <thead><tr><th>等级</th><th>店名</th><th>业态</th><th>商圈</th><th class="num">距离</th><th class="num">分数</th><th>下一步</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table></div>
+    <div class="foot"><div id="pack-foot"></div><span>坐标系 GCJ-02 · 数据来源 高德 Web 服务</span></div>
+  </section>
+</div>
+
+<script src="sample-data.js"></script>
+<script>
+const D = window.SAMPLE;
+const $ = s => document.querySelector(s);
+const el = (t, a = {}, h = "") => { const e = document.createElement(t); Object.entries(a).forEach(([k, v]) => e.setAttribute(k, v)); e.innerHTML = h; return e; };
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const SCENES = { "scene-1": "应酬酒局", "scene-2": "海鲜配啤酒", "scene-3": "家庭常备", "scene-4": "火锅烧烤重口味", "scene-5": "节庆送礼" };
+const SP = { "natural-soda": "天然苏打", "low-sodium": "低钠弱碱 pH8.1", "meal-companion": "场景标配" };
+
+$("#runid").textContent = D.run.slice(0, 15);
+
+/* stations */
+const sel = D.grids.filter(g => g.sel);
+const cnt = k => D.terminals.filter(t => t.g === k).length;
+const inten = sel.reduce((m, g) => (m[g.intensity] = (m[g.intensity] || 0) + 1, m), {});
+const STATIONS = [
+  ["L0", "立项", `${D.radius / 1000} km · ${D.people} 人 × ${D.weeks} 周`],
+  ["L1", "卖给谁", `P1 ${D.channels.filter(c => c.p === "P1").length} 个业态 · P2 ${D.channels.filter(c => c.p === "P2").length}`],
+  ["L2", "去哪里", `${D.grids.length} 个网格 → 选 ${sel.length}`, "gate"],
+  ["L2C", "对手在哪", `高 ${inten["高"] || 0} · 中 ${inten["中"] || 0} · 低 ${inten["低"] || 0}`],
+  ["L3", "进哪家", `A ${cnt("A")} · B ${cnt("B")} · C ${cnt("C")}`, "gate"],
+  ["L3P", "谁来供货", `推荐 ${D.partners.length} 家 · 缺口 0`],
+  ["L4", "怎么说", "话术与桌牌 · 合规通过"],
+  ["PACK", "作战包", `${D.counts.days} 个人日 · 待办 ${D.counts.backlog}`, "pack"],
+];
+const ol = $("#stations");
+STATIONS.forEach(([id, q, sum, kind], i) => {
+  const s = D.stages.find(x => x.id === id) || {};
+  const li = el("li", { class: `station ${kind || ""}`, "aria-current": id === "L3" ? "true" : "false" });
+  const auto = s.approved_by ? `<span class="chip review">${s.approved_by === "auto (demo)" ? "自动放行 · 演示" : "人工确认"}</span>` : "";
+  li.innerHTML = `<button type="button"><span class="node"><span>${id}</span></span>
+    <span class="q">${q}</span><span class="sum mono">${esc(sum)}</span>
+    <span class="st"><span class="chip ${s.status === "passed" ? "brand" : "stamp"}"><span class="dot"></span>${s.status === "passed" ? "通过" : "打回"} · ${s.attempts} 次</span>${auto}</span></button>`;
+  ol.append(li);
+});
+
+/* projection: metres from centre */
+const [lat0, lon0] = D.center;
+const kx = Math.cos(lat0 * Math.PI / 180) * 111320, ky = 110540;
+const toM = (lat, lon) => [(lon - lon0) * kx, (lat - lat0) * ky];
+const CELL = 500;
+/* infer how zone ids map to grid indices from the real terminal positions */
+const cands = [];
+for (const f of [Math.floor, Math.round]) for (const order of ["xy", "yx"]) cands.push({ f, order });
+const fit = c => D.terminals.reduce((n, t) => { const [x, y] = toM(t.lat, t.lon); const a = c.f(x / CELL), b = c.f(y / CELL); return n + ((c.order === "xy" ? `${a}:${b}` : `${b}:${a}`) === t.zone); }, 0);
+const best = cands.map(c => [fit(c), c]).sort((a, b) => b[0] - a[0])[0][1];
+const cellXY = id => { const [p, q] = id.split(":").map(Number); const [i, j] = best.order === "xy" ? [p, q] : [q, p]; const o = best.f === Math.round ? -.5 : 0; return [(i + o) * CELL, (j + o) * CELL]; };
+
+const R = D.radius + 250, S = 640 / (2 * R);
+const px = ([x, y]) => [320 + x * S, 320 - y * S];
+const svg = $("#map");
+const NS = "http://www.w3.org/2000/svg";
+const sv = (t, a) => { const e = document.createElementNS(NS, t); Object.entries(a).forEach(([k, v]) => e.setAttribute(k, v)); return e; };
+/* quartile breaks over non-empty cells so the ramp actually separates dense from sparse */
+const nz = D.grids.map(g => g.n).filter(n => n > 0).sort((a, b) => a - b);
+const qb = [.25, .5, .75].map(q => nz[Math.floor(q * (nz.length - 1))]);
+const heatN = n => n === 0 ? 0 : 1 + qb.filter(b => n > b).length;
+const heatI = g => ({ "低": 1, "中": 2, "高": 4 }[g.intensity] || 0);
+let colorBy = "n";
+const gCells = sv("g", {}), gTerms = sv("g", {}), gTop = sv("g", {});
+svg.append(gCells, sv("circle", { class: "ring", cx: 320, cy: 320, r: D.radius * S }), gTerms, gTop);
+
+function drawCells() {
+  gCells.innerHTML = "";
+  D.grids.forEach(g => {
+    const [x, y] = cellXY(g.id); const [X, Y] = px([x, y + CELL]);
+    const lvl = colorBy === "n" ? heatN(g.n) : (g.sel ? heatI(g) : 0);
+    const r = sv("rect", { class: `cell${g.sel ? " sel" : ""}`, x: X, y: Y, width: CELL * S, height: CELL * S, fill: `var(--c-heat-${lvl})` });
+    r.append(sv("title", {})); r.firstChild.textContent = `网格 ${g.id} · ${g.tier} · ${g.type} · 目标店 ${g.n}${g.sel ? ` · 选中第 ${g.rank} · 竞争${g.intensity} · ${g.strategy}` : ""}`;
+    gCells.append(r);
+  });
+  gTop.innerHTML = "";
+  gTop.append(sv("path", { d: "M314 320h12M320 314v12", stroke: "var(--c-stamp)", "stroke-width": 2 }));
+  sel.forEach(g => {
+    const [x, y] = cellXY(g.id); const [X, Y] = px([x, y + CELL]);
+    gTop.append(sv("rect", { x: X - 9, y: Y - 9, width: 18, height: 18, fill: "var(--c-ink)" }));
+    const t = sv("text", { class: "rank", x: X, y: Y + 4, "text-anchor": "middle", fill: "var(--c-sheet)", style: "fill:var(--c-sheet)" }); t.textContent = g.rank; gTop.append(t);
+  });
+  const bar = sv("g", {}); const L = 1000 * S;
+  bar.append(sv("path", { d: `M20 616h${L}`, stroke: "var(--c-ink)", "stroke-width": 2 }));
+  const bt = sv("text", { class: "axis", x: 20, y: 608 }); bt.textContent = "1 km"; bar.append(bt); gTop.append(bar);
+  legend();
+}
+function legend() {
+  const ramp = [0, 1, 2, 3, 4].map(i => `<i class="sw" style="background:var(--c-heat-${i});width:14px"></i>`).join("").replace(/margin-right:6px/g, "");
+  $("#legend").innerHTML = `<span>${ramp.replace(/<i /g, '<i style="margin-right:0" ')} ${colorBy === "n" ? "目标业态店数（每格 500 m）" : "竞争强度（仅选中商圈，代理指标）"}</span>
+    <span><i class="sw" style="border:2px solid var(--c-ink);height:12px;width:16px"></i>选中商圈与排名</span>
+    <span><svg width="10" height="10"><circle cx="5" cy="5" r="4" fill="var(--c-grade-a)"/></svg> A</span>
+    <span><svg width="10" height="10"><circle cx="5" cy="5" r="3.5" fill="none" stroke="var(--c-grade-b)" stroke-width="1.6"/></svg> B</span>
+    <span><svg width="10" height="10"><circle cx="5" cy="5" r="2" fill="var(--c-grade-c)"/></svg> C</span>
+    <span>虚线 半径 ${D.radius / 1000} km</span>`;
+}
+function drawTerms() {
+  gTerms.innerHTML = "";
+  ["C", "B", "A"].forEach(k => D.terminals.filter(t => t.g === k).forEach(t => {
+    const [X, Y] = px(toM(t.lat, t.lon));
+    const c = sv("circle", { class: `term ${k}${t.id === cur ? " on" : ""}`, cx: X.toFixed(1), cy: Y.toFixed(1), r: k === "A" ? 4 : k === "B" ? 3.5 : 2, tabindex: k === "C" ? -1 : 0 });
+    c.append(sv("title", {})); c.firstChild.textContent = `${t.g} · ${t.name} · ${t.ch}`;
+    c.addEventListener("click", () => pick(t.id));
+    gTerms.append(c);
+  }));
+}
+document.querySelectorAll("[data-color]").forEach(b => b.addEventListener("click", () => {
+  colorBy = b.dataset.color; document.querySelectorAll("[data-color]").forEach(x => x.setAttribute("aria-pressed", x === b)); drawCells();
+}));
+$("#map-sub").textContent = `${D.counts.pois} 家餐饮点位 · ${D.grids.length} 个 500 m 网格 · 选中 ${sel.length} 个`;
+
+/* inspector */
+let cur = D.trace.id;
+const layersOf = arr => `<span class="layers" aria-label="五层检查">${(arr || ["passed", "passed", "passed", "needs_review", "passed"]).map(s => `<i class="${s === "needs_review" ? "rv" : s === "passed" ? "" : "fl"}" title="${s}"></i>`).join("")}</span>`;
+function pick(id) {
+  cur = id; const t = D.terminals.find(x => x.id === id);
+  const g = D.grids.find(x => x.id === t.zone) || {};
+  const ch = D.channels.find(c => c.name === t.ch) || {};
+  const part = D.partners.find(p => p.zone === t.zone);
+  const tr = id === D.trace.id ? D.trace.chain : null;
+  const W = { channel_weight: "业态权重", zone_rank: "商圈排名", distance_decay: "距离", data_completeness: "资料完整度" };
+  const bars = Object.entries(t.sc).map(([k, v]) => `<span>${W[k] || k}</span><span class="t"><i style="width:${(v * 100).toFixed(0)}%"></i></span><span class="mono">${v.toFixed(2)}</span>`).join("");
+  const act = { "首访-带样品和桌牌": "首访，带样品和桌牌", "首访-了解需求": "首访，先了解需求", "暂缓": "暂缓" }[t.act] || t.act;
+  const L = k => tr && tr[k] ? tr[k].layers : null;
+  $("#insp").innerHTML = `
+    <div class="store">
+      <span class="grade ${t.g}">${t.g}</span>
+      <h3>${esc(t.name)}</h3>
+      <div class="score"><b>${t.s.toFixed(2)}</b><span>综合分</span></div>
+      <div class="meta">${esc(t.ch)} · ${zoneLabel(t.zone)} · 距中心 <span class="mono">${t.d}</span> m</div>
+    </div>
+    <div class="action"><span class="k">下一步</span>${act}</div>
+    <ol class="chain" aria-label="证据链">
+      <li><span class="pin">L3</span><div><div class="hd"><b>为什么给 ${t.g} 级</b><span class="src">代码打分 · 分位分级</span>${layersOf(L("score_components"))}</div><div class="bars">${bars}</div></div></li>
+      <li><span class="pin">L2</span><div><div class="hd"><b>所在商圈排第 ${g.rank ?? "—"}</b><span class="src">${g.tier ?? ""} · ${g.type ?? ""}</span>${layersOf(L("zone"))}</div><p>网格内目标业态店 <span class="mono">${g.n}</span> 家${g.sel ? "，入选本次铺市范围" : "，未入选"}</p></div></li>
+      <li><span class="pin">2C</span><div><div class="hd"><b>竞争${g.intensity ?? "—"} · ${g.strategy ?? "—"}切入</b><span class="src">代理指标：竞品点位 + 便利店 + 商超</span>${layersOf(L("competition"))}</div><p>店内现售哪家饮料，高德查不到，首访确认。</p></div></li>
+      <li><span class="pin">L1</span><div><div class="hd"><b>${esc(t.ch)} 是 ${ch.p ?? "—"} 业态</b><span class="src">档案场景 ${(ch.scenes || []).map(s => SCENES[s] || s).join("、")}</span>${layersOf(L("channel"))}</div><p>卖点：${((tr && tr.channel && tr.channel.data.selling_point_ids) || ["natural-soda", "low-sodium"]).map(s => SP[s] || s).join("、")}　出处 <span class="mono">dongting-brief.md#B-使用场景</span></p></div></li>
+      <li><span class="pin">3P</span><div><div class="hd"><b>建议供货方</b><span class="src">${part ? esc(part.type) + " · 覆盖本商圈 " + part.cov + " 家" : "—"}</span>${layersOf(L("supply"))}</div><p>${part ? esc(part.name) + "，最远配送 <span class='mono'>" + Math.round(part.maxd) + "</span> m。资质与供货能力待核实。" : "本商圈无推荐伙伴，计入招商缺口。"}</p></div></li>
+    </ol>
+    <div class="open"><b>待首访确认</b><ul><li>店内现售佐餐饮料品牌</li><li>毛利、价格带与首单政策（档案未提供，不编造）</li></ul></div>
+    ${(() => { const m = D.materials[t.id]; return m
+      ? `<div class="pitch"><div class="hd"><b>进店话术</b> <span class="chip ${m.ok ? "brand" : "stamp"}"><span class="dot"></span>${m.ok ? "合规扫描通过" : "合规未通过"}</span></div><blockquote>${esc(m.pitch.length > 150 ? m.pitch.slice(0, 150) + "…" : m.pitch)}</blockquote><div class="card">${esc(m.card)}</div></div>`
+      : `<div class="pitch"><div class="hd"><b>进店话术</b> <span class="chip plain">未生成</span></div><p class="sub">${t.g === "C" ? "C 级暂缓，不生成话术。" : "本店不在话术范围内。"}</p></div>`; })()}`;
+  drawTerms(); rows();
+}
+
+/* pack table */
+let gf = new Set(["A", "B"]), page = 0;
+const PER = 12;
+const ACT = { "首访-带样品和桌牌": ["brand", "带样品首访"], "首访-了解需求": ["plain", "先了解需求"], "暂缓": ["review", "暂缓"] };
+const zoneLabel = id => { const g = D.grids.find(x => x.id === id); return g && g.sel ? `商圈 ${g.rank}` : "—"; };
+function rows() {
+  const list = D.terminals.filter(t => gf.has(t.g)).sort((a, b) => b.s - a.s);
+  const pages = Math.max(1, Math.ceil(list.length / PER)); page = Math.min(page, pages - 1);
+  $("#rows").innerHTML = list.slice(page * PER, page * PER + PER).map(t => { const [c, a] = ACT[t.act] || ["plain", t.act]; return `<tr data-id="${t.id}" class="${t.id === cur ? "on" : ""}"><td><span class="g ${t.g}">${t.g}</span></td><td class="nm">${esc(t.name)}<span class="ch-m"> · ${esc(t.ch)}</span></td><td class="c-ch">${esc(t.ch)}</td><td class="c-z">${zoneLabel(t.zone)}</td><td class="num mono c-d">${t.d} m</td><td class="num mono">${t.s.toFixed(2)}</td><td><span class="chip ${c}">${a}</span></td></tr>`; }).join("");
+  $("#pack-foot").innerHTML = `<span class="pager"><button type="button" data-p="-1" ${page === 0 ? "disabled" : ""}>上一页</button><span class="mono">${page + 1} / ${pages}</span><button type="button" data-p="1" ${page >= pages - 1 ? "disabled" : ""}>下一页</button></span><span>共 ${list.length} 家</span>`;
+}
+$("#pack-foot").addEventListener("click", e => { const b = e.target.closest("[data-p]"); if (b) { page += +b.dataset.p; rows(); } });
+$("#rows").addEventListener("click", e => { const tr = e.target.closest("tr"); if (tr) pick(tr.dataset.id); });
+$("#filters").innerHTML = ["A", "B", "C"].map(k => `<button type="button" data-g="${k}" aria-pressed="${gf.has(k)}">${k} 级 <span class="mono">${cnt(k)}</span></button>`).join("");
+$("#filters").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; const k = b.dataset.g; gf.has(k) ? gf.delete(k) : gf.add(k); b.setAttribute("aria-pressed", gf.has(k)); page = 0; rows(); });
+$("#pack-sub").textContent = `A+B ${cnt("A") + cnt("B")} 家排进 ${D.counts.days} 个人日（${D.people} 人 × ${D.weeks} 周）· 待办 ${D.counts.backlog}`;
+
+drawCells(); pick(cur);
+</script>
+</body>
+</html>
