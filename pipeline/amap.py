@@ -50,7 +50,7 @@ from datetime import datetime, timezone, timedelta
 
 AREAS = {'shishan': '苏州高新区狮山路商圈', 'guanqian': '苏州姑苏区观前街', 'ligongdi': '苏州工业园区李公堤'}
 SUBTYPES = {'050119': ['海鲜'], '050117': ['火锅'], '050101': ['酒楼'], '050300': ['简餐']}
-MAPPING_NOTE = 'rules：映射配置见params.amap_classification；高德type明确子类型优先，再050119海鲜、050117火锅、050101酒楼、050300简餐类型码，最后档案名称规则；050118不直接映射烧烤；未知归其他餐饮；不推断营业时段或宴会能力。'
+MAPPING_NOTE = 'rules：映射配置及来源见params.amap_classification；高德type明确子类型及菜系别名优先，再类型码，再有来源的精确店名及菜系名称规则、档案名称规则；050118不直接映射烧烤；未知归其他餐饮；不推断营业时段或宴会能力。'
 
 
 def load_key(root):
@@ -107,6 +107,8 @@ class AmapAdapter:
 
     def subtypes(self, code, text):
         matched = [word for word in self.mapping['type_keywords'] if word in text]
+        if not matched:
+            matched = [value for word, value in self.mapping.get('subtype_aliases', {}).items() if word in text]
         return matched or ([self.mapping['typecode_subtypes'][code]] if code in self.mapping['typecode_subtypes'] else [])
 
     def normalize(self, payload, site, radius_m):

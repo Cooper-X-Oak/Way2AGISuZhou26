@@ -1,6 +1,5 @@
 import re
 from pipeline.contracts import Brief, validate, violation
-from pipeline.sources import SITE_NOTE
 from pipeline.common import decide, provenance
 from pipeline.profiles import PROFILE_DIR
 
@@ -46,7 +45,7 @@ def run(inputs):
                     "输出 lat,lon,radius_m,profile_id,delivery_people,weeks,visits_per_person_day,planned_visits_day,questions[]；未知=null，不得改变supplied；不计算人数乘积。")
     if result.get("planned_visits_day") is None and all(type(result.get(k)) is int for k in ("delivery_people", "visits_per_person_day")):
         result["planned_visits_day"] = result["delivery_people"] * result["visits_per_person_day"]
-    result.update(request=inputs["request"], judged_by=inputs["judge"].label.split(":", 1)[0], site_note=SITE_NOTE,
+    result.update(request=inputs["request"], judged_by=inputs["judge"].label.split(":", 1)[0], site_note=inputs['site'].get('site_note', inputs['site']['location_note']),
                   location_note=inputs["site"]["location_note"], assumptions=assumptions)
     from pipeline.quality import meta
     result.update(meta(inputs, ["profile:"+inputs["profile"]["id"]], opened=["来源："+a for a in assumptions]))
@@ -75,7 +74,7 @@ def check(artifact, inputs):
     pid = artifact["profile_id"]
     if not pid or not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", pid) or not (PROFILE_DIR / f"{pid}.yaml").is_file():
         errors.append(violation("profile", "profile_id", "产品档案不存在"))
-    if artifact["site_note"] != SITE_NOTE or artifact["request"] != inputs["request"] or artifact["location_note"] != inputs["site"]["location_note"] or artifact["assumptions"] != assumptions:
+    if artifact["site_note"] != inputs['site'].get('site_note', inputs['site']['location_note']) or artifact["request"] != inputs["request"] or artifact["location_note"] != inputs["site"]["location_note"] or artifact["assumptions"] != assumptions:
         errors.append(violation("provenance", "brief", "来源、需求或假设说明被改写"))
     return errors
 

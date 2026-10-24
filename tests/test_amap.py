@@ -213,7 +213,9 @@ def test_network_failure_is_counted(tmp_path,monkeypatch):
 
 def test_reason_does_not_republish_merchant_claims():
     from pipeline.l3 import reason
-    p={'id':'amap:test','name':'第一合成样本'}
-    value=reason(p,{'channel_id':'hotpot','priority':'P1'},{'zone_id':'grid:test','type':'混合','rank':1})
-    assert 'amap:test' in value and '第一' not in value
+    from pipeline.profiles import load
+    p={'id':'amap:test','name':'第一合成样本','lat':31.28,'lon':120.55}
+    c={'profile':load('jiangnan-gongquan'),'brief':{'lat':31.28,'lon':120.55}}
+    value=reason(p,{'channel_id':'hotpot','priority':'P1'},{'zone_id':'grid:test','type':'混合','tier':'社区级','rank':1},c)
+    assert '火锅' in value and '第一' not in value and 'amap:test' not in value
     assert p['name']=='第一合成样本'

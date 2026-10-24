@@ -49,6 +49,13 @@ def channel_for(poi, profile):
         for c in profile['channels']:
             if poi['category'] in c['categories'] and c.get('pattern') and re.search(c['pattern'],subtypes,re.I):
                 return c
+        mapping=AmapAdapter().mapping
+        name=poi.get('name') or ''
+        named=[r['subtype'] for r in mapping.get('named_restaurants',[]) if re.fullmatch(re.escape(r['name'])+r'(?:[（(][^（）()]+[）)])?',name)]
+        name_subtypes=' '.join(named+[value for word,value in mapping.get('name_subtypes',{}).items() if word in name])
+        for c in profile['channels']:
+            if poi['category'] in c['categories'] and c.get('pattern') and re.search(c['pattern'],name_subtypes,re.I):
+                return c
     text = " ".join(str(poi.get(k) or "") for k in ("name", "restaurant_types")) + " " + str(poi.get("tags", {}).get("cuisine", ""))
     for c in profile["channels"]:
         if poi["category"] not in c["categories"]: continue

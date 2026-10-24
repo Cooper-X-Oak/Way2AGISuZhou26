@@ -13,6 +13,9 @@ def candidates(c):return {p['id']:p for p in c.get('market',{}).get('partners',[
 def kind(p,c):
     text=(p.get('name') or '')+' '+p.get('tags',{}).get('type','')
     code=p.get('tags',{}).get('typecode','')
+    exclusion=c['params']['partners']['retail_exclusion']
+    if any(word in text for word in exclusion['keywords']) or any(str(code).startswith(prefix) for prefix in exclusion['typecode_prefixes']):
+        return '其他'
     for rule in c['params']['partners']['classification']:
         if any(s in text for s in rule['keywords']) or code in rule['typecodes']:return rule['kind']
     return '其他'
@@ -45,7 +48,7 @@ def recommended(c):
     return result
 
 
-def reason(p,k,ids,c):return f"POI={p['id']}；名称/类型规则分类={k}；{c['params']['partners']['coverage_radius_m']}米内A/B终端数={len(ids)}；供货资质待核实。"
+def reason(p,k,ids,c):return f"依据名称和类型，暂归为{k}；{c['params']['partners']['coverage_radius_m']}米内有{len(ids)}家A/B级终端。" + ('零售业态或供货类型不明，暂不推荐为供货方。' if k=='其他' else '可作为供货候选，供货资质与配送能力待核实。')
 
 
 def run(c):

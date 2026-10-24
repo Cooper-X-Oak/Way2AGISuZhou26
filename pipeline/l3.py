@@ -43,19 +43,20 @@ def ranked(c):
     return values
 
 
-def reason(p,ch,z):
-    # Merchant names remain verbatim in pois.json; reasons use IDs to avoid republishing
-    # promotional claims embedded in source names. Compliance checks remain unchanged.
-    return f"POI={p['id']}；业态={ch['channel_id']}；优先级={ch['priority']}；商圈={z['zone_id']}；类型={z['type']}；排名={z['rank']}。"
+def reason(p,ch,z,c):
+    # Use controlled profile labels, not promotional claims in merchant names.
+    label=next(row['name'] for row in c['profile']['channels'] if row['id']==ch['channel_id'])
+    meters=round(distance(c['brief']['lat'],c['brief']['lon'],p['lat'],p['lon']))
+    return f"{label}，属{ch['priority']}业态；位于商圈{z['rank']}（{z['tier']}{z['type']}），距参考中心{meters}米。"
 
 
 def run(c):
     rows=candidates(c)
     def rules():
         return {'decision':'在选中商圈内按渠道、排名、距离和资料完整度确定首访动作。',
-                'items':[dict(poi_id=p['id'],channel_id=ch['channel_id'],zone_id=z['zone_id'],reason=reason(p,ch,z),
+                'items':[dict(poi_id=p['id'],channel_id=ch['channel_id'],zone_id=z['zone_id'],reason=reason(p,ch,z,c),
                               **meta(c,['poi:'+p['id'],'L1:'+ch['channel_id'],'L2:'+z['zone_id'],'params.scoring'])) for p,ch,z in rows]}
-    decision=decide(c,'L3',{'candidates':[dict(poi=p,channel=ch,zone=z,allowed_reason=reason(p,ch,z)) for p,ch,z in rows]},rules,
+    decision=decide(c,'L3',{'candidates':[dict(poi=p,channel=ch,zone=z,allowed_reason=reason(p,ch,z,c)) for p,ch,z in rows]},rules,
                     '返回decision,items，每项poi_id,channel_id,zone_id,reason,evidence,judged_by,confidence,open；reason只能使用候选的allowed_reason原文，不计算分数等级。')
     lookup=ranked(c)
     for r in decision['items']:
@@ -85,7 +86,7 @@ def business(a,c):
     for r in a['items']:
         p,ch,z=rows[r['poi_id']]
         if any(r[k]!=v for k,v in expected[r['poi_id']].items()):out.append(violation('score','score_components/score/grade/next_action','与代码重算不一致'))
-        if r['reason']!=reason(p,ch,z):out.append(violation('reason','reason','理由只能使用该POI已知字段'))
+        if r['reason']!=reason(p,ch,z,c):out.append(violation('reason','reason','理由只能使用该POI已知字段'))
         if r['grade'] in ('A','B') and not any('现售佐餐饮料品牌待首访确认' in s for s in r['open']):out.append(violation('stock_open','open','A/B终端缺少现售品牌待确认项'))
     for z in shortage(a,c):out.append(violation('zone_shortage',z,'A+B终端数不足 params.min_terminals_per_zone；必须回退L2'))
     return out
