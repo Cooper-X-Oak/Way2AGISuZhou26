@@ -248,6 +248,26 @@ def test_exception_retains_candidate(raw,tmp_path,monkeypatch):
     assert 'secret provider' not in (directory/'ledger.jsonl').read_text(encoding='utf-8')
 
 
+def test_run_storage_preserves_retries_and_verifiable_references(raw,tmp_path):
+    from pipeline.io import resolve
+    raw['demo_replay']='compliance'
+    directory,state=execute(raw,tmp_path)
+    assert state['status']=='completed'
+    for entry in ledger(directory):
+        if 'attempt' not in entry:continue
+        attempt=resolve(entry['artifact_ref'],directory)
+        report=resolve(entry['check_ref'],directory)
+        assert attempt['violations']==entry['violations']==report['violations']
+        assert attempt['artifact']['judged_by']==entry['judged_by']
+    snapshot=read(directory/'inputs.json')
+    for key in ('pois','coverage','profile','params'):
+        assert snapshot[key]==read(directory/f'{key}.json')==raw[key]
+    assert read(directory/'PACK.json')['trace']==read(directory/'trace.json')
+    # Trace ancestors refer to shared content; the full upstream is not copied.
+    assert (directory/'trace.json').stat().st_size<512
+    assert (directory/'attempts/PACK-r1-1.json').stat().st_size<512
+
+
 def test_interactive_accept_and_decline(raw,tmp_path,monkeypatch):
     raw['auto_approve']=False
     monkeypatch.setattr('builtins.input',lambda prompt:'no')

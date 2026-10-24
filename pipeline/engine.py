@@ -7,7 +7,7 @@ import uuid
 from copy import deepcopy
 from pathlib import Path
 from pipeline import l0,l1,l2,l2c,l3,l3p,l4,pack
-from pipeline.io import now,write
+from pipeline.io import now,write,RunStore
 
 STAGES=(("L0",l0),("L1",l1),("L2",l2),("L2C",l2c),("L3",l3),("L3P",l3p),("L4",l4),("PACK",pack))
 NAMES={'L0':'brief','L1':'channels','L2':'zones','L2C':'competition','L3':'terminals','L3P':'partners','L4':'materials','PACK':'pack'}
@@ -16,15 +16,18 @@ NAMES={'L0':'brief','L1':'channels','L2':'zones','L2C':'competition','L3':'termi
 def execute(inputs,root=Path('.'),stages=STAGES):
     run_id=now().replace(':','').replace('-','').replace('.','')+'-'+uuid.uuid4().hex[:8]
     directory=Path(root)/'runs'/run_id;directory.mkdir(parents=True,exist_ok=False)
+    store=RunStore(directory)
+    # Storage-only transformation: gates and retry feedback keep full objects.
+    persist=store.write
     public=deepcopy({k:v for k,v in inputs.items() if k!='judge'})
     sources={}
     for row in inputs['profile']['scenes']+inputs['profile']['selling_points']:
         file=row['source'].split('#')[0]
         sources[file]=Path(file).read_text(encoding='utf-8')
     public['source_documents']=sources
-    write(directory/'inputs.json',public);write(directory/'params.json',inputs['params'])
-    write(directory/'pois.json',inputs['pois']);write(directory/'coverage.json',inputs['coverage']);write(directory/'profile.json',inputs['profile'])
-    write(directory/'market.json',public.get('market',{'competitors':[],'partners':[],'open':['来源：未提供市场缓存。']}))
+    persist(directory/'inputs.json',public);persist(directory/'params.json',inputs['params'])
+    persist(directory/'pois.json',inputs['pois']);persist(directory/'coverage.json',inputs['coverage']);persist(directory/'profile.json',inputs['profile'])
+    persist(directory/'market.json',public.get('market',{'competitors':[],'partners':[],'open':['来源：未提供市场缓存。']}))
     c={**deepcopy(public),'judge':inputs['judge'],'approvals':{},'checks':{},'excluded_zones':[]}
     state=dict(run_id=run_id,status='running',started_at=now(),judged_by=inputs['judge'].label.split(':',1)[0],
                input_sha256=hashlib.sha256(json.dumps(public,sort_keys=True,ensure_ascii=False).encode()).hexdigest(),
@@ -54,7 +57,7 @@ def execute(inputs,root=Path('.'),stages=STAGES):
                 c['params']['min_terminals_per_zone']=min(totals.values())+1
                 c['params']['sources']['min_terminals_per_zone']='来源：--demo-replay backtrack 演示配置，固定为首轮最小A+B数+1；后续不降低'
                 c['seeded_backtrack']=True
-                write(directory/'params.json',c['params'])
+                persist(directory/'params.json',c['params'])
                 ledger(dict(event='demo_configuration',stage='L3',seeded_for_demo=True,parameter='min_terminals_per_zone',before=before,after=c['params']['min_terminals_per_zone']))
         restart=False;passed=False
         for attempt in range(1,4):
@@ -65,7 +68,7 @@ def execute(inputs,root=Path('.'),stages=STAGES):
                 report=module.inspect(artifact,c)
                 if name in ('L2','L3') and not c.get('auto_approve') and {v['code'] for v in report['violations']}=={'approval_pending'}:
                     preview=directory/f'pending/{name}-r{revision}.json'
-                    write(preview,{'artifact':artifact,'check':report,**({'competition_summary':l2c.preview(c,artifact)} if name=='L2' else {})})
+                    persist(preview,{'artifact':artifact,'check':report,**({'competition_summary':l2c.preview(c,artifact)} if name=='L2' else {})})
                     try:approved=input(f'{name} 待确认：{preview}；输入 yes 确认，其他输入停止：').strip().lower()=='yes'
                     except EOFError:approved=False
                     if approved:c['approvals'][name]='human';report=module.inspect(artifact,c)
@@ -80,14 +83,16 @@ def execute(inputs,root=Path('.'),stages=STAGES):
                        duration_seconds=round(time.perf_counter()-started,6),artifact_path=filename,check_path=f'checks/{name}-r{revision}-{attempt}.json',
                        judged_by=artifact.get('judged_by') if artifact else None,approved_by=c['approvals'].get(name),
                        seeded_for_demo=bool(c.get('seeded_backtrack') or artifact and artifact.get('seeded_for_demo')))
-            write(directory/filename,{'artifact':artifact,'check':report,'violations':violations})
-            write(directory/entry['check_path'],report);write(directory/f'{name}.check.json',report);ledger(entry)
+            persist(directory/filename,{'artifact':artifact,'check':report,'violations':violations})
+            persist(directory/entry['check_path'],report);persist(directory/f'{name}.check.json',report)
+            entry.update(artifact_ref=store.reference(directory/filename),check_ref=store.reference(directory/entry['check_path']))
+            ledger(entry)
             if artifact is not None:
-                write(directory/f'{name}.json',artifact)
-                if name=='L0':write(directory/'brief.json',artifact)
+                persist(directory/f'{name}.json',artifact)
+                if name=='L0':persist(directory/'brief.json',artifact)
             if not violations:
                 key='brief' if name=='L0' else name.lower();c[key]=artifact;c['checks'][name]=report
-                write(directory/f'{NAMES[name]}.json',artifact)
+                persist(directory/f'{NAMES[name]}.json',artifact)
                 if name not in state['completed_stages']:state['completed_stages'].append(name)
                 passed=True;break
             codes={v['code'] for v in violations}
@@ -116,7 +121,7 @@ def execute(inputs,root=Path('.'),stages=STAGES):
         if not passed:return stop(name,violations)
         index+=1
     if 'pack' in c:
-        write(directory/'trace.json',c['pack']['trace'])
+        persist(directory/'trace.json',c['pack']['trace'])
         fields=['poi_id','channel_id','zone_id','score','grade','next_action','reason','suggested_partner_id','supply_status','supply_distance_m']
         with (directory/'terminals.csv').open('w',encoding='utf-8-sig',newline='') as f:
             writer=csv.DictWriter(f,fieldnames=fields,extrasaction='ignore');writer.writeheader()
