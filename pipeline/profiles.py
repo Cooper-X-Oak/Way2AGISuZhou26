@@ -38,3 +38,27 @@ def load(profile_id, directory=PROFILE_DIR):
 
 def parameters():
     return yaml.safe_load(Path(__file__).with_name("params.yaml").read_text(encoding="utf-8"))
+
+
+def source_path(reference, root=Path("."), work_dir=None):
+    """Resolve historical source IDs without requiring private work documents."""
+    relative = reference.split("#", 1)[0]
+    root = Path(root)
+    path = root / relative
+    if work_dir is not None and relative.startswith(".work/"):
+        path = Path(work_dir) / relative[len(".work/"):]
+    if path.is_file():
+        return path
+    public_files = {".work/handbook/dongting-brief.md": "dongting-brief.md",
+                    ".work/handbook/handbook.md": "handbook.md"}
+    if relative in public_files:
+        import hashlib
+        import json
+        directory = root / "docs/product-sources"
+        manifest = json.loads((directory / "manifest.json").read_text(encoding="utf-8"))
+        filename = public_files[relative]
+        expected = next(row["sha256"] for row in manifest["files"] if row["file"] == filename)
+        path = directory / filename
+        if hashlib.sha256(path.read_bytes()).hexdigest() != expected:
+            raise ValueError(f"Published source SHA-256 mismatch: {filename}")
+    return path

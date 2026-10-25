@@ -8,6 +8,7 @@ from copy import deepcopy
 from pathlib import Path
 from pipeline import l0,l1,l2,l2c,l3,l3p,l4,pack
 from pipeline.io import now,write,RunStore
+from pipeline.profiles import source_path
 
 STAGES=(("L0",l0),("L1",l1),("L2",l2),("L2C",l2c),("L3",l3),("L3P",l3p),("L4",l4),("PACK",pack))
 NAMES={'L0':'brief','L1':'channels','L2':'zones','L2C':'competition','L3':'terminals','L3P':'partners','L4':'materials','PACK':'pack'}
@@ -24,7 +25,7 @@ def execute(inputs,root=Path('.'),stages=STAGES,*,run_id=None,observer=None,appr
     sources={}
     for row in inputs['profile']['scenes']+inputs['profile']['selling_points']:
         file=row['source'].split('#')[0]
-        sources[file]=(Path(source_root)/file).read_text(encoding='utf-8')
+        sources[file]=source_path(file, source_root).read_text(encoding='utf-8')
     public['source_documents']=sources
     persist(directory/'inputs.json',public);persist(directory/'params.json',inputs['params'])
     persist(directory/'pois.json',inputs['pois']);persist(directory/'coverage.json',inputs['coverage']);persist(directory/'profile.json',inputs['profile'])

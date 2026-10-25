@@ -10,6 +10,17 @@
 
 面向区域渠道经理，用产品档案回答“卖给谁 → 去哪里 → 进哪家 → 怎么说”，输出可汇报、可执行的铺市作战包。产品差异保存在 `profiles/<id>.yaml`；引擎没有按品牌 id 分支。当前开发分支 `feat/pipeline`，Python 3.11+，uv；只提供数据、Python 与 JSON，不做 UI 或部署。
 
+## 独立环境演示
+
+仓库包含三个商圈的高德缓存及 `docs/product-sources/` 产品文本。无需复制原作者 `.work/`，无需高德或 LLM 密钥。Python 3.11+，安装 uv 后在仓库根目录执行：
+
+```powershell
+uv sync --locked
+uv run python -m pipeline run --area shishan --offline --auto-approve --profile jiangnan-gongquan --input "苏州高新区周边3公里，2个地推，做4周" -o .work/reports/demo.json
+```
+
+结果在 `runs/<run_id>/`，摘要在 `.work/reports/demo.json`。`--offline` 判断标记为 `rules`，`--auto-approve` 是演示自动确认。历史来源引用继续保留 `.work/handbook/` 标识；本地文件不存在时，自动读取仓库公开文本并核验 SHA-256。首次安装依赖需要联网。
+
 ## 运行
 
 ### 本地实时 API
