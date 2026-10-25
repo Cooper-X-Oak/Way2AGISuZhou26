@@ -4,6 +4,12 @@ const fs=require('node:fs');
 const vm=require('node:vm');
 const html=fs.readFileSync('pipeline/view_template.html','utf8');
 for(const [i,match] of [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)].entries())new vm.Script(match[1],{filename:'workbench-'+i});
+test('generated delivery page has complete replay data and executable scripts',()=>{
+ const delivered=fs.readFileSync('web/data/agent-workbench.html','utf8');
+ for(const match of delivered.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g))new vm.Script(match[1]);
+ const match=delivered.match(/const DATA=([^\n]+);/);
+ const data=JSON.parse(match[1]);assert.ok(data.tasks.length>0);
+});
 const helper=html.slice(html.indexOf('async function streamChat('),html.indexOf('const RUN_STREAMS='));
 test('SSE parser preserves UTF8 and processes operation before final chunk',async()=>{
  const encoder=new TextEncoder();let delivered=false;
