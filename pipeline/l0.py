@@ -11,21 +11,20 @@ def facts(inputs):
     supplied = {"lat": s["lat"], "lon": s["lon"], "profile_id": inputs["profile"].get("id")}
     assumptions = [s["location_note"] + "；中心来自缓存 coverage.site，来源证据见 location_evidence；不是配送门店定位。"]
     text = inputs["request"]
-    m = re.search(r"(?:半径|周边)\s*(-?\d+(?:\.\d+)?)\s*(km|公里|千米|m|米)", text, re.I)
+    matches = list(re.finditer(r"(?:半径|周边|覆盖)(?:\s*(?:改成|改为|调整为|为|是))?\s*(-?\d+(?:\.\d+)?)\s*(km|公里|千米|m|米)", text, re.I))
+    m = matches[-1] if matches else None
     if m:
         supplied["radius_m"] = int(float(m[1]) * (1000 if m[2].lower() in ("km", "公里", "千米") else 1))
     patterns = {
-        "delivery_people": [r"(-?\d+)\s*(?:个|名|位)?地推", r"(?:地推|配送员)\s*(-?\d+)\s*人"],
+        "delivery_people": [r"(-?\d+)\s*(?:个|名|位)?\s*(?:地推|人)", r"(?:地推|配送员)\s*(-?\d+)\s*人"],
         "weeks": [r"(?:做|执行|计划)?\s*(-?\d+)\s*周"],
         "visits_per_person_day": [r"每人每天(?:可)?(?:进店|拜访)\s*(-?\d+)"],
         "planned_visits_day": [r"每天总(?:进店|拜访)\s*(-?\d+)"],
     }
     for key, options in patterns.items():
-        for pattern in options:
-            match = re.search(pattern, text)
-            if match:
-                supplied[key] = int(match[1])
-                break
+        matches = [m for pattern in options for m in re.finditer(pattern, text)]
+        if matches:
+            supplied[key] = int(max(matches, key=lambda m: m.start())[1])
     if "visits_per_person_day" not in supplied and not inputs.get("no_defaults"):
         spec = inputs["params"]["execution"]["visits_per_person_day"]
         supplied["visits_per_person_day"] = spec["default"]

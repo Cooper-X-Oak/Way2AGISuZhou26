@@ -76,9 +76,22 @@ class RunManager:
                 if previous.get('area_id') != request.area or previous['profile']['id'] != request.profile:
                     raise ValueError('更换产品或商圈请新建任务')
                 inputs['request'] = previous['request'] + '\n追加要求：' + request.input
+                # A bare number answers the single outstanding numeric question.
+                # Preserve the original message and record the interpretation explicitly.
+                import re
+                from pipeline.l0 import facts
+                supplied, _ = facts(previous)
+                missing = [k for k in ('radius_m', 'delivery_people', 'weeks') if k not in supplied]
+                if (directory / 'L0.json').exists():
+                    brief = read(directory / 'L0.json')
+                    missing = [k for k in ('radius_m', 'delivery_people', 'weeks') if brief.get(k) is None]
+                if re.fullmatch(r'\s*\d+\s*', request.input) and len(missing) == 1:
+                    labels = {'radius_m': '半径{}米', 'delivery_people': '{}个地推', 'weeks': '{}周'}
+                    inputs['request'] += '\n按上一轮唯一待补充项解释：' + labels[missing[0]].format(request.input.strip())
                 if len(inputs['request']) > 20000: raise ValueError('本次任务上下文过长，请新建任务')
                 # Accepted discoveries survive follow-up turns without changing shared caches.
-                inputs['pois'] = read(directory / 'pois.json')
+                if (directory / 'pois.json').exists():
+                    inputs['pois'] = read(directory / 'pois.json')
             inputs.update(agent_l1d=True, auto_approve=True,
                           task=dict(mode=task_mode, message=request.input, area=request.area, profile=request.profile,
                                     product=profile['product']['name'], parent_id=parent, created_at=now()))
