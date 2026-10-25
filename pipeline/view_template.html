@@ -40,7 +40,7 @@
 
 *{box-sizing:border-box}
 [hidden]{display:none!important}
-html,body{margin:0}
+html,body{margin:0;height:100dvh;overflow:hidden}
 html{height:100dvh}
 body{background:var(--bg);color:var(--ink);font:var(--t-md)/1.6 var(--font);-webkit-font-smoothing:antialiased;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px}
@@ -259,9 +259,19 @@ tr.C td{color:var(--muted)}
 .example:hover{border-color:var(--primary);color:var(--ink)}
 
 .mobtabs{display:none}
-@media (max-width:1180px){.panes{grid-template-columns:minmax(0,1fr)}.panes .card.art{min-height:560px}html{height:auto}.app,.main{height:auto}.thread{max-height:60vh}}
+.app{grid-template-rows:minmax(0,1fr);overflow:hidden}
+.card-h,.composer,.livebar{flex:none}
+@media (max-width:1180px){
+  .main{grid-template-rows:auto auto auto minmax(0,1fr)}
+  .mobtabs{display:flex;gap:8px}.mobtabs button{padding:4px 12px;border:1px solid var(--line);border-radius:var(--r-sm)}
+  .mobtabs button[aria-pressed="true"]{background:var(--primary-soft);color:var(--primary)}
+  .panes{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr)}
+  .panes .card.art{display:none}
+  .panes[data-show="art"]>.card:first-child{display:none}
+  .panes[data-show="art"]>.card.art{display:flex}
+}
 @media (max-width:860px){
-  .app{grid-template-columns:minmax(0,1fr);gap:12px}
+  .app{grid-template-columns:minmax(0,1fr);grid-template-rows:72px minmax(0,1fr);gap:12px}
   .side{display:grid;grid-template-columns:auto 1fr;align-items:center}
   .side .brand,.side .list-h{display:none}
   .tasks{grid-auto-flow:column;grid-auto-columns:minmax(200px,70vw);overflow-x:auto}
@@ -282,6 +292,7 @@ tr.C td{color:var(--muted)}
   <main class="main">
     <div class="head"><h1 id="title"></h1><div class="meta" id="meta"></div></div>
     <ol class="rail" id="rail" aria-label="关卡进度"></ol>
+    <div class="mobtabs" aria-label="切换工作区"><button type="button" data-pane="chat" aria-pressed="true">对话</button><button type="button" data-pane="art" aria-pressed="false">产物</button></div>
     <div class="panes">
       <section class="card" aria-labelledby="chat-h">
         <div class="card-h"><h2 id="chat-h">对话</h2><button class="linkbtn" id="replay" type="button" hidden>回看执行过程</button></div>
@@ -347,7 +358,7 @@ const FOLLOW={
   L3P:['推荐 3 公里内的供货方'],
   L4:['为写字楼重写话术：对象是物业和企业行政','为健身房写一段 30 秒开场白'],
   PACK:['导出第一周首访路线','汇总成一页给区域经理的简报']};
-const TEMPLATES=p=>[`${p.area}商圈周边 3 公里推广${p.product}，2 个地推，做 4 周`,`${p.area}周边 2 公里推广${p.product}，3 个地推，做 6 周，先找写字楼和健身房`];
+const TEMPLATES=p=>[`${p.area}商圈周边 3 公里推广${p.product}，先分析客户和拓客策略`,`${p.area}周边 2 公里推广${p.product}，3 个地推，做 6 周，先找写字楼和健身房`];
 const DONE=s=>['completed','blocked','failed'].includes(s);
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -410,7 +421,8 @@ function briefText(b){if(!b)return '';const parts=[];
   if(b.radius_m)parts.push(`${+(b.radius_m/1000).toFixed(1)} 公里`);
   if(b.delivery_people)parts.push(`${b.delivery_people} 人`);
   if(b.weeks)parts.push(`${b.weeks} 周`);
-  const miss=['radius_m','delivery_people','weeks'].filter(k=>!b[k]).map(k=>({radius_m:'半径',delivery_people:'人数',weeks:'周期'})[k]);
+  const miss=['radius_m'].filter(k=>!b[k]).map(()=> '半径');
+  if(!b.delivery_people||!b.weeks)parts.push('人员排期待安排');
   return parts.join(' · ')+(miss.length?(parts.length?' · ':'')+'待补充'+miss.join('、'):'');}
 function stageSummary(v,s){
   if(s.id==='L0')return briefText(v.brief);
@@ -501,12 +513,12 @@ function turnHTML(id,idx,isLast){
     out.push(msg('s','流水线','出错',`<div class="callout stop"><p>${esc(v.stop_reason||'执行中断，可以重新发送这条要求。')}</p></div>`));
   }else if(v.status==='completed'){
     const g={A:0,B:0,C:0};(v.terminals||[]).forEach(t=>g[t.grade]++);const first=(v.route?.first||[]).filter(Boolean);
-    out.push(msg('s','流水线汇总','由代码根据各关产物生成',`<div class="prose"><p>选中 <span class="num">${v.map?.zones?.length||0}</span> 个网格；首访名单 <span class="num">${(v.terminals||[]).length}</span> 家（A ${g.A} · B ${g.B} · C ${g.C}）${(v.terminals||[]).some(t=>t.found)?`，其中 <span class="num">${v.terminals.filter(t=>t.found).length}</span> 家由 Agent 补采`:''}。</p>${first.length?`<p>第 1 天首访：${esc(first.slice(0,4).join('、'))}${first.length>4?` 等 ${first.length} 家`:''}。</p>`:''}${v.pitches?.length?`<p>已为 ${v.pitches.length} 个渠道准备进店话术，均过合规扫描。</p>`:''}<div class="links"><button class="linkbtn" data-tab="map" type="button">看地图</button><button class="linkbtn" data-tab="list" type="button">看名单</button><button class="linkbtn" data-tab="pitch" type="button">看话术</button><button class="linkbtn" data-tab="dec" type="button">看决策</button></div></div>`));
+    out.push(msg('s','流水线汇总','由代码根据各关产物生成',`<div class="prose"><p>选中 <span class="num">${v.map?.zones?.length||0}</span> 个网格；首访名单 <span class="num">${(v.terminals||[]).length}</span> 家（A ${g.A} · B ${g.B} · C ${g.C}）${(v.terminals||[]).some(t=>t.found)?`，其中 <span class="num">${v.terminals.filter(t=>t.found).length}</span> 家由 Agent 补采`:''}。</p>${v.route?.pending?'<p>策略与客户清单已生成，人员排期待安排。需要具体日程时，再补充人数和周期。</p>':''}${first.length?`<p>第 1 天首访：${esc(first.slice(0,4).join('、'))}${first.length>4?` 等 ${first.length} 家`:''}。</p>`:''}${v.pitches?.length?`<p>已为 ${v.pitches.length} 个渠道准备进店话术，均过合规扫描。</p>`:''}<div class="links"><button class="linkbtn" data-tab="map" type="button">看地图</button><button class="linkbtn" data-tab="list" type="button">看名单</button><button class="linkbtn" data-tab="pitch" type="button">看话术</button><button class="linkbtn" data-tab="dec" type="button">看决策</button></div></div>`));
   }
   return out.join('');
 }
 function answerChips(v){
-  const b=v.brief||{},miss={radius_m:!b.radius_m,delivery_people:!b.delivery_people,weeks:!b.weeks};
+  const b=v.brief||{},qs=(v.questions||[]).join(' '),miss={radius_m:!b.radius_m,delivery_people:!b.delivery_people&&/人数|几位|几人|delivery_people/.test(qs),weeks:!b.weeks&&/几周|周期|weeks/.test(qs)};
   const parts=[miss.radius_m&&'3 公里',miss.delivery_people&&'2 个地推',miss.weeks&&'做 4 周'].filter(Boolean);
   const alt=[miss.radius_m&&'2 公里',miss.delivery_people&&'3 个地推',miss.weeks&&'做 6 周'].filter(Boolean);
   return [parts.join('，'),alt.join('，')].filter(Boolean);
@@ -527,7 +539,7 @@ function renderThread(){
 }
 function newTaskHTML(){
   const p=picked();
-  return `<div class="welcome"><h3>发起一个铺市任务</h3><p class="muted">选好产品和商圈，说清楚范围、人数和周期。Agent 会判断目标渠道在商圈里有没有足够的门店，不够就自己去高德补采，再交给流水线排出首访名单和话术。</p>
+  return `<div class="welcome"><h3>发起一个铺市任务</h3><p class="muted">选好产品和商圈，说清楚覆盖范围。人数和周期可以稍后补充，不影响先分析客户和策略。Agent 会判断目标渠道在商圈里有没有足够的门店，不够就自己去高德补采，再交给流水线排出首访名单和话术。</p>
   <div class="examples">${TEMPLATES(p).map(t=>`<button class="example" type="button" data-fill="${esc(t)}">${esc(t)}</button>`).join('')}</div>
   ${S.online?'':'<p class="small">这是离线页面：可以查看历史任务，新任务需要连接本地服务后发送。</p>'}</div>`;
 }
@@ -551,7 +563,7 @@ function renderComposer(){
   else{const st=S.stage||'L1D';label=SNAME[st];items=FOLLOW[st]||[];}
   $('quick').hidden=!items.length;
   $('quick').innerHTML=items.length?`<span class="lab">${esc(label)}</span>`+items.map(q=>`<button class="pill" type="button" data-fill="${esc(q)}">${esc(q)}</button>`).join(''):'';
-  $('ask').placeholder=draft?'例如：狮山商圈周边 3 公里推广新鲜活泉，2 个地推，做 4 周':running?'执行中，结束后可以补充要求':'补充要求，或输入 / 打开百宝箱';
+  $('ask').placeholder=draft?'例如：狮山商圈周边 3 公里推广新鲜活泉，先分析客户和策略':running?'执行中，结束后可以补充要求':'补充要求，或输入 / 打开百宝箱';
   $('ask').disabled=!!running;$('send').disabled=!!running||S.sending;$('tb').disabled=!!running;
   $('hint').textContent=!S.online?'离线页面：可以编辑和查看，发送需要连接本地服务':
     !S.config?.live_ready?`本地服务已连接，但实况配置缺少：${(S.config?.missing||[]).join('、')||'—'}`:
@@ -620,7 +632,7 @@ function pitchHTML(v){
 function render(){renderList();renderHead();renderRail();renderThread();renderComposer();renderArtifacts();}
 
 /* ================= actions ================= */
-function select(id){clearTimeout(S.timer);stopReplay(false);S.cur=id;S.stage=null;S.tab='map';S._jump=true;
+function select(id){showPane('chat');clearTimeout(S.timer);stopReplay(false);S.cur=id;S.stage=null;S.tab='map';S._jump=true;
   const c=conv();if(!c?.draft&&S.online){render();poll();}else render();
   if(!c?.draft){try{history.replaceState(null,'','#'+c.id);}catch{}}}
 function newTask(){let d=S.convs.find(c=>c.draft);if(!d){d={id:'draft',draft:true};S.convs.unshift(d);}select(d.id);$('ask').focus();}
@@ -661,14 +673,16 @@ function startReplay(){
 }
 
 /* ================= events ================= */
+function showPane(name){document.querySelector('.panes').dataset.show=name;document.querySelectorAll('[data-pane]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.pane===name)));}
 document.addEventListener('click',e=>{
-  const t=e.target.closest('[data-fill],[data-tab],.task,.node,#newbtn,#replay,#tb,.note');
+  const t=e.target.closest('[data-pane],[data-fill],[data-tab],.task,.node,#newbtn,#replay,#tb,.note');
   if(!t){if(S.toolbox&&!e.target.closest('#toolbox')){S.toolbox=false;renderToolbox();}return;}
   if(t.matches('.note')){t.classList.toggle('open');return;}
   if(t.dataset.fill!=null)return fill(t.dataset.fill);
-  if(t.dataset.tab){S.tab=t.dataset.tab;renderArtifacts();return;}
+  if(t.dataset.pane)return showPane(t.dataset.pane);
+  if(t.dataset.tab){showPane('art');S.tab=t.dataset.tab;renderArtifacts();return;}
   if(t.matches('.task'))return select(t.dataset.id);
-  if(t.matches('.node')){S.stage=t.dataset.stage;S.tab='dec';renderRail();renderComposer();renderArtifacts();return;}
+  if(t.matches('.node')){showPane('art');S.stage=t.dataset.stage;S.tab='dec';renderRail();renderComposer();renderArtifacts();return;}
   if(t.id==='newbtn')return newTask();
   if(t.id==='replay')return startReplay();
   if(t.id==='tb'){S.toolbox=!S.toolbox;S.tbIndex=-1;renderToolbox();}

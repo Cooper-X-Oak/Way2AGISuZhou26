@@ -13,7 +13,11 @@ def facts(inputs):
     assumptions = [s["location_note"] + "；中心来自缓存 coverage.site，来源证据见 location_evidence；不是配送门店定位。"]
     text = inputs["request"]
     matches = list(re.finditer(r"(?:半径|周边|覆盖)(?:\s*(?:改成|改为|调整为|为|是))?\s*(-?\d+(?:\.\d+)?)\s*(km|公里|千米|m|米)", text, re.I))
-    m = matches[-1] if matches else None
+    # Also accept a distance-qualified area or a direct radius answer; a route
+    # length such as '步行3公里' is not a request to change the search radius.
+    matches += list(re.finditer(r"(?<![\d.])(-?\d+(?:\.\d+)?)\s*(km|公里|千米|m|米)\s*(?:以内|内|范围)", text, re.I))
+    matches += list(re.finditer(r"(?:^|追加要求：)\s*(-?\d+(?:\.\d+)?)\s*(km|公里|千米|m|米)(?=\s*(?:[,，。]|$))", text, re.I))
+    m = max(matches, key=lambda m: m.start()) if matches else None
     if m:
         supplied["radius_m"] = int(float(m[1]) * (1000 if m[2].lower() in ("km", "公里", "千米") else 1))
     patterns = {
