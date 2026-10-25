@@ -3,6 +3,7 @@ from copy import deepcopy
 import json
 import httpx
 import pytest
+from pipeline.profiles import source_path
 from pipeline import l2c,l3p,l4,pack
 from pipeline.engine import execute,STAGES
 from pipeline.profiles import load,parameters
@@ -18,7 +19,7 @@ def contexts():
     c=dict(request='周边3公里，2个地推，做4周',site=site,pois=[dict(id=f'test:{i}',name='测试火锅',category='restaurant',**site) for i in range(10)],
            profile=load('jiangnan-gongquan'),params=parameters(),judge=Judge(True),coverage=dict(site=site,radius_m=3000,source='synthetic fixture'),auto_approve=True)
     c['market']=dict(competitors=[dict(id='test:competitor',brands=['农夫山泉'],**site)],partners=[dict(id='test:partner',name='测试酒水批发',tags={},**site)])
-    c.update(checks={},approvals={'L2':'auto (demo)','L3':'auto (demo)'},source_documents={c['profile']['source']:Path(c['profile']['source']).read_text(encoding='utf-8')})
+    c.update(checks={},approvals={'L2':'auto (demo)','L3':'auto (demo)'},source_documents={c['profile']['source']:source_path(c['profile']['source']).read_text(encoding='utf-8')})
     result={}
     for name,module in STAGES:
         result[name]=deepcopy(c);a=module.run(c);report=module.inspect(a,c)

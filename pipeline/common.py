@@ -59,7 +59,9 @@ def channel_for(poi, profile):
     text = " ".join(str(poi.get(k) or "") for k in ("name", "restaurant_types")) + " " + str(poi.get("tags", {}).get("cuisine", ""))
     for c in profile["channels"]:
         if poi["category"] not in c["categories"]: continue
-        if c.get("pattern") and not re.search(c["pattern"], text, re.I): continue
+        # Opt-in: non-dining channels may match the source's type text (e.g. 高德 type "购物服务;便民商店/便利店").
+        subject = text + " " + str(poi.get("tags", {}).get("type", "")) if c.get("match_type_text") else text
+        if c.get("pattern") and not re.search(c["pattern"], subject, re.I): continue
         return c
     return None
 

@@ -53,6 +53,8 @@ amap_classification:
   name_subtypes: {苏帮菜: 酒楼, 本帮菜: 酒楼, 淮扬菜: 酒楼, 江浙菜: 酒楼, 海鲜: 海鲜, 河鲜: 海鲜}
   named_restaurants:
     - {name: 得月楼, subtype: 酒楼, source: '.work/tasks/data-quality.md#发现1；任务明确指出的苏帮菜老字号；仅匹配店名及括号分店后缀，不凭楼字推断'}
+  category_keywords: {office: [商务写字楼, 写字楼, 商务楼, 办公楼], gym: [健身中心, 健身房, 健身]}
+  category_keywords_source: 项目映射假设（演示）：非餐饮行按高德type文本归类，未命中归other；不证明实际业态
   source: 项目映射假设（Issue 12）；高德type明确子类型优先，再050107江浙菜等类型码，再名称明确菜系关键词与档案规则；地方正餐菜系暂归酒楼宴席，不证明宴会能力或老字号身份；050100中餐厅与050118特色中餐厅保持待核实；不推断营业时段
 sources:
   first_visits_per_day: 项目首访容量假设；每人每天10家，每周5天，执行前固定

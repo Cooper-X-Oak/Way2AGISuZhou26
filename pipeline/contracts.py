@@ -38,7 +38,7 @@ class Brief(Artifact):
     assumptions: list[str]
 
 
-GridType = Literal['夜宵餐饮街','商务宴请区','社区餐饮','产业园食堂/简餐','混合','非目标']
+GridType = Literal['夜宵餐饮街','商务宴请区','社区餐饮','产业园食堂/简餐','社区零售','混合','非目标']
 
 
 class VisitDay(Model):
