@@ -1025,7 +1025,8 @@ function heroRender(){
   }else if(!S.online)$('h-pick').innerHTML=`<span class="fixed">产品 · ${esc(v?.product||'洞庭山·新鲜活泉')}</span><span class="fixed">商圈 · ${esc(AREA[v?.area_id]||'狮山')}</span>`;
   heroExamples();
   const n=S.convs.filter(c=>!c.draft).length;
-  $('h-hist').textContent=n?`任务记录 · ${n}`:'进入工作台';
+  const r=H.resume&&S.convs.includes(H.resume)?H.resume:null,rt=r?String(r.title||'上次的任务'):'';
+  $('h-hist').textContent=r?`继续：${rt.length>16?rt.slice(0,16)+'…':rt}`:n?`任务记录 · ${n}`:'进入工作台';
   $('h-play').hidden=!(H.conv&&v?.steps?.length);
   $('h-play-sub').textContent=v?`真实录制 · ${v.model||'模型'} · ${v.steps.filter(s=>s.kind==='tool').length} 次工具调用`:'';
   if(v&&H.statsFor!==v){H.statsFor=v;
@@ -1139,7 +1140,7 @@ async function heroSubmit(){
 }
 async function heroPlay(){if(!H.conv)return;const id=H.conv.turns.at(-1);if(S.online){try{await loadTurn(id);}catch{}}
   leaveHero(()=>{select(H.conv.id);setTimeout(startReplay,reduced?0:500);});}
-function heroHistory(){leaveHero(()=>{const c=S.convs.find(c=>!c.draft);c?select(c.id):newTask();});}
+function heroHistory(){leaveHero(()=>{const c=(H.resume&&S.convs.includes(H.resume)?H.resume:null)||S.convs.find(c=>!c.draft);c?select(c.id):newTask();});}
 $('h-form').addEventListener('submit',e=>{e.preventDefault();heroSubmit();});
 $('hero').addEventListener('click',e=>{const t=e.target.closest('[data-hx],[data-hplay],#h-play,#h-hist');if(!t)return;
   if(t.dataset.hx!=null){$('h-ask').value=t.dataset.hx;$('h-ask').focus();return;}
@@ -1151,7 +1152,9 @@ document.querySelector('.brand').setAttribute('title','回到首页');
 
 /* ================= boot ================= */
 async function boot(){
-  if(!location.hash){$('hero').hidden=false;H.view=(DATA?.tasks||[]).find(heroOk)||null;showHero();}
+  // Every load starts on the entry screen; a #task link becomes a 「继续」 button instead of skipping it.
+  const want=decodeURIComponent(location.hash.slice(1)).replace(/^task\//,'');
+  $('hero').hidden=false;H.view=(DATA?.tasks||[]).find(heroOk)||null;showHero();
   let done;H.conn=new Promise(r=>done=r);
   if(location.protocol!=='file:'){
     try{
@@ -1162,11 +1165,12 @@ async function boot(){
   if(S.online){for(const [id,item] of Object.entries(CHAT)){try{const data=await api('chat/'+id);item.data={...data,conversation_id:id};if(!S.convs.some(c=>c.id===item.root)&&!data.latest_run)S.convs.push({id:item.root,draft:true,title:data.messages.find(m=>m.role==='user')?.content.slice(0,60)||'对话'});}catch{delete CHAT[id];}}saveChats();}
   if(!S.online)S.convs=offlineConvs();
   done();H.conn=null;
-  const want=decodeURIComponent(location.hash.slice(1)).replace(/^task\//,'');
   const hit=want&&S.convs.find(c=>c.id===want||c.turns?.includes(want));
-  if(hit){$('hero').hidden=true;select(hit.id);return;}
+  H.resume=hit||null;
   // Leave the user's own pick alone if they already left the entry screen while we were loading.
-  if(!(H.dismissed&&conv()&&!conv().draft)){if(S.convs.length)select(S.convs[0].id);else if(!conv())newTask();}
+  if(!(H.dismissed&&conv()&&!conv().draft)){if(hit)select(hit.id);else{if(S.convs.length)select(S.convs[0].id);else if(!conv())newTask();
+    // Auto-selected behind the entry screen, not chosen by the user: keep the URL clean.
+    if(!H.dismissed){try{history.replaceState(null,'',location.pathname+location.search);}catch{}}}}
   if(H.dismissed)return;
   if($('hero').hidden)showHero();else heroRender();
   const had=H.view;await heroSource();
