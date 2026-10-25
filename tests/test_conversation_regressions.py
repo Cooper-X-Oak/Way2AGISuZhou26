@@ -31,7 +31,7 @@ def test_blocked_task_numeric_answer_and_correction(tmp_path, monkeypatch):
         directory=root/'runs'/run_id
         write(directory/'inputs.json',{k:v for k,v in inputs.items() if k!='judge'})
         supplied,_=facts(inputs)
-        write(directory/'L0.json',supplied)
+        write(directory/'L0.json',{**supplied,'questions':['请补充 radius_m'] if 'radius_m' not in supplied else []})
         # A run that failed before POI persistence can still receive a reply.
         state=dict(run_id=run_id,status='blocked',completed_stages=[])
         write(directory/'status.json',state)

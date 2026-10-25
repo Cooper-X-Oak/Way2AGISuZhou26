@@ -10,10 +10,18 @@ from pipeline import l3p
 NOTE = '只排A+B，A级优先、同级就近分组；首访上限为地推人数×周数×5天×params.first_visits_per_day（项目假设，默认10）；球面距离非道路导航；超容量A+B保留backlog，C保留终端清单。'
 
 
+def planning_note(c):
+    fields={'delivery_people':'人数','weeks':'周期','visits_per_person_day':'每人每日拜访量','planned_visits_day':'每日总拜访量'}
+    missing=[label for key,label in fields.items() if c['brief'].get(key) is None]
+    return ('策略与客户清单已生成；人员排期待安排（尚未提供'+ '、'.join(missing)+'）。A/B级客户全部保留在待安排清单，不生成虚构人日或路线。') if missing else NOTE
+
+
 def schedule(c):
     b=c['brief'];pois={p['id']:p for p in c['pois']}
     remaining={t['poi_id']:t for t in c['l3']['items'] if t['grade'] in ('A','B')}
     days=[]
+    if any(b.get(k) is None for k in ('weeks','planned_visits_day','delivery_people','visits_per_person_day')):
+        return days
     for week in range(1,b['weeks']+1):
         for day in range(1,6):
             daily=b['planned_visits_day']
@@ -78,9 +86,11 @@ def trace(c):
 
 def run(c):
     days=schedule(c)
-    result=envelope(c,'铺市清单、合规物料、拜访路线与来源证据已拼装；待验证项随包交付。',c['l3']['items'],
+    decision=('铺市清单、合规物料与来源证据已拼装；人员排期待安排。' if planning_note(c)!=NOTE
+              else '铺市清单、合规物料、拜访路线与来源证据已拼装；待验证项随包交付。')
+    result=envelope(c,decision,c['l3']['items'],
                     channels=c['l1'],zones=c['l2'],materials=c['l4'],days=days,backlog=backlog(c,days),trace=trace(c),
-                    coverage=c['coverage'],review_queue=[r for report in c['checks'].values() for r in report['review_queue']],planning_note=NOTE)
+                    coverage=c['coverage'],review_queue=[r for report in c['checks'].values() for r in report['review_queue']],planning_note=planning_note(c))
     result.update(competition=c['l2c'],partners=c['l3p'],supply_assignments=l3p.assignments(c),recruitment_gaps=l3p.gaps(c))
     result['judged_by']='rules'
     return result
@@ -103,7 +113,7 @@ def business(a,c):
             out.append(violation('upstream_check',name,'上游验收未通过'))
     if a['days']!=schedule(c):out.append(violation('route','days','路线、人员或每日容量与代码重算不一致'))
     if a['backlog']!=backlog(c,schedule(c)):out.append(violation('backlog','backlog','超出容量的A+B必须完整保留且不得重复排入'))
-    if a['coverage']!=c['coverage'] or a['planning_note']!=NOTE:out.append(violation('provenance','coverage','覆盖或路线假设被更改'))
+    if a['coverage']!=c['coverage'] or a['planning_note']!=planning_note(c):out.append(violation('provenance','coverage','覆盖或路线假设被更改'))
     if a['review_queue']!=[r for report in c['checks'].values() for r in report['review_queue']]:out.append(violation('review_queue','review_queue','待复核项遗漏'))
     if a['supply_assignments']!=l3p.assignments(c) or a['recruitment_gaps']!=l3p.gaps(c):out.append(violation('supply_assignment','supply_assignments','建议供货方或招商缺口与代码重算不一致'))
     # Recount uncovered A/B terminals from source geometry, independently of PACK output.

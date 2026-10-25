@@ -39,6 +39,35 @@ def contexts(raw):
     return result
 
 
+@pytest.mark.parametrize('message',[
+    '苏州高新区周边3公里，推广产品',
+    '苏州高新区周边3公里，2个地推',
+    '苏州高新区周边3公里，做4周',
+])
+def test_strategy_completes_without_staffing(raw,tmp_path,message):
+    raw['request']=message
+    directory,state=execute(raw,tmp_path)
+    assert state['status']=='completed',state
+    brief=read(directory/'brief.json')
+    result=read(directory/'pack.json')
+    assert brief['questions']==[]
+    assert brief['delivery_people'] is None or brief['weeks'] is None
+    assert result['days']==[]
+    assert {t['poi_id'] for t in result['backlog']}=={t['poi_id'] for t in result['items'] if t['grade'] in ('A','B')}
+    assert result['materials']['items']
+    assert '排期待安排' in result['planning_note']
+
+
+def test_optional_staffing_still_rejects_invented_or_invalid_values(raw):
+    raw['request']='周边3公里推广产品'
+    artifact=l0.run(raw)
+    assert not l0.check(artifact,raw)
+    artifact['delivery_people']=2
+    assert any(v.code=='changed_fact' for v in l0.check(artifact,raw))
+    raw['request']='周边3公里，0个地推，做4周'
+    assert any(v.code=='positive' for v in l0.check(l0.run(raw),raw))
+
+
 @pytest.mark.parametrize('name,module',STAGES)
 def test_five_layers_pass(name,module,contexts):
     c=contexts[name];a=module.run(c)

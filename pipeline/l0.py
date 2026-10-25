@@ -4,6 +4,7 @@ from pipeline.common import decide, provenance
 from pipeline.profiles import PROFILE_DIR
 
 REQUIRED = ("lat", "lon", "radius_m", "profile_id", "delivery_people", "weeks", "visits_per_person_day", "planned_visits_day")
+ANALYSIS_REQUIRED = ("lat", "lon", "radius_m", "profile_id")
 
 
 def facts(inputs):
@@ -36,12 +37,12 @@ def run(inputs):
     supplied, assumptions = facts(inputs)
     def rules():
         result = {k: supplied.get(k) for k in REQUIRED}
-        result["questions"] = [f"请补充 {k}" for k in REQUIRED if k != "planned_visits_day" and result[k] is None]
+        result["questions"] = [f"请补充 {k}" for k in ANALYSIS_REQUIRED if result[k] is None]
         if result["radius_m"] is not None and not 0 < result["radius_m"] <= 3000:
             result["questions"].append("半径必须大于0且不超过3000米，请明确调整范围。")
         return result
     result = decide(inputs, "L0", {"request": inputs["request"], "supplied": supplied}, rules,
-                    "输出 lat,lon,radius_m,profile_id,delivery_people,weeks,visits_per_person_day,planned_visits_day,questions[]；未知=null，不得改变supplied；不计算人数乘积。")
+                    "输出 lat,lon,radius_m,profile_id,delivery_people,weeks,visits_per_person_day,planned_visits_day,questions[]；未知=null，不得改变supplied；不计算人数乘积。人数、周期与每日拜访量仅用于排期，未知时保留null，不列入questions；分析只需要位置、半径和产品。")
     if result.get("planned_visits_day") is None and all(type(result.get(k)) is int for k in ("delivery_people", "visits_per_person_day")):
         result["planned_visits_day"] = result["delivery_people"] * result["visits_per_person_day"]
     result.update(request=inputs["request"], judged_by=inputs["judge"].label.split(":", 1)[0], site_note=inputs['site'].get('site_note', inputs['site']['location_note']),
@@ -55,7 +56,7 @@ def check(artifact, inputs):
     errors = validate(Brief, artifact)
     if errors: return errors
     errors += provenance(artifact, inputs)
-    for k in REQUIRED:
+    for k in ANALYSIS_REQUIRED:
         if artifact[k] is None: errors.append(violation("missing", k, "关键字段缺失，等待澄清"))
     if artifact["questions"]: errors.append(violation("clarification", "questions", "仍有未澄清问题"))
     if artifact["lat"] is not None and artifact["lon"] is not None and not (30.7 <= artifact["lat"] <= 32.1 and 119.9 <= artifact["lon"] <= 121.4):
@@ -68,6 +69,9 @@ def check(artifact, inputs):
         if not 0 < artifact["planned_visits_day"] <= artifact["delivery_people"] * artifact["visits_per_person_day"]:
             errors.append(violation("capacity", "planned_visits_day", "每日总量超出人员容量或不为正"))
     supplied, assumptions = facts(inputs)
+    for k in ("delivery_people", "weeks"):
+        if k not in supplied and artifact[k] is not None:
+            errors.append(violation("changed_fact", k, "未提供的人员和周期必须保留待安排，不得代填"))
     for k, value in supplied.items():
         if artifact[k] != value: errors.append(violation("changed_fact", k, "不得修改明确输入或数据坐标"))
     pid = artifact["profile_id"]

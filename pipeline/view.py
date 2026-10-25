@@ -105,8 +105,9 @@ def build(directory, title=None, created_at=None):
     selected = [z for z in zones if z.get('selected')]
     days = pack.get('days', [])
     first_day = days[0] if days else None
+    scheduling_pending = any(brief.get(k) is None for k in ('delivery_people','weeks','visits_per_person_day','planned_visits_day'))
     summaries = {
-        'L0': f"{(brief.get('radius_m') or 0) / 1000:g} km · {brief.get('delivery_people')} 人 × {brief.get('weeks')} 周",
+        'L0': f"{(brief.get('radius_m') or 0) / 1000:g} km · " + ('人员排期待安排' if scheduling_pending else f"{brief['delivery_people']} 人 × {brief['weeks']} 周"),
         'L1': ' · '.join(f"{names.get(r['channel_id'], r['channel_id'])} {r['priority']}" for r in l1 if r['priority'] in ('P1', 'P2')) or '—',
         'L1D': (f"补采 +{len(added)} 家" if agent else '规则：只盘点缓存'),
         'L2': f"选中 {len(selected)} 个网格" if zones else '—',
@@ -114,7 +115,7 @@ def build(directory, title=None, created_at=None):
         'L3': f"A {grades['A']} · B {grades['B']} · C {grades['C']}" if terminals else '—',
         'L3P': f"{len((_opt(directory, 'partners.json') or {}).get('items', []))} 个供货候选",
         'L4': f"{len(materials)} 条话术 · 合规{'通过' if materials and all(m['compliance']['passed'] for m in materials) else '—'}",
-        'PACK': f"{len(days)} 个人日 · 首日 {len((first_day or {}).get('poi_ids', [])) if first_day else 0} 家" if pack else '—',
+        'PACK': ('策略已生成 · 排期待安排' if scheduling_pending else f"{len(days)} 个人日 · 首日 {len((first_day or {}).get('poi_ids', [])) if first_day else 0} 家") if pack else '—',
     }
     FILES = {'L0': 'brief.json', 'L1': 'channels.json', 'L1D': 'discovery.json', 'L2': 'zones.json', 'L2C': 'competition.json',
              'L3': 'terminals.json', 'L3P': 'partners.json', 'L4': 'materials.json', 'PACK': 'pack.json'}
@@ -178,7 +179,7 @@ def build(directory, title=None, created_at=None):
         stages=stages, steps=steps,
         map=dict(base=base, found=found, zones=[dict(id=z['zone_id'], rank=z.get('rank')) for z in selected]),
         terminals=term_rows, pitches=pitches,
-        route=dict(days=len(days), first=[by_id.get(pid, {}).get('name') for pid in (first_day or {}).get('poi_ids', [])]),
+        route=dict(days=len(days), pending=scheduling_pending, planning_note=pack.get('planning_note'), first=[by_id.get(pid, {}).get('name') for pid in (first_day or {}).get('poi_ids', [])]),
         boundary=['只有「找终端」这一步由模型决策；选区、打分、分级、路线由代码计算。',
                   '补采商户来自高德 POI 基础字段，不代表实际经营情况或进货意愿，需走访确认。',
                   '价格、毛利、首单政策未知，话术中不做承诺。'],

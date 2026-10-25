@@ -412,6 +412,7 @@ function pipelineMsg(){
   const g={A:0,B:0,C:0};T.terminals.forEach(t=>g[t.grade]++);const first=(T.route.first||[]).filter(Boolean);
   const li=msg('pipe','流水线汇总','<span>由代码根据各关产物生成，不是模型输出</span>',
     `<p>选中 <b class="mono">${T.map.zones.length}</b> 个网格；首访名单 <b class="mono">${T.terminals.length}</b> 家（A ${g.A} / B ${g.B} / C ${g.C}），其中 <b class="mono">${T.terminals.filter(t=>t.found).length}</b> 家是 Agent 补采的。</p>`+
+    (T.route.pending?'<p>策略和客户清单已生成，人员排期待安排。需要安排具体拜访日程时，再补充人数和周期。</p>':'')+
     (first.length?`<p>第 1 周第 1 天首访 ${first.length} 家：${esc(first.slice(0,4).join('、'))}${first.length>4?' 等':''}。</p>`:'')+
     `<p>已为 ${T.pitches.length} 个渠道准备进店话术，均过合规扫描。</p><div class="links"><button class="link" data-t="map" type="button">看地图</button><button class="link" data-t="term" type="button">看首访名单</button><button class="link" data-t="pitch" type="button">看话术</button><button class="link" data-t="dec" type="button">看决策过程</button></div>`);
   li.querySelectorAll('.link').forEach(b=>b.addEventListener('click',()=>tab(b.dataset.t)));
@@ -428,7 +429,7 @@ function renderThread(){
   }
   T=current;
   if(T.pending){msg('pipe','工作台','','<p>正在加载这条任务的执行记录与产物…</p>');return;}
-  if(T.draft){msg('pipe','Agent 工作台','',`<p>告诉我要推广什么产品、去哪个区域、有几个人和多长时间。也可以从下面的百宝箱选一条开始。</p>`);extras();return;}
+  if(T.draft){msg('pipe','Agent 工作台','',`<p>告诉我要推广什么产品、去哪个区域。可以先分析商圈和客户；人数、周期有安排后再补充。</p>`);extras();return;}
   userMsg();
   if(T.steps.length){agentStart();T.steps.forEach(addStep);if(T.decision)agentAnswer();}
   if(['completed','blocked','failed'].includes(T.status))pipelineMsg();else msg('pipe','执行中','','<p>正在处理任务，工具结果会继续更新。</p>');extras();

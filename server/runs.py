@@ -84,7 +84,8 @@ class RunManager:
                 missing = [k for k in ('radius_m', 'delivery_people', 'weeks') if k not in supplied]
                 if (directory / 'L0.json').exists():
                     brief = read(directory / 'L0.json')
-                    missing = [k for k in ('radius_m', 'delivery_people', 'weeks') if brief.get(k) is None]
+                    missing = [k for k in ('radius_m', 'delivery_people', 'weeks')
+                               if brief.get(k) is None and any(k in q for q in brief.get('questions', []))]
                 if re.fullmatch(r'\s*\d+\s*', request.input) and len(missing) == 1:
                     labels = {'radius_m': '半径{}米', 'delivery_people': '{}个地推', 'weeks': '{}周'}
                     inputs['request'] += '\n按上一轮唯一待补充项解释：' + labels[missing[0]].format(request.input.strip())
