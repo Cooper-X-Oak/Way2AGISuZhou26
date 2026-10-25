@@ -561,7 +561,7 @@ const S={outbox:{},online:false,config:null,profiles:[],areas:[],convs:[],cur:nu
 /* ================= data: offline ================= */
 function offlineConvs(){
   return (DATA?.tasks||[]).map((t,i)=>{const id='offline-'+i;S.views[id]=t;
-    return {id,turns:[id],title:t.request||t.title,product:t.product,area:AREA[t.area_id]||t.area||'',status:t.status,stopped_at:t.stopped_at,created_at:t.created_at,mode:t.mode,offline:true};});
+    return {id,turns:[id],title:t.display_title||t.request||t.title,product:t.product,area:AREA[t.area_id]||t.area||'',status:t.status,stopped_at:t.stopped_at,created_at:t.created_at,mode:t.mode,offline:true};});
 }
 
 /* ================= data: online ================= */
