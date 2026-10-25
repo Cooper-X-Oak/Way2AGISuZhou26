@@ -89,3 +89,18 @@ def install(app):
     def detail(run_id:str,request:Request):
         try: return activity(request.app.state.manager,run_id)
         except KeyError: raise HTTPException(404,'任务不存在') from None
+
+    @app.get('/api/tasks/{run_id}/view')
+    def workbench_view(run_id:str,request:Request):
+        from pipeline.view import build
+        mgr=request.app.state.manager
+        try:
+            directory=mgr.directory(run_id)
+            result=build(directory)
+            state=mgr.status(run_id)
+            result.update(status=state['status'],mode='回放' if state.get('task',{}).get('mode')=='replay' else '实况',
+                          task=state.get('task'),current_stage=state.get('current_stage'))
+            result['questions']=activity(mgr,run_id)['questions']
+            return public(result)
+        except KeyError: raise HTTPException(404,'任务不存在') from None
+        except (FileNotFoundError,ValueError): raise HTTPException(409,'正在准备任务资料，请稍后重试') from None

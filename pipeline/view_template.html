@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>铺市 Agent 工作台</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+
+<style>
+/* Layout: agent workbench — task history rail | conversation with toolbox composer | artifacts. */
+:root{
+  --bg:#f3f6f6; --surface:#ffffff; --ink:#13222a; --muted:#5a6b72; --line:#d6e0e3;
+  --water:#0b6a88; --water-soft:#d7ecf2; --found:#b8640c; --found-soft:#f6e3cc;
+  --ok:#2c7a4b; --stop:#b23a3a; --stop-soft:#f6dede; --dot:#b9c6cb;
+  --f-display:"Noto Serif SC","Songti SC","SimSun",serif;
+  --f-body:"Noto Sans SC","PingFang SC","Microsoft YaHei","Hiragino Sans GB",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Consolas,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0d1619; --surface:#132127; --ink:#e2ebee; --muted:#8fa2a9; --line:#22343b;
+  --water:#4fb3d3; --water-soft:#123543; --found:#f0a14a; --found-soft:#3a2a17;
+  --ok:#5fbf86; --stop:#e07272; --stop-soft:#3a1d1d; --dot:#3a4e56; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0d1619; --surface:#132127; --ink:#e2ebee; --muted:#8fa2a9; --line:#22343b;
+  --water:#4fb3d3; --water-soft:#123543; --found:#f0a14a; --found-soft:#3a2a17;
+  --ok:#5fbf86; --stop:#e07272; --stop-soft:#3a1d1d; --dot:#3a4e56; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.6 var(--f-body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px 32px}
+h1,h2,h3{margin:0;text-wrap:balance}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.label{font-size:12px;letter-spacing:.06em;color:var(--muted)}
+button,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--water);outline-offset:2px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);min-width:0}
+.card-h{display:flex;flex-wrap:wrap;gap:8px 14px;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line)}
+.card-h h2{font:700 17px var(--f-display)}
+
+.app{max-width:1600px;margin:0 auto;display:grid;grid-template-columns:260px minmax(0,1fr);gap:16px;align-items:start}
+.work{display:grid;gap:14px;min-width:0}
+.panes{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:14px;align-items:start}
+
+/* task sidebar */
+.side{position:sticky;top:env(safe-area-inset-top,0px);display:grid;gap:12px}
+.brand{display:grid;gap:2px;padding:4px 2px}
+.brand b{font:700 20px var(--f-display)}
+.newtask{border:1px dashed var(--water);background:transparent;color:var(--water);border-radius:var(--r);padding:9px 12px;font-weight:700;text-align:left}
+.tasks{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.task{border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:10px 12px;display:grid;gap:4px;text-align:left;width:100%}
+.task[aria-current="true"]{border-color:var(--ink);box-shadow:0 0 0 2px var(--ink) inset}
+.task .t{font-weight:700;font-size:14px;line-height:1.4}
+.task .m{font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 8px}
+.st-chip{font-size:11px;border-radius:4px;padding:0 6px;white-space:nowrap}
+.st-chip.done{background:var(--water-soft);color:var(--water)}
+.st-chip.stop{background:var(--stop-soft);color:var(--stop)}
+.st-chip.draft{border:1px solid var(--line);color:var(--muted)}
+
+/* header + rail */
+.head{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:flex-end;justify-content:space-between}
+.head h1{font:700 clamp(20px,2.4vw,26px)/1.3 var(--f-display)}
+.head h1 span{color:var(--muted);font-weight:600}
+.head .meta{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--muted)}
+.rail{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:6px;list-style:none;margin:0;padding:0}
+.st{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 9px 10px;display:grid;gap:1px;position:relative;cursor:pointer;transition:border-color .3s,box-shadow .3s,opacity .3s}
+.st .id{font:600 11px var(--f-mono);color:var(--muted)}
+.st .nm{font-weight:700;font-size:14px}
+.st .sm{font-size:11px;color:var(--muted);line-height:1.35}
+.st .tag{position:absolute;top:6px;right:6px;font:600 9px var(--f-mono);letter-spacing:.06em;color:var(--found);border:1px solid var(--found);border-radius:3px;padding:0 3px}
+.st[data-s="idle"]{opacity:.45}
+.st[data-s="run"]{border-color:var(--water);box-shadow:0 0 0 3px var(--water-soft)}
+.st.agent[data-s="run"]{border-color:var(--found);box-shadow:0 0 0 3px var(--found-soft)}
+.st[data-s="done"] .id::after{content:" ✓";color:var(--ok)}
+.st[data-s="stop"]{border-color:var(--stop)}
+.st[data-s="stop"] .id::after{content:" 停";color:var(--stop)}
+.st.sel{outline:2px solid var(--ink);outline-offset:1px}
+
+/* conversation */
+.chat{display:flex;flex-direction:column}
+.thread{list-style:none;margin:0;padding:16px;display:grid;gap:14px;max-height:620px;overflow:auto;align-content:start;min-height:320px}
+.msg{display:grid;grid-template-columns:34px minmax(0,1fr);gap:10px;align-items:start;animation:in .35s ease both}
+.av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font:700 13px var(--f-body)}
+.av.u{background:var(--ink);color:var(--surface)}
+.av.a{background:var(--water);color:var(--surface)}
+.av.p{background:var(--line);color:var(--ink)}
+.av.s{background:var(--stop-soft);color:var(--stop)}
+.mbody{min-width:0;display:grid;gap:4px}
+.who-line{font-size:12px;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap;align-items:baseline}
+.who-line b{color:var(--ink);font-size:13px}
+.bubble{background:var(--bg);border:1px solid var(--line);border-radius:4px 12px 12px 12px;padding:10px 12px;display:grid;gap:8px;min-width:0}
+.msg.user .bubble{background:var(--surface)}
+.msg.sys .bubble{background:var(--stop-soft);border-color:transparent}
+.bubble p{margin:0}
+details.think{border:1px dashed var(--line);border-radius:10px;padding:8px 10px;background:var(--surface)}
+details.think summary{cursor:pointer;font-size:13px;color:var(--muted);list-style:none}
+details.think summary::-webkit-details-marker{display:none}
+details.think summary::before{content:"▸ "}
+details.think[open] summary::before{content:"▾ "}
+.log{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:8px}
+.log li{display:grid;grid-template-columns:44px minmax(0,1fr);gap:8px;align-items:start;animation:in .35s ease both}
+.who{font:600 11px var(--f-mono);text-align:center;border-radius:6px;padding:3px 0}
+.who.model{background:var(--water-soft);color:var(--water)}
+.who.tool{background:var(--found-soft);color:var(--found)}
+.who.rej{background:var(--stop);color:var(--surface)}
+.lbody{min-width:0;display:grid;gap:3px}
+.lbody .h{font-weight:700;font-size:14px}
+.note{color:var(--muted);font-size:13px;font-style:italic;overflow-wrap:anywhere}
+.args{display:flex;flex-wrap:wrap;gap:5px}
+.arg{font:12px var(--f-mono);border:1px solid var(--line);border-radius:4px;padding:0 6px;overflow-wrap:anywhere}
+.res{font-size:13px}
+.res b{color:var(--found);font-family:var(--f-mono)}
+.links{display:flex;flex-wrap:wrap;gap:6px}
+.link{border:1px solid var(--water);color:var(--water);background:transparent;border-radius:999px;padding:1px 10px;font-size:12px}
+@keyframes in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+/* composer + toolbox */
+.composer{border-top:1px solid var(--line);padding:10px 14px 12px;display:grid;gap:8px;position:relative}
+.quick{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.quick .label{margin-right:2px}
+.qp{border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:2px 10px;font-size:12px;max-width:100%;text-align:left}
+.qp:hover{border-color:var(--water)}
+.row{display:flex;gap:8px;align-items:stretch}
+.row textarea{flex:1;min-width:0;resize:vertical;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:14px/1.5 var(--f-body);padding:8px 10px}
+.tb-btn{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:0 12px;font-size:13px;white-space:nowrap}
+.tb-btn[aria-expanded="true"]{border-color:var(--water);color:var(--water)}
+.send{border:0;background:var(--water);color:var(--surface);border-radius:10px;padding:0 18px;font-weight:700}
+.hint{font-size:12px;color:var(--muted)}
+.toolbox{position:absolute;left:14px;right:14px;bottom:calc(100% - 6px);background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 32px rgba(10,30,40,.18);padding:12px;display:grid;gap:10px;max-height:420px;overflow:auto;z-index:5}
+.toolbox h3{font-size:13px;display:flex;gap:6px;align-items:baseline}
+.toolbox h3 span{font:600 11px var(--f-mono);color:var(--muted)}
+.tb-group{display:grid;gap:5px}
+.tb-group .qp{justify-self:start}
+
+/* artifacts */
+.tabs{display:flex;gap:4px;flex-wrap:wrap}
+.tab{border:1px solid var(--line);background:transparent;border-radius:999px;padding:3px 12px;font-size:13px}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.panel{padding:14px 16px;display:grid;gap:12px}
+.counters{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.ctr{border:1px solid var(--line);border-radius:8px;padding:6px 10px;display:grid}
+.ctr .v{font:600 20px/1.3 var(--f-mono)}
+.ctr .v small{font-size:12px;color:var(--muted);font-weight:400}
+.ctr.total .v{color:var(--found)}
+.map{display:block;width:100%;height:auto;max-width:100%}
+.map .ring{fill:none;stroke:var(--line);stroke-width:14}
+.map .grid{stroke:var(--line);stroke-width:4}
+.map .base{fill:var(--dot)}
+.map .found{fill:var(--found);transition:opacity .4s}
+.map .zone{fill:var(--water-soft);stroke:var(--water);stroke-width:14;transition:opacity .4s}
+.map .term{fill:none;stroke:var(--water);stroke-width:12;transition:opacity .4s}
+.map .term.A{stroke:var(--ink);stroke-width:16}
+.map .centre{fill:var(--ink)}
+.map text{fill:var(--muted);font:120px var(--f-body)}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.dec{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.dec li{border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:grid;gap:5px;transition:box-shadow .3s}
+.dec li.hl{box-shadow:0 0 0 3px var(--water-soft);border-color:var(--water)}
+.dec .top{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}
+.dec .top b{font-family:var(--f-mono)}
+.dec p{margin:0;font-size:14px}
+.lay{display:flex;flex-wrap:wrap;gap:4px}
+.lay span{font-size:11px;border-radius:4px;padding:0 6px;border:1px solid var(--line)}
+.lay .passed{color:var(--ok);border-color:var(--ok)}
+.lay .needs_review{color:var(--found);border-color:var(--found)}
+.lay .failed,.lay .blocked{color:var(--stop);border-color:var(--stop)}
+.jb{font-size:11px;border-radius:4px;padding:0 6px;background:var(--water-soft);color:var(--water)}
+.jb.m{background:var(--found-soft);color:var(--found)}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;color:var(--muted);font-weight:500;white-space:nowrap}
+td.g{font:700 13px var(--f-mono)}
+td.n{white-space:nowrap}
+tr.C{color:var(--muted)}
+.chip{display:inline-block;font-size:11px;border-radius:4px;padding:0 5px;margin-left:6px;background:var(--found-soft);color:var(--found);white-space:nowrap}
+.pitch{border-top:1px solid var(--line);padding-top:12px;display:grid;gap:6px}
+.pitch:first-child{border-top:0;padding-top:0}
+.pitch blockquote{margin:0;font-size:14px;line-height:1.7;max-width:62ch}
+.okt{color:var(--ok);font-size:12px}
+.empty{color:var(--muted);font-size:14px;padding:24px 4px}
+footer{max-width:1600px;margin:14px auto 0;color:var(--muted);font-size:12px;display:grid;gap:4px}
+footer ul{margin:0;padding-left:18px}
+.ghost{border:1px solid var(--line);background:transparent;border-radius:999px;padding:2px 10px;font-size:12px;color:var(--muted)}
+
+@media (max-width:1280px){.panes{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:980px){.app{grid-template-columns:minmax(0,1fr)}.side{position:static}.tasks{grid-auto-flow:column;grid-auto-columns:minmax(220px,1fr);overflow-x:auto}.rail{grid-template-columns:repeat(5,minmax(0,1fr))}}
+@media (max-width:560px){.rail{grid-template-columns:repeat(3,minmax(0,1fr))}.counters{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* Fixed workbench: only the conversation, task list and artifact panel scroll. */
+html,body{height:100%;overflow:hidden}
+body{height:100dvh;padding-block:12px;display:flex;flex-direction:column;gap:10px}
+.app{width:100%;flex:1;min-height:0;align-items:stretch;overflow:hidden}
+.side{position:static;min-height:0;overflow:auto;align-content:start;overscroll-behavior:contain}
+.work{min-height:0;grid-template-rows:auto auto minmax(0,1fr)}
+.panes{min-height:0;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);align-items:stretch}
+.chat{min-height:0;overflow:hidden}.chat>.card-h{flex:none}
+.thread{flex:1;min-height:0;max-height:none;overscroll-behavior:contain;scrollbar-gutter:stable}
+.composer{flex:none;max-height:none;overflow:visible}
+.quick{max-height:58px;overflow:auto}.row textarea{resize:none;max-height:90px}
+.panes>section:last-child{min-height:0;display:flex;flex-direction:column;overflow:hidden}
+.panes>section:last-child>.card-h{flex:none}.panel{min-height:0;overflow:auto;overscroll-behavior:contain;align-content:start}
+footer{width:100%;margin:0 auto;max-height:38px;overflow:auto;flex:none;font-size:11px}
+.task-options{display:flex;flex-wrap:wrap;gap:8px}.task-options label{font-size:12px;color:var(--muted)}.task-options select{max-width:220px;border:1px solid var(--line);border-radius:5px;background:var(--bg);padding:4px}
+.art-mobile{display:none}.sample{font-size:12px;color:var(--muted);max-height:180px;overflow:auto}.sample ul{padding-left:18px}
+@media(max-width:1280px){.app{grid-template-columns:190px minmax(0,1fr)}}
+@media(max-width:980px){.app{grid-template-columns:minmax(0,1fr);grid-template-rows:92px minmax(0,1fr)}.side{display:flex;flex-wrap:wrap;gap:8px}.brand{display:none}.tasks{display:flex;overflow:auto;flex:1;min-width:0}.tasks>li{min-width:220px}.rail{display:flex;overflow:auto}.st{min-width:100px}.panes{grid-template-columns:minmax(0,1fr)}.panes>section:last-child{display:none}.art-mobile{display:inline-block}.panes.show-art>.chat{display:none}.panes.show-art>section:last-child{display:flex}.head h1{font-size:19px}.head .meta{font-size:11px}.head .meta .mono{display:none}}
+@media(max-width:560px){body{padding:8px}.app{gap:8px}.work{gap:8px}.app{grid-template-rows:68px minmax(0,1fr)}.side>.label{display:none}.composer{padding:8px;max-height:none}.quick{max-height:32px}.thread{padding:10px}.card-h{padding:8px 10px}.hint{font-size:10px}.task-options select{max-width:150px}.row{gap:5px}.tb-btn{padding:0 6px}.send{padding:0 10px}.toolbox{max-height:240px}}
+
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side" aria-label="任务">
+    <div class="brand"><b>铺市 Agent</b><span class="label">新品进店 · 市场开发策略</span></div>
+    <button class="newtask" id="newtask" type="button">＋ 新建任务</button>
+    <span class="label">任务记录</span>
+    <ol class="tasks" id="tasks"></ol>
+  </aside>
+
+  <main class="work">
+    <div class="head">
+      <h1 id="h1"></h1>
+      <div class="meta" id="meta"></div><button class="ghost art-mobile" type="button" onclick="document.querySelector('.panes').classList.toggle('show-art')">对话 / 产物</button>
+    </div>
+    <ol class="rail" id="rail" aria-label="关卡（点击查看该关的决策与快捷指令）"></ol>
+
+    <div class="panes">
+      <section class="card chat" aria-labelledby="chat-h">
+        <div class="card-h"><h2 id="chat-h">对话</h2><div style="display:flex;gap:8px;align-items:center"><span class="label" id="agent-meta"></span><button class="ghost" id="replay" type="button">回看执行过程</button></div></div>
+        <ol class="thread" id="thread" aria-live="polite"></ol>
+        <form class="composer" id="composer" autocomplete="off">
+          <div class="toolbox" id="toolbox" hidden aria-label="百宝箱"></div>
+          <div class="task-options" id="task-options" hidden><label>产品 <select id="product-select"></select></label><label>商圈 <select id="area-select"></select></label></div><div class="quick" id="quick"></div>
+          <div class="row">
+            <button class="tb-btn" id="tb" type="button" aria-expanded="false" aria-controls="toolbox">百宝箱</button>
+            <textarea id="ask" rows="2" aria-label="给 Agent 的指令" placeholder="描述产品和目标区域，或输入 / 打开百宝箱"></textarea>
+            <button class="send" type="submit">发送</button>
+          </div>
+          <span class="hint" id="hint"></span>
+        </form>
+      </section>
+
+      <section class="card" aria-labelledby="art-h">
+        <div class="card-h"><h2 id="art-h">产物</h2>
+          <div class="tabs" role="tablist">
+            <button class="tab" role="tab" id="tab-map" aria-controls="p-map" aria-selected="true" type="button">地图</button>
+            <button class="tab" role="tab" id="tab-dec" aria-controls="p-dec" aria-selected="false" type="button">决策过程</button>
+            <button class="tab" role="tab" id="tab-term" aria-controls="p-term" aria-selected="false" type="button">首访名单</button>
+            <button class="tab" role="tab" id="tab-pitch" aria-controls="p-pitch" aria-selected="false" type="button">话术</button>
+          </div>
+        </div>
+        <div class="panel" id="p-map" role="tabpanel" aria-labelledby="tab-map">
+          <div class="counters" id="counters"></div>
+          <svg class="map" id="map" viewBox="-3300 -3300 6600 6600" role="img" aria-label="商圈地图：灰点为原有缓存商户，橙点为 Agent 补采商户，蓝框为选中网格"></svg>
+          <div class="legend"><span><i style="background:var(--dot)"></i>原有缓存</span><span><i style="background:var(--found)"></i>Agent 补采</span><span><i style="border:2px solid var(--water)"></i>首访终端</span><span><i style="background:var(--water-soft);border-radius:2px;border:1px solid var(--water)"></i>选中网格（500 米）</span></div>
+          <span class="label" id="map-meta"></span>
+        </div>
+        <div class="panel" id="p-dec" role="tabpanel" aria-labelledby="tab-dec" hidden><ol class="dec" id="dec"></ol></div>
+        <div class="panel" id="p-term" role="tabpanel" aria-labelledby="tab-term" hidden><span class="label" id="t-meta"></span><div class="tbl"><table><thead><tr><th>等级</th><th>门店</th><th>渠道</th><th>距中心</th><th>理由</th><th>动作</th></tr></thead><tbody id="tbody"></tbody></table></div></div>
+        <div class="panel" id="p-pitch" role="tabpanel" aria-labelledby="tab-pitch" hidden><div id="pitches"></div></div>
+      </section>
+    </div>
+  </main>
+</div>
+<footer><span class="label">如实说明</span><ul id="boundary"></ul></footer>
+
+<script>
+const DATA=/*__DATA__*/null;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'—').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const NS='http://www.w3.org/2000/svg';
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const CAT={restaurant:'餐馆',tea:'茶馆',office:'办公',gym:'健身',other:'其他'};
+const STAGE_NAMES={L0:'立项',L1:'卖给谁',L1D:'找终端',L2:'去哪里',L2C:'对手在哪',L3:'进哪家',L3P:'谁来供货',L4:'怎么说',PACK:'作战包'};
+
+/* 百宝箱：按阶段整理的快捷指令。点击只会填入输入框，由你确认后发送。 */
+const TOOLBOX={
+  L0:['把半径改成 2 公里，3 个地推，做 6 周','换一个商圈：观前街周边 3 公里','这个产品还缺哪些资料？列出来'],
+  L1:['解释为什么这几个渠道是 P1','加一个渠道：社区便利店，重新评估优先级','哪些使用场景被排除了？为什么'],
+  L1D:['写字楼候选再补采一些，最多 2 页','列出补采到但没进首访名单的健身房','茶馆只有 11 家，换些关键词再找找'],
+  L2:['为什么只选了 1 个网格？','放宽到前 2 个网格，A/B 门店还够吗','把选中网格里每个渠道的数量列出来'],
+  L2C:['选中网格里有哪些竞品点位？','竞争强度是怎么算的'],
+  L3:['列出 A 级首访门店和理由','把 C 级里 300 米以内的门店列出来','金河国际中心为什么排第一？'],
+  L3P:['推荐 3 公里内的供货方','哪些终端还没有供货方覆盖'],
+  L4:['为写字楼重写话术：对象是物业和企业行政','为健身房写一段 30 秒开场白','话术里有没有不合规的说法？'],
+  PACK:['导出第一周首访路线','生成给地推的当日任务卡','汇总成一页给区域经理的简报']
+};
+
+const tasks=DATA.tasks.map(t=>({...t,draft:false,extra:[]}));
+let cur=0,selStage=null,timer=null,playing=false;
+
+/* ---------- task list ---------- */
+const fmt=s=>{if(!s)return '—';const d=new Date(s);return isNaN(d)?s:d.toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});};
+function statusChip(t){if(['running','queued','gate_pending'].includes(t.status))return '<span class="st-chip done">执行中</span>';if(t.draft)return '<span class="st-chip draft">草稿</span>';if(t.status==='completed')return '<span class="st-chip done">已完成</span>';return `<span class="st-chip stop">停在 ${esc(t.stopped_at||'—')}</span>`;}
+function renderTasks(){
+  $('tasks').innerHTML=tasks.map((t,i)=>`<li><button class="task" type="button" data-i="${i}" aria-current="${i===cur}"><span class="t">${esc(t.title)}</span><span class="m">${statusChip(t)}<span>${t.draft?'未执行':fmt(t.created_at)}</span>${!t.draft&&t.model?`<span>${esc(t.model)}</span>`:''}${!t.draft&&t.counts&&t.counts.added?`<span>补采 ${t.counts.added}</span>`:''}</span></button></li>`).join('');
+  $('tasks').querySelectorAll('.task').forEach(b=>b.addEventListener('click',()=>{stopPlay();cur=Number(b.dataset.i);selStage=null;open();}));
+}
+$('newtask').addEventListener('click',()=>{stopPlay();tasks.unshift({draft:true,title:'新任务',extra:[],stages:[],steps:[],channels:[],terminals:[],pitches:[],map:{base:[],found:[],zones:[]},counts:{},targets:[],boundary:DATA.tasks[0]?.boundary||[],radius:3000,cache:{total:0}});cur=0;selStage='L0';open();$('ask').focus();});
+
+/* ---------- tabs ---------- */
+const TABS=['map','dec','term','pitch'];
+function tab(name){if(innerWidth<=980)document.querySelector('.panes').classList.add('show-art');TABS.forEach(t=>{$('tab-'+t).setAttribute('aria-selected',t===name);$('p-'+t).hidden=t!==name;});}
+TABS.forEach(t=>$('tab-'+t).addEventListener('click',()=>tab(t)));
+
+/* ---------- open a task ---------- */
+let T,foundEls,termEls,zoneEls;
+function open(){
+  T=tasks[cur];renderTasks();
+  $('h1').innerHTML=T.draft?'新任务 <span>· 待描述</span>':`${esc(T.product)} <span>× ${esc(T.area)}</span>`;
+  $('meta').innerHTML=T.draft?'<span>描述产品和目标区域，或从百宝箱选一条开始</span>':`<span>${esc(T.mode||'回放')}</span><span>${statusChip(T)}</span><span>${fmt(T.created_at)}</span><span>${T.model?'模型 '+esc(T.model):'规则执行，未调用模型'}</span><span class="mono">${esc((T.run_id||'').slice(0,24))}</span>`;
+  $('agent-meta').textContent=T.counts&&T.counts.model_calls!=null?`模型 ${T.counts.model_calls} 次 · 工具 ${T.counts.tool_calls} 次`:'';
+  $('replay').hidden=T.draft||!T.stages.length;
+  $('boundary').innerHTML=(T.boundary||[]).map(b=>`<li>${esc(b)}</li>`).join('');
+  $('hint').textContent=T.draft?'这是离线页面：可以编辑指令，执行需要连接本地 Agent 服务。':'历史任务：可继续追问（需要连接本地 Agent 服务才能执行）。输入 / 打开百宝箱。';
+  renderRail();renderMap();renderDecisions();renderFindings();renderThread();
+  if(!selStage)selStage=T.stopped_at||(T.stages.find(s=>s.agent)||{}).id||'L4';
+  selectStage(selStage,false);
+  tab('map');document.querySelector('.panes').classList.remove('show-art');
+  if(window.workbenchOpened)window.workbenchOpened();
+}
+
+/* rail */
+function renderRail(){
+  const st=T.stages.length?T.stages:Object.keys(STAGE_NAMES).map(id=>({id,name:STAGE_NAMES[id],summary:'—',agent:id==='L1D'}));
+  $('rail').innerHTML=st.map(s=>`<li class="st${s.agent?' agent':''}" id="st-${s.id}" data-s="${s.done?'done':s.stopped?'stop':'idle'}" tabindex="0" role="button">${s.agent?'<span class="tag">AGENT</span>':''}<span class="id">${s.id}</span><span class="nm">${esc(s.name)}</span><span class="sm">${esc(s.summary)}</span></li>`).join('');
+  st.forEach(s=>{const e=$('st-'+s.id);const go=()=>selectStage(s.id,true);e.addEventListener('click',go);e.addEventListener('keydown',ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();go();}});});
+}
+const setStage=(id,state)=>{const e=$('st-'+id);if(e)e.dataset.s=state;};
+function selectStage(id,jump){
+  selStage=id;document.querySelectorAll('.st').forEach(e=>e.classList.toggle('sel',e.id==='st-'+id));
+  renderQuick();
+  if(jump&&T.stages.length){tab('dec');document.querySelectorAll('.dec li').forEach(x=>x.classList.toggle('hl',x.id==='dec-'+id));$('dec-'+id)?.scrollIntoView({block:'nearest',behavior:reduced?'auto':'smooth'});}
+}
+
+/* map */
+function renderMap(){
+  const svg=$('map');svg.innerHTML='';const R=T.radius||3000;
+  const el=(tag,attrs,parent=svg)=>{const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);parent.appendChild(e);return e;};
+  const tip=(n,t)=>{const x=document.createElementNS(NS,'title');x.textContent=t;n.appendChild(x);};
+  const clip=el('clipPath',{id:'c'});el('circle',{cx:0,cy:0,r:R},clip);
+  const g=el('g',{'clip-path':'url(#c)'});
+  for(let v=-Math.ceil(R/500)*500;v<=R;v+=500){el('line',{x1:v,y1:-R,x2:v,y2:R,class:'grid'},g);el('line',{x1:-R,y1:v,x2:R,y2:v,class:'grid'},g);}
+  zoneEls=T.map.zones.map(z=>{const [x,y]=z.id.split(':').map(Number);return el('rect',{x:x*500,y:-(y+1)*500,width:500,height:500,class:'zone'});});
+  el('circle',{cx:0,cy:0,r:R,class:'ring'});
+  for(const [x,y] of T.map.base)el('circle',{cx:x,cy:-y,r:18,class:'base'});
+  foundEls=new Map(T.map.found.map(p=>{const c=el('circle',{cx:p.x,cy:-p.y,r:30,class:'found'});tip(c,`${p.name}（${p.channel||'其他'}）`);return [p.id,c];}));
+  termEls=T.terminals.filter(t=>t.grade!=='C').map(t=>{const c=el('circle',{cx:t.x,cy:-t.y,r:t.grade==='A'?90:70,class:'term '+t.grade});tip(c,`${t.grade} · ${t.name}`);return c;});
+  el('circle',{cx:0,cy:0,r:45,class:'centre'});
+  if(!T.draft)el('text',{x:-R+60,y:-R+160}).textContent=`半径 ${R/1000} km`;
+  $('map-meta').textContent=T.draft?'任务执行后在这里显示商圈、补采门店和选区。':`${T.map.base.length} 家缓存 · Agent 补采 ${T.map.found.length} 家 · 选中 ${T.map.zones.length} 个网格`;
+  counters(T.steps.length?T.steps.reduce((a,s)=>s.by_channel||a,null):null,T.map.found.length);
+}
+function counters(by,added){
+  const ch=T.channels.length?T.channels:(T.targets||[]).map(n=>({id:n,name:n}));
+  $('counters').innerHTML=ch.map(c=>`<div class="ctr"><span class="label">${esc(c.name)}</span><span class="v">${by?.[c.id]??0}<small> 家</small></span></div>`).join('')+
+   `<div class="ctr total"><span class="label">Agent 补采</span><span class="v">${added}<small> 家</small></span></div>`;
+}
+
+/* decisions + findings */
+const ST={passed:'通过',needs_review:'待复核',failed:'未通过',blocked:'阻断',not_run:'未运行'};
+function renderDecisions(){
+  $('dec').innerHTML=T.stages.length?T.stages.map(s=>`<li id="dec-${s.id}"><div class="top"><b>${s.id}</b><span>${esc(s.name)}</span>${s.judged_by?`<span class="jb ${s.judged_by==='模型'?'m':''}">${esc(s.judged_by)}判断</span>`:''}<span class="label">${s.attempts?`尝试 ${s.attempts} 次`:'未执行'}${s.review?` · 待复核 ${s.review} 项`:''}${s.approved?` · ${s.approved==='auto (demo)'?'自动放行（演示）':'人工确认'}`:''}</span></div>${s.decision?`<p>${esc(s.decision)}</p>`:''}${s.stopped&&T.stop_reason?`<p style="color:var(--stop)">停止原因：${esc(T.stop_reason)}</p>`:''}<p class="label">${esc(s.summary)}</p>${s.checks.length?`<div class="lay">${s.checks.map(c=>`<span class="${c.status}">${esc(c.layer)} ${ST[c.status]||c.status}</span>`).join('')}</div>`:''}</li>`).join(''):'<li class="empty">任务执行后，这里逐关列出决定、判断来源和检查结果。</li>';
+}
+function renderFindings(){
+  const g={A:0,B:0,C:0};T.terminals.forEach(t=>g[t.grade]++);
+  $('t-meta').textContent=T.terminals.length?`共 ${T.terminals.length} 家 · A ${g.A} / B ${g.B} / C ${g.C}`:'';
+  $('tbody').innerHTML=T.terminals.length?T.terminals.map(t=>`<tr class="${t.grade}"><td class="g">${t.grade}</td><td>${esc(t.name)}${t.found?'<span class="chip">Agent 补采</span>':''}</td><td class="n">${esc(t.channel)}</td><td class="mono n">${t.distance??'—'} 米</td><td>${esc(t.reason)}</td><td>${esc(t.action)}</td></tr>`).join(''):`<tr><td colspan="6" class="empty">${T.draft?'任务执行后显示首访名单。':'这次任务没有产出首访名单'+(T.stopped_at?`（停在 ${esc(T.stopped_at)}）`:'')+'。'}</td></tr>`;
+  $('pitches').innerHTML=T.pitches.length?T.pitches.map(p=>`<div class="pitch"><h3 class="label">${esc(p.channel)} <span class="okt">${p.passed?'合规通过':'合规未通过'}</span></h3><blockquote>${esc(p.pitch)}</blockquote></div>`).join(''):'<p class="empty">这次任务没有产出话术。</p>';
+}
+
+/* ---------- conversation ---------- */
+const ARG={keywords:'关键词',types:'类型码',max_pages:'页数',channel_id:'渠道',category:'类别',type_prefix:'类型前缀',page:'页'};
+function stepHTML(s){
+  if(s.kind==='model')return `<span class="who model">行动</span><div class="lbody"><span class="h">${s.calls.length?'→ 调用 '+esc(s.calls.join('、')):'→ 给出结论'}</span></div>`;
+  if(s.kind==='rejected')return `<span class="who rej">打回</span><div class="lbody"><span class="h">代码复核未通过，要求重写</span><span class="note">${esc(s.problems.join('；'))}</span></div>`;
+  const a=Object.entries(s.args).map(([k,v])=>`<span class="arg">${esc(ARG[k]||k)} ${esc(v)}</span>`).join('');
+  let r='';
+  if(!s.ok)r=`<span class="res" style="color:var(--stop)">${esc(s.error)}</span>`;
+  else if(s.tool==='search_merchants')r=`<span class="res">返回 <b>${s.returned}</b> 条 · 新增 <b>${s.new}</b> 家</span>`;
+  else if(s.by_channel)r=`<span class="res">${s.by_category?Object.entries(s.by_category).map(([k,v])=>`${CAT[k]||k} ${v}`).join('、')+' → ':''}${T.channels.map(c=>`${esc(c.name)} <b>${s.by_channel[c.id]??0}</b>`).join(' · ')}</span>`;
+  else if(s.total!=null)r=`<span class="res">${s.total} 条</span>`;
+  return `<span class="who tool">工具</span><div class="lbody"><span class="h">${esc(s.label)}</span>${a?`<div class="args">${a}</div>`:''}${r}${s.sample?.length?`<details class="sample"><summary>查看返回的商户（${s.sample.length} 条样例）</summary><ul>${s.sample.map(p=>`<li>${esc(p.name)} · ${esc(p.distance_m)} 米</li>`).join('')}</ul></details>`:''}</div>`;
+}
+function msg(kind,who,meta,inner){const li=document.createElement('li');li.className='msg '+kind;const av={user:['u','你'],agent:['a','A'],pipe:['p','≡'],sys:['s','!']}[kind];li.innerHTML=`<span class="av ${av[0]}">${av[1]}</span><div class="mbody"><span class="who-line"><b>${who}</b>${meta||''}</span><div class="bubble">${inner}</div></div>`;$('thread').appendChild(li);return li;}
+function userMsg(){msg('user','你','<span>任务</span>',`<p>${esc(T.request)}</p><p class="label">产品：${esc(T.product)} · 目标渠道：${esc((T.targets||[]).join(' / '))}</p>`);}
+let thinkLog=null,state=null;
+function agentStart(){
+  const cat=T.cache.by_category||{};
+  const li=msg('agent','Agent',`<span>${esc(T.model||'')} · 找终端</span>`,`<p>现有缓存 <b class="mono">${T.cache.total}</b> 家（${Object.entries(cat).map(([k,v])=>`${CAT[k]||k} ${v}`).join('、')||'—'}）。接下来盘点目标渠道，按需搜索补充。</p><details class="think" open><summary>行动与工具调用 · <span class="n">0</span> 步</summary><ol class="log"></ol></details>`);
+  thinkLog=li.querySelector('.log');state={by:null,added:new Set()};
+}
+function addStep(s){const li=document.createElement('li');li.innerHTML=stepHTML(s);thinkLog.appendChild(li);thinkLog.closest('details').querySelector('.n').textContent=thinkLog.children.length;if(s.by_channel)state.by=s.by_channel;(s.added_ids||[]).forEach(i=>state.added.add(i));counters(state.by,state.added.size);foundEls.forEach((c,id)=>c.style.opacity=state.added.has(id)?1:0);}
+function agentAnswer(){msg('agent','Agent','<span>结论 · 代码复核通过</span>',`<p>${esc(T.decision)}</p><p class="label">补采后：${T.channels.map(c=>`${esc(c.name)} ${c.after} 家`).join(' · ')}</p>`);}
+function pipelineMsg(){
+  if(T.status!=='completed'){msg('sys','流水线',`<span>停在 ${esc(T.stopped_at)}</span>`,`<p>${esc(T.stop_reason||'未完成')}</p><p class="label">${esc((T.questions||[]).join('；')||'请查看停止原因，补充要求后可以继续。')}</p>`);return;}
+  const g={A:0,B:0,C:0};T.terminals.forEach(t=>g[t.grade]++);const first=(T.route.first||[]).filter(Boolean);
+  const li=msg('pipe','流水线汇总','<span>由代码根据各关产物生成，不是模型输出</span>',
+    `<p>选中 <b class="mono">${T.map.zones.length}</b> 个网格；首访名单 <b class="mono">${T.terminals.length}</b> 家（A ${g.A} / B ${g.B} / C ${g.C}），其中 <b class="mono">${T.terminals.filter(t=>t.found).length}</b> 家是 Agent 补采的。</p>`+
+    (first.length?`<p>第 1 周第 1 天首访 ${first.length} 家：${esc(first.slice(0,4).join('、'))}${first.length>4?' 等':''}。</p>`:'')+
+    `<p>已为 ${T.pitches.length} 个渠道准备进店话术，均过合规扫描。</p><div class="links"><button class="link" data-t="map" type="button">看地图</button><button class="link" data-t="term" type="button">看首访名单</button><button class="link" data-t="pitch" type="button">看话术</button><button class="link" data-t="dec" type="button">看决策过程</button></div>`);
+  li.querySelectorAll('.link').forEach(b=>b.addEventListener('click',()=>tab(b.dataset.t)));
+}
+function extras(){for(const e of T.extra){msg('user','你','<span>追问</span>',`<p>${esc(e)}</p>`);offlineNotice();}}
+function offlineNotice(){msg('sys','系统','<span>未执行</span>','<p>这是离线页面，没有连接 Agent 服务，这条指令没有被执行，也不会生成回复。</p><p class="label">要执行：在本地启动服务，连接后从这里发送；或在命令行运行 <span class="mono">uv run python -m pipeline demo --mode live</span>。</p>');}
+function renderThread(){
+  $('thread').innerHTML='';
+  if(T.pending){msg('pipe','工作台','','<p>正在加载这条任务的执行记录与产物…</p>');return;}
+  if(T.draft){msg('pipe','Agent 工作台','',`<p>告诉我要推广什么产品、去哪个区域、有几个人和多长时间。也可以从下面的百宝箱选一条开始。</p>`);extras();return;}
+  userMsg();
+  if(T.steps.length){agentStart();T.steps.forEach(addStep);if(T.decision)agentAnswer();}
+  if(['completed','blocked','failed'].includes(T.status))pipelineMsg();else msg('pipe','执行中','','<p>正在处理任务，工具结果会继续更新。</p>');extras();
+  zoneEls.forEach(z=>z.style.opacity=1);termEls.forEach(t=>t.style.opacity=1);
+  $('thread').scrollTop=0;
+}
+
+/* ---------- composer + toolbox ---------- */
+function renderQuick(){
+  const list=TOOLBOX[selStage]||[];
+  $('quick').innerHTML=list.length?`<span class="label">${esc(STAGE_NAMES[selStage])} ·</span>`+list.map(q=>`<button class="qp" type="button">${esc(q)}</button>`).join(''):'';
+  $('quick').querySelectorAll('.qp').forEach(b=>b.addEventListener('click',()=>fill(b.textContent)));
+}
+function renderToolbox(filter=''){
+  const f=filter.trim();
+  $('toolbox').innerHTML=Object.entries(TOOLBOX).map(([id,list])=>{const items=list.filter(q=>!f||q.includes(f)||STAGE_NAMES[id].includes(f));return items.length?`<div class="tb-group"><h3>${esc(STAGE_NAMES[id])} <span>${id}</span></h3>${items.map(q=>`<button class="qp" type="button">${esc(q)}</button>`).join('')}</div>`:'';}).join('')||'<p class="empty">没有匹配的快捷指令</p>';
+  $('toolbox').querySelectorAll('.qp').forEach(b=>b.addEventListener('click',()=>{fill(b.textContent);toggleBox(false);}));
+}
+function toggleBox(on,filter=''){$('toolbox').hidden=!on;$('tb').setAttribute('aria-expanded',on);if(on)renderToolbox(filter);}
+function fill(text){$('ask').value=text;$('ask').focus();}
+$('tb').addEventListener('click',()=>toggleBox($('toolbox').hidden));
+$('ask').addEventListener('input',e=>{const v=e.target.value;if(v.startsWith('/'))toggleBox(true,v.slice(1));else if(!$('toolbox').hidden&&!v)toggleBox(false);});
+$('ask').addEventListener('keydown',e=>{if(e.key==='Escape')toggleBox(false);if(e.key==='Enter'&&(e.metaKey||e.ctrlKey)){e.preventDefault();$('composer').requestSubmit();}});
+document.addEventListener('click',e=>{if(!$('toolbox').hidden&&!e.target.closest('#toolbox,#tb,#ask'))toggleBox(false);});
+$('composer').addEventListener('submit',e=>{
+  e.preventDefault();const text=$('ask').value.trim();if(!text||text.startsWith('/'))return;
+  if(window.startConnectedTask){window.startConnectedTask(text);return;}
+  T.extra.push(text);if(T.draft){T.title=text.slice(0,18)+(text.length>18?'…':'');renderTasks();}
+  msg('user','你',`<span>${T.draft?'任务':'追问'}</span>`,`<p>${esc(text)}</p>`);offlineNotice();
+  $('ask').value='';toggleBox(false);$('thread').scrollTop=$('thread').scrollHeight;
+});
+
+/* ---------- 回看执行过程（历史任务的逐步重现） ---------- */
+let followThread=true;$('thread').addEventListener('scroll',()=>{const e=$('thread');followThread=e.scrollHeight-e.scrollTop-e.clientHeight<80;});
+const wait=ms=>new Promise(r=>{timer=setTimeout(r,reduced?0:ms);});
+function stopPlay(){if(playing){playing=false;clearTimeout(timer);$('replay').textContent='回看执行过程';}}
+async function replay(){
+  if(playing){stopPlay();open();return;}
+  followThread=true;playing=true;$('replay').textContent='停止';
+  T.stages.forEach(s=>setStage(s.id,'idle'));zoneEls.forEach(z=>z.style.opacity=0);termEls.forEach(t=>t.style.opacity=0);foundEls.forEach(c=>c.style.opacity=0);counters(null,0);tab('map');
+  $('thread').innerHTML='';userMsg();await wait(800);
+  for(const s of T.stages){
+    if(!playing)return;setStage(s.id,'run');
+    if(s.agent&&T.steps.length){agentStart();for(const step of T.steps){await wait(step.kind==='model'?1500:1000);if(!playing)return;addStep(step);if(followThread)$('thread').scrollTop=$('thread').scrollHeight;}await wait(700);if(!playing)return;if(T.decision)agentAnswer();}
+    else await wait(500);
+    if(!playing)return;setStage(s.id,s.done?'done':s.stopped?'stop':'idle');
+    if(s.id==='L2')zoneEls.forEach(z=>z.style.opacity=1);
+    if(s.id==='L3')termEls.forEach(t=>t.style.opacity=1);
+    if(s.stopped)break;
+  }
+  await wait(400);if(!playing)return;pipelineMsg();extras();if(followThread)$('thread').scrollTop=$('thread').scrollHeight;
+  playing=false;$('replay').textContent='回看执行过程';
+}
+$('replay').addEventListener('click',replay);
+
+open();
+</script>
+</body>
+</html>

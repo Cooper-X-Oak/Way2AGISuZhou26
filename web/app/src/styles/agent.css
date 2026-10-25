@@ -12,3 +12,35 @@
 .agent-artifacts{border-left:1px solid var(--c-line);padding:6px 22px 30px;position:sticky;top:0;align-self:start;max-height:100vh;overflow:auto;min-width:0}.agent-artifacts h3{font-size:19px;margin:25px 0 14px}.agent-artifacts>p{font-size:13px;line-height:1.8}.agent-artifact-tabs{display:flex;flex-wrap:wrap;gap:6px}.agent-artifact-tabs button[aria-pressed=true]{background:var(--agent-blue);color:white}.agent-empty{margin-top:70px;color:var(--c-muted);font-size:14px;line-height:2}.agent-empty ul{padding-left:20px}.agent-counts{display:flex;flex-direction:column;gap:9px;margin:14px 0}.agent-counts>div{display:grid;grid-template-columns:100px 1fr 32px;align-items:center;gap:10px;font-size:12px}.agent-counts>div>div{height:7px;background:var(--c-sunk);border-radius:3px}.agent-counts i{display:block;background:var(--agent-blue);height:7px;border-radius:3px}.agent-counts b{text-align:right}.agent-merchant{padding:16px 0;border-bottom:1px solid var(--c-line);font-size:13px;line-height:1.7}.agent-merchant strong,.agent-merchant span,.agent-merchant small{display:block}.agent-merchant span,.agent-merchant small{color:var(--c-muted);margin-top:5px}.agent-merchant em{font-size:11px;font-style:normal;margin-left:10px;background:var(--c-brand-soft);padding:3px 6px}.agent-merchant p{white-space:pre-wrap}.agent-artifacts details{margin-top:14px;font-size:12px}.agent-artifacts summary{cursor:pointer;color:var(--agent-blue)}.agent-artifacts pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px;background:var(--c-sheet);padding:12px}.agent-query{overflow-wrap:anywhere}
 @media(max-width:900px){.agent-layout{grid-template-columns:180px minmax(300px,1fr)}.agent-artifacts{grid-column:2;border-left:0;border-top:1px solid var(--c-line);position:static;max-height:none}.agent-conversation{padding:24px}.agent-header>span{display:none}.agent-header{justify-content:space-between}}
 @media(max-width:650px){.agent-layout{display:flex;flex-direction:column}.agent-sidebar{border-right:0;border-bottom:1px solid var(--c-line);padding:16px 0;max-height:210px;overflow:auto}.agent-sidebar h2{margin:12px 0}.agent-history{padding:8px}.agent-conversation{padding:20px 0}.agent-artifacts{padding:18px 0}.agent-fields{grid-template-columns:1fr}.agent-welcome{margin:8px 0 24px}.agent-welcome h1{font-size:26px}.agent-submit{align-items:flex-start}.agent-header{gap:10px}.agent-header>a:last-child{font-size:11px}}
+
+/* The viewport is the workspace; messages and artifacts own their scroll. */
+body:has(.agent-app){height:100dvh;overflow:hidden}
+.agent-app{height:100dvh;display:flex;flex-direction:column;overflow:hidden}
+.agent-header{flex:none}
+.agent-layout{flex:1;min-height:0;grid-template-rows:minmax(0,1fr);position:relative;overflow:hidden}
+.agent-sidebar{min-height:0;overflow:auto;overscroll-behavior:contain}
+.agent-conversation{min-height:0;display:flex;flex-direction:column;overflow:hidden;padding:0}
+.agent-messages{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable;padding:28px 32px}
+.agent-conversation>.followup{flex:none;margin:0 20px 16px;padding:14px 18px;max-height:45%;overflow:auto}
+.followup textarea{resize:none;max-height:100px}
+.followup .agent-muted{margin:6px 0;font-size:11px}
+.agent-artifacts{position:static;align-self:stretch;min-height:0;height:100%;max-height:none;overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
+.agent-artifact-close{display:none}
+@media(max-width:900px){
+ .agent-layout{grid-template-columns:180px minmax(0,1fr)}
+ .agent-messages{padding:20px}
+ .agent-artifacts{display:none;position:absolute;inset:0 0 0 auto;width:min(440px,100%);z-index:5;background:var(--c-sheet);border-left:1px solid var(--c-line);padding:16px 22px}
+ .agent-artifacts.is-open{display:block}
+ .agent-artifact-close{display:block;border:1px solid var(--c-line);background:var(--c-ground);padding:8px 12px;border-radius:5px;position:sticky;top:0}
+}
+@media(max-width:650px){
+ .agent-layout{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:96px minmax(0,1fr)}
+ .agent-sidebar{max-height:none;padding:10px 0}
+ .agent-sidebar h2{display:none}
+ .agent-conversation{padding:0}
+ .agent-messages{padding:16px 0}
+ .agent-conversation>.followup{margin:0 0 8px;padding:10px;max-height:45%}
+ .followup textarea{height:66px}
+ .followup .agent-muted{display:none}
+ .agent-artifacts{height:100%;padding:12px}
+}
