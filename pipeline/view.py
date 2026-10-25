@@ -183,10 +183,20 @@ def build(directory, title=None, created_at=None):
         map=dict(base=base, found=found, zones=[dict(id=z['zone_id'], rank=z.get('rank')) for z in selected]),
         terminals=term_rows, pitches=pitches,
         route=dict(days=len(days), pending=scheduling_pending, planning_note=pack.get('planning_note'), first=[by_id.get(pid, {}).get('name') for pid in (first_day or {}).get('poi_ids', [])]),
-        boundary=['只有「找终端」这一步由模型决策；选区、打分、分级、路线由代码计算。',
+        boundary=[_judgment_note(stages),
                   '补采商户来自高德 POI 基础字段，不代表实际经营情况或进货意愿，需走访确认。',
                   '价格、毛利、首单政策未知，话术中不做承诺。'],
     )
+
+
+def _judgment_note(stages):
+    """Say which stages the model actually judged in this run, from each artifact's judged_by."""
+    # PACK only assembles code results; its label mirrors the run's judge, so it never counts as a model judgment.
+    by_model = [s['name'] for s in stages if s['judged_by'] == '模型' and s['id'] != 'PACK' and s['done']]
+    tail = '选区、打分、分级、路线由代码计算，每关结果都经过代码检查。'
+    if not by_model:
+        return '本次各关均按规则执行；' + tail
+    return '由模型判断：' + '、'.join(f'「{n}」' for n in by_model) + '；' + tail
 
 
 def render(tasks):

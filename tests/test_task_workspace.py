@@ -58,6 +58,7 @@ def test_followup_retains_request_and_discovered_pois(tmp_path,monkeypatch):
         observer(dict(event='run_done',payload=state))
     monkeypatch.setattr(server.runs,'execute',execute)
     monkeypatch.setattr(pipeline.demo,'live_ready',lambda:[])
+    for key,value in (('LLM_BASE_URL','http://model.invalid'),('LLM_API_KEY','test'),('LLM_MODEL','synthetic-model')):monkeypatch.setenv(key,value)
     manager=RunManager(tmp_path)
     try:
         first=manager.start(TaskRequest(area='shishan',profile='bread-trial',input='周边3公里，2个人，4周'))
@@ -66,6 +67,8 @@ def test_followup_retains_request_and_discovered_pois(tmp_path,monkeypatch):
         assert manager.runs[second]['done'].wait(15)
         assert len(captured)==2
         assert captured[0]['agent_l1d'] is True
+        # Live tasks hand every judgment stage to the model; code checks still decide pass/fail.
+        assert captured[0]['judge'].label=='llm:synthetic-model'
         assert captured[1]['request']=='周边3公里，2个人，4周\n追加要求：继续查找便利店'
         assert any(p['id']=='synthetic-discovered' for p in captured[1]['pois'])
         assert captured[1]['task']['parent_id']==first
