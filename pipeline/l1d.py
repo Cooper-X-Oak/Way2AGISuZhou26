@@ -253,7 +253,7 @@ def run(c):
     (ws.run_dir / 'agent').mkdir(parents=True, exist_ok=True)
     try:
         final, log = run_agent(SYSTEM, prompt(c), ws.tools(), post=post, validate=validate,
-                               limits=Limits(cfg['max_steps'], cfg['max_tool_calls'], cfg['tool_summary_max_chars']), on_step=on_step)
+                               limits=Limits(cfg['max_steps'], cfg['max_tool_calls'], cfg['tool_summary_max_chars']), on_step=on_step, on_progress=c.get('progress', lambda kind, **data: None))
     finally:
         write(steps_path, {'searches': ws.searches, 'amap_calls': ws.calls, 'added': sorted(ws.added)})
     model = getattr(post, 'model', 'injected')

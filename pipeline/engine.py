@@ -52,6 +52,7 @@ def execute(inputs,root=Path('.'),stages=STAGES,*,run_id=None,observer=None,appr
     while index<len(stages):
         name,module=stages[index];revision=revisions.get(name,0)+1;revisions[name]=revision
         event('stage_start',stage=name,revision=revision)
+        c['progress'] = lambda kind, **data: event(kind, stage=name, payload=data)
         c.pop('previous',None);c.pop('violations',None);c['approvals'].pop(name,None)
         if name=='L3' and c.get('demo_replay')=='backtrack' and not demo_configured:
             demo_configured=True

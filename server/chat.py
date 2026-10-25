@@ -3,6 +3,16 @@ import json
 import os
 import uuid
 import threading
+import queue
+from contextvars import ContextVar
+from fastapi.responses import StreamingResponse
+
+EMIT = ContextVar("chat_emit", default=None)
+
+def emit(kind, **data):
+    callback = EMIT.get()
+    if callback: callback({"type": kind, **data})
+
 from datetime import datetime, timezone
 from pathlib import Path
 import httpx
@@ -36,6 +46,35 @@ def completion(messages, tools=None, tool_choice=None, json_mode=False):
     if json_mode:body['response_format']={'type':'json_object'}
     try:
         with httpx.Client(timeout=90) as client:
+            if EMIT.get():
+                body['stream'] = True
+                result = {'role': 'assistant', 'content': ''}
+                calls = {}
+                emit('model_start')
+                with client.stream('POST', base.rstrip('/')+'/chat/completions', headers={'Authorization':'Bearer '+key}, json=body) as response:
+                    response.raise_for_status()
+                    finished = False
+                    for line in response.iter_lines():
+                        if not line.startswith('data:'): continue
+                        raw = line[5:].strip()
+                        if raw == '[DONE]':
+                            finished = True
+                            break
+                        choices = json.loads(raw).get('choices', [])
+                        if not choices: continue
+                        delta = choices[0].get('delta', {})
+                        if choices[0].get('finish_reason'): finished = True
+                        if delta.get('content'):
+                            result['content'] += delta['content']
+                            emit('text_delta', text=delta['content'])
+                        for part in delta.get('tool_calls', []):
+                            call = calls.setdefault(part['index'], {'id':'', 'type':'function', 'function':{'name':'', 'arguments':''}})
+                            if part.get('id'): call['id'] += part['id']
+                            for field in ('name', 'arguments'):
+                                call['function'][field] += part.get('function', {}).get(field, '')
+                    if not finished: raise ValueError('Incomplete model stream')
+                if calls: result['tool_calls'] = [calls[i] for i in sorted(calls)]
+                return result
             response=client.post(base.rstrip('/')+'/chat/completions',headers={'Authorization':'Bearer '+key},json=body)
             response.raise_for_status()
             result=response.json()['choices'][0]['message']
@@ -52,6 +91,40 @@ def install(app,access=None):
         try:return chat_impl(body,request)
         finally:
             with LOCK:BUSY.discard(key)
+
+    @app.post('/api/chat/stream')
+    def chat_stream(body:ChatRequest, request:Request):
+        # Validate ownership before opening a response or consuming model tokens.
+        if access and body.conversation_id: access.check(request, body.conversation_id)
+        if access and body.parent_id: access.check(request, body.parent_id)
+        key = body.conversation_id or getattr(request.state, 'public_session', 'local')
+        with LOCK:
+            if key in BUSY: raise HTTPException(409, '当前对话正在回应，请稍后发送')
+            BUSY.add(key)
+        events = queue.Queue()
+        def work():
+            token = EMIT.set(events.put)
+            try:
+                events.put({'type':'done', **chat_impl(body, request)})
+            except HTTPException as exc:
+                events.put({'type':'error', 'message':str(exc.detail)})
+            except Exception:
+                events.put({'type':'error', 'message':'对话执行失败，已保存的操作可在刷新后查看。'})
+            finally:
+                EMIT.reset(token)
+                with LOCK: BUSY.discard(key)
+                events.put(None)
+        threading.Thread(target=work, daemon=True, name='chat-stream').start()
+        def frames():
+            # Operations continue and persist if the browser disconnects.
+            while True:
+                try: item = events.get(timeout=10)
+                except queue.Empty:
+                    yield ': heartbeat\n\n'
+                    continue
+                if item is None: return
+                yield 'data: ' + json.dumps(item, ensure_ascii=False) + '\n\n'
+        return StreamingResponse(frames(), media_type='text/event-stream', headers={'Cache-Control':'no-cache', 'X-Accel-Buffering':'no'})
 
     def chat_impl(body:ChatRequest,request:Request):
         manager=request.app.state.manager
@@ -108,6 +181,8 @@ def install(app,access=None):
             return {**state,'conversation_id':cid,'run_id':None,'reply':state['messages'][-1]['content']}
         history=[{k:m[k] for k in ('role','content')} for m in state['messages'][-20:]]
         messages=[{'role':'system','content':SYSTEM},{'role':'system','content':'当前任务资料：'+json.dumps(context,ensure_ascii=False)},*history,{'role':'user','content':body.input}]
+        save()
+        emit('conversation', conversation_id=cid)
         reply=completion(messages,TOOLS)
         run_id=None;executed=False;document_saved=False;tools=reply.get('tool_calls') or []
         if len(tools)>4:raise HTTPException(502,'模型返回过多操作，请重试')
@@ -151,6 +226,7 @@ def install(app,access=None):
                                              '本轮操作未成功，尚未提交任务。')
                 if run_id:response_message['run_id']=run_id
                 save()
+                emit('operation', conversation_id=cid, run_id=run_id, document=state['document'], messages=state['messages'], changes=state['changes'], message=response_message['content'])
             # The tool outcome is durable even if the provider fails on the final wording.
             try:reply=completion(messages, TOOLS if not executed and tool_round<3 else None)
             except HTTPException:reply={'content':'操作结果已保存。'+('任务已提交，可查看执行过程。' if run_id else '请查看右侧任务文档；模型回复暂时不可用。')}

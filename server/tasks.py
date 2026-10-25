@@ -101,6 +101,19 @@ def install(app, access=None):
         try: return activity(request.app.state.manager,run_id)
         except KeyError: raise HTTPException(404,'任务不存在') from None
 
+    @app.get('/api/tasks/{run_id}/events')
+    def events(run_id:str, request:Request):
+        if access: access.check(request, run_id)
+        mgr=request.app.state.manager
+        try: mgr.directory(run_id)
+        except KeyError: raise HTTPException(404, '任务不存在') from None
+        from sse_starlette.sse import EventSourceResponse
+        from server.events import stream_events
+        last=request.headers.get('last-event-id','0')
+        if not last.isascii() or not last.isdecimal() or len(last)>18:
+            raise HTTPException(400, '无效事件编号')
+        return EventSourceResponse(stream_events(mgr,run_id,int(last),request))
+
     @app.get('/api/tasks/{run_id}/view')
     def workbench_view(run_id:str,request:Request):
         if access is not None: access.check(request,run_id)

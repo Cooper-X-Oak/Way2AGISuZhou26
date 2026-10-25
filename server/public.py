@@ -62,9 +62,9 @@ def create_public_app(root=None,manager=None):
     @app.middleware('http')
     async def public_boundary(request,call_next):
         path=request.url.path
-        allowed=path in ('/','/agent-workbench.html','/api/chat','/api/health','/api/library','/api/profiles','/api/areas','/api/tasks','/api/tasks/config') or re.fullmatch(r'/api/chat/[a-f0-9]{32}',path) or re.fullmatch(r'/api/tasks/[a-f0-9]{32}(?:/view)?',path)
+        allowed=path in ('/','/agent-workbench.html','/api/chat','/api/chat/stream','/api/health','/api/library','/api/profiles','/api/areas','/api/tasks','/api/tasks/config') or re.fullmatch(r'/api/chat/[a-f0-9]{32}',path) or re.fullmatch(r'/api/tasks/[a-f0-9]{32}(?:/view|/events)?',path)
         if not allowed:return JSONResponse({'detail':'Not found'},status_code=404)
-        if request.method not in ('GET','HEAD') and not (request.method=='POST' and path in ('/api/tasks','/api/chat')):
+        if request.method not in ('GET','HEAD') and not (request.method=='POST' and path in ('/api/tasks','/api/chat','/api/chat/stream')):
             return JSONResponse({'detail':'Method not allowed'},status_code=405)
         origin=request.headers.get('origin')
         if request.method=='POST' and origin and urlsplit(origin).netloc!=request.headers.get('host'):

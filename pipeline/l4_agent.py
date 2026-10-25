@@ -201,7 +201,7 @@ def run(c, l4, research=None):
                                        request=c.get('request', '')), ensure_ascii=False, default=str)
             + '\n最终 JSON 格式：' + json.dumps(SHAPE, ensure_ascii=False) + extra)
     final, log = run_agent(system(), user, w.tools(), post=post, validate=validate,
-                           limits=Limits(cfg['max_steps'], cfg['max_tool_calls'], cfg['tool_summary_max_chars']), on_step=on_step)
+                           limits=Limits(cfg['max_steps'], cfg['max_tool_calls'], cfg['tool_summary_max_chars']), on_step=on_step, on_progress=c.get('progress', lambda kind, **data: None))
     model = getattr(post, 'model', 'injected')
     items = [w.item(r) for r in final['items']]
     write(run_dir / 'agent' / f'L4-a{attempt}.json', {'model': model, 'model_calls': log.model_calls, 'tool_calls': log.tool_calls})

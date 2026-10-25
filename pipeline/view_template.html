@@ -525,6 +525,34 @@ async function api(path,body){
   if(!r.ok){const e=new Error(typeof data?.detail==='string'?data.detail:'服务没有响应');e.status=r.status;throw e;}
   return data;
 }
+async function streamChat(body,onEvent){
+  const r=await fetch('/api/chat/stream',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(!r.ok){const data=await r.json();throw new Error(data.detail||'对话连接失败');}
+  const reader=r.body.getReader(),decoder=new TextDecoder();let buffer='',final=null;
+  try{while(true){const {value,done}=await reader.read();buffer+=decoder.decode(value||new Uint8Array(),{stream:!done});
+    let end;while((end=buffer.indexOf('\n\n'))>=0){const frame=buffer.slice(0,end);buffer=buffer.slice(end+2);
+      for(const line of frame.split('\n')){if(!line.startsWith('data:'))continue;const event=JSON.parse(line.slice(5));
+        if(event.type==='error')throw new Error(event.message);
+        await onEvent(event);if(event.type==='done')final=event;
+      }
+    }if(done)break;
+  }}finally{await reader.cancel();reader.releaseLock();}
+  if(!final)throw new Error('连接已中断，请刷新查看已保存的操作，勿重复提交。');return final;
+}
+const RUN_STREAMS=new Map();
+function watchRun(id){
+  if(RUN_STREAMS.has(id))return;
+  const source=new EventSource('/api/tasks/'+id+'/events');RUN_STREAMS.set(id,source);
+  const labels={stage_start:'开始',stage_done:'完成',tool_start:'正在调用',tool_done:'调用结束',run_done:'任务完成',run_failed:'任务未通过检查'};
+  const tools={area_inventory:'盘点商户',search_merchants:'高德商户检索',list_merchants:'读取候选门店',list_targets:'读取话术目标',check_pitch:'检查话术'};
+  for(const kind of Object.keys(labels))source.addEventListener(kind,async event=>{
+    const data=JSON.parse(event.data),tool=data.payload?.tool;
+    S.runProgress=S.runProgress||{};S.runProgress[id]=labels[kind]+' · '+(tool?(tools[tool]||tool):(data.stage||''));
+    if(kind==='run_done'||kind==='run_failed'){source.close();RUN_STREAMS.delete(id);}
+    await loadTurn(id,true);if(conv()?.turns?.includes(id))render();
+  });
+  source.onerror=()=>{source.close();RUN_STREAMS.delete(id);}; // Existing polling recovers after transport loss.
+}
 function group(rows){
   return groupTaskRecords(rows).map(({root,latest:last,ids})=>({id:root.run_id,turns:ids,title:root.task.message,product:root.task.product,area:AREA[root.task.area]||root.task.area,
       area_id:root.task.area,profile:root.task.profile,status:last.status,stopped_at:last.stopped_at,current_stage:last.current_stage,created_at:root.task.created_at,updated_at:last.task.created_at,mode:root.task.mode==='replay'?'回放':'实况'}));
@@ -712,7 +740,9 @@ function renderThread(){
   (S.notices[c.id]||[]).forEach(n=>html+=msg('u','你','',`<div class="bubble">${esc(n.text)}</div>`)+msg('s','系统','未执行',`<div class="callout stop"><p>${esc(n.reason)}</p></div>`));
   const outgoing=S.outbox[c?.id];
   if(outgoing)html+=msg('u','你',outgoing.status==='failed'?'未收到发送确认':'发送中',`<div class="bubble">${esc(outgoing.text)}</div>${outgoing.status==='failed'?`<p class="small">${esc(outgoing.error)} · 请检查是否已执行，再重试。</p><button class="linkbtn" type="button" data-fill="${esc(outgoing.text)}">重新编辑</button>`:''}`);
-  if((outgoing?.status==='sending')||S.reviewing)html+=msg('a','Agent','正在回应','<div class="typing"><i></i><i></i><i></i></div>');
+  if(S.liveChat?.root===c.id)html+=msg('a','Agent',S.liveChat.status||'正在回应',S.liveChat.text?`<div class="prose markdown">${markdown(S.liveChat.text)}</div>`:'<div class="typing"><i></i><i></i><i></i></div>');
+  else if((outgoing?.status==='sending')||S.reviewing)html+=msg('a','Agent','正在回应','<div class="typing"><i></i><i></i><i></i></div>');
+  const progress=S.runProgress?.[c.turns?.at(-1)];if(progress)html+=msg('s','执行进度','实时',`<p>${esc(progress)}</p>`);
   if(S.error)html+=msg('s','系统','连接问题',`<div class="callout stop"><p>${esc(S.error)}</p></div>`);
   const same=th.dataset.conv===String(c.id),nm=same?th.querySelectorAll('.msg').length:0,nt=same?th.querySelectorAll('.tl li:not(:has(.typing))').length:0;
   th.innerHTML=html;th.dataset.conv=c.id;
@@ -834,7 +864,7 @@ function render(){renderList();renderHead();renderRail();renderThread();renderCo
 
 /* ================= actions ================= */
 function select(id){showPane('chat');clearTimeout(S.timer);stopReplay(false);S.cur=id;S.stage=null;S.tab='map';S._jump=true;
-  const c=conv();if(!c?.draft&&S.online){render();poll();}else render();
+  const c=conv();if(!c?.draft&&S.online){render();poll();if(!c.offline&&!DONE(c.status)&&c.turns?.length)watchRun(c.turns.at(-1));}else render();
   if(!c?.draft){try{history.replaceState(null,'','#'+c.id);}catch{}}}
 function newTask(){let d=S.convs.find(c=>c.draft&&!chatFor(c)&&!S.outbox[c.id]);if(!d){d={id:'draft-'+Date.now(),draft:true};S.convs.unshift(d);}select(d.id);$('ask').focus();}
 async function send(text){
@@ -857,19 +887,34 @@ async function send(text){
     const body=taskRequestBody({conv:c,view:lastView(),text,profile:$('p-sel')?.value,area:$('a-sel')?.value});
     if(!c||c.draft)Object.assign(body,selectedLibrary());
     const existing=chatFor(c);if(existing){body.conversation_id=existing.data.conversation_id;body.profile=existing.profile;body.area=existing.area;body.library=existing.library;}
-    const response=await api('chat',body),run_id=response.run_id;
-    accepted=true;delete S.outbox[origin];const viewing=S.cur===origin;
+    const applyReply=async response=>{const run_id=response.run_id;
+    accepted=true;delete S.outbox[origin];const viewing=S.cur===origin||S.cur===CHAT[response.conversation_id]?.root;
     const root=run_id?(c?.draft?run_id:c.id):(c?.draft?'chat-'+response.conversation_id:c.id);
     CHAT[response.conversation_id]={root,profile:body.profile,area:body.area,library:body.library,data:response};saveChats();
     if(viewing)S._jump=true;
     if(!run_id){if(c?.draft){c.id=root;c.title=c.title||text.slice(0,60);if(viewing)S.cur=root;}if(viewing)S.tab='document';render();return;}
-    if(!c||c.draft){S.convs=S.convs.filter(x=>x.id!==origin);}
+    if(!c||c.draft){S.convs=S.convs.filter(x=>x!==c&&x.id!==origin);}
     await refreshList();
     const target=S.convs.find(x=>x.turns?.includes(run_id));
     S.views[run_id]={pending:true,status:'queued',task:{message:text}};
     if(viewing){select(target?target.id:run_id);S.tab='document';renderArtifacts();}else renderList();
+    watchRun(run_id);
+    };
+    S.liveChat={root:origin,text:'',status:'正在连接模型'};
+    const response=await streamChat(body,async event=>{
+      if(event.type==='conversation'){
+        CHAT[event.conversation_id]=CHAT[event.conversation_id]||{root:origin,profile:body.profile,area:body.area,library:body.library,data:{conversation_id:event.conversation_id,messages:[]}};saveChats();
+      }
+      if(event.type==='model_start'){S.liveChat.text='';S.liveChat.status='模型正在生成回复';}
+      if(event.type==='text_delta')S.liveChat.text+=event.text;
+      if(event.type==='operation'){
+        await applyReply(event);S.liveChat.root=CHAT[event.conversation_id].root;S.liveChat.text='';S.liveChat.status=event.message;
+      }
+      renderThread();
+    });
+    await applyReply(response);
   }catch(e){if(!accepted)S.outbox[origin]={text,status:'failed',error:e.message};else S.error=e.message;render();}
-  finally{S.sending=false;renderComposer();renderThread();}
+  finally{S.liveChat=null;S.sending=false;renderComposer();renderThread();}
 }
 function alertDraft(reason){const th=$('thread');th.insertAdjacentHTML('beforeend',msg('s','系统','未执行',`<div class="callout stop"><p>${esc(reason)}</p></div>`));}
 function fill(t){$('ask').value=t;S.toolbox=false;autosize();renderToolbox();$('ask').focus();}

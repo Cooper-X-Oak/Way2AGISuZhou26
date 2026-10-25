@@ -84,7 +84,7 @@ def parse_final(content):
     return value
 
 
-def run_agent(system, user, tools, *, post, validate, limits=Limits(), on_step=lambda step: None):
+def run_agent(system, user, tools, *, post, validate, limits=Limits(), on_step=lambda step: None, on_progress=lambda kind, **data: None):
     """Return (final_dict, transcript). `validate(final)` returns a list of error strings."""
     registry = {t.name: t for t in tools}
     messages = [{'role': 'system', 'content': system}, {'role': 'user', 'content': user}]
@@ -126,6 +126,7 @@ def run_agent(system, user, tools, *, post, validate, limits=Limits(), on_step=l
                     except ValueError:
                         args, result = {}, {'ok': False, 'error': '参数不是合法 JSON 对象'}
                     else:
+                        on_progress('tool_start', tool=name)
                         t0 = time.perf_counter()
                         try:
                             result = registry[name].fn(**args)
@@ -135,6 +136,7 @@ def run_agent(system, user, tools, *, post, validate, limits=Limits(), on_step=l
                             result = {'ok': False, 'error': str(exc)}
                         except Exception as exc:  # a broken tool call must not kill the demo run
                             result = {'ok': False, 'error': f'工具执行失败（{type(exc).__name__}）'}
+                        on_progress('tool_done', tool=name, ok=result.get('ok', True))
                         record(kind='tool', tool=name, args=args, ok=result.get('ok', True),
                                result=result, duration_seconds=round(time.perf_counter() - t0, 3))
                 messages.append({'role': 'tool', 'tool_call_id': call['id'], 'content': clip(result, limits.summary_max_chars)})

@@ -5,7 +5,7 @@ import json
 from pipeline.io import resolve
 
 EVENT_TYPES = {'stage_start', 'attempt', 'check', 'violation', 'backtrack',
-               'gate_pending', 'gate_approved', 'stage_done', 'run_done', 'run_failed'}
+               'tool_start', 'tool_done', 'gate_pending', 'gate_approved', 'stage_done', 'run_done', 'run_failed'}
 
 
 async def stream_events(manager, run_id, last_id, request):
