@@ -9,6 +9,7 @@ import httpx
 from fastapi import HTTPException, Request
 from pydantic import Field
 from server.tasks import TaskRequest
+from pipeline.io import write
 
 LOCK=threading.RLock()
 BUSY=set()
@@ -56,6 +57,10 @@ def install(app,access=None):
         cid=body.conversation_id or uuid.uuid4().hex
         root=Path(manager.root)/'conversations';root.mkdir(parents=True,exist_ok=True)
         path=root/(cid+'.json')
+        def save():
+            with LOCK:
+                write(path,state)
+                if access:access.record(request,cid)
         if body.conversation_id and access:access.check(request,cid)
         if body.parent_id and access:access.check(request,body.parent_id)
         with LOCK:
@@ -98,14 +103,16 @@ def install(app,access=None):
                 if changed:state['changes'].append({'at':datetime.now(timezone.utc).isoformat(),'source_run':state['latest_run'],'sections':changed})
                 state['reviewed_run']=state['latest_run'];state['review_version']=3
                 state['messages'].append({'role':'assistant','content':'执行结果已同步到右侧任务文档。阶段判断保留了模型或规则来源，原来的计划和判断可在修改记录中回看。'})
-                with LOCK:
-                    temp=path.with_suffix('.tmp');temp.write_text(json.dumps(state,ensure_ascii=False),encoding='utf8');temp.replace(path)
+                save()
             return {**state,'conversation_id':cid,'run_id':None,'reply':state['messages'][-1]['content']}
         history=[{k:m[k] for k in ('role','content')} for m in state['messages'][-20:]]
         messages=[{'role':'system','content':SYSTEM},{'role':'system','content':'当前任务资料：'+json.dumps(context,ensure_ascii=False)},*history,{'role':'user','content':body.input}]
         reply=completion(messages,TOOLS)
         run_id=None;executed=False;document_saved=False;tools=reply.get('tool_calls') or []
         if len(tools)>4:raise HTTPException(502,'模型返回过多操作，请重试')
+        state['messages'].append({'role':'user','content':body.input})
+        response_message={'role':'assistant','content':'正在处理本轮请求。'}
+        state['messages'].append(response_message)
         if tools:
             messages.append(reply)
             for call in tools:
@@ -133,15 +140,19 @@ def install(app,access=None):
                     else:raise ValueError('不支持的工具')
                 except (ValueError,KeyError,RuntimeError) as exc:result={'error':str(exc)}
                 messages.append({'role':'tool','tool_call_id':call['id'],'content':json.dumps(result,ensure_ascii=False)})
+                # Persist each operation before another tool or slow model request.
+                # This provisional response remains truthful if the process stops.
+                response_message['content']=('任务已提交，可查看执行过程；最终回复尚未生成。' if run_id else
+                                             '任务文档已保存；最终回复尚未生成。' if document_saved else
+                                             '本轮操作未成功，尚未提交任务。')
+                if run_id:response_message['run_id']=run_id
+                save()
             # The tool outcome is durable even if the provider fails on the final wording.
             try:reply=completion(messages)
             except HTTPException:reply={'content':'操作结果已保存。'+('任务已提交，可查看执行过程。' if run_id else '请查看右侧任务文档；模型回复暂时不可用。')}
         content=reply.get('content') or ('任务已提交，可以查看执行过程。' if run_id else '请继续说明你的目标或想调整的内容。')
-        state['messages'].append({'role':'user','content':body.input})
-        state['messages'].append({'role':'assistant','content':content,**({'run_id':run_id} if run_id else {})})
-        with LOCK:
-            temp=path.with_suffix('.tmp');temp.write_text(json.dumps(state,ensure_ascii=False),encoding='utf8');temp.replace(path)
-            if access:access.record(request,cid)
+        response_message['content']=content
+        save()
         return {'conversation_id':cid,'reply':content,'document':state['document'],'changes':state['changes'],'messages':state['messages'],'run_id':run_id,'reviewed_run':state.get('reviewed_run'),'review_version':state.get('review_version')}
 
     @app.get('/api/chat/{cid}')

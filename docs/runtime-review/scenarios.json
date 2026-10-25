@@ -1,0 +1,48 @@
+{
+  "status": "acceptance specification, not implemented results",
+  "regions": [
+    "shishan",
+    "guanqian",
+    "ligongdi"
+  ],
+  "reuse": "Same existing regional merchant snapshots",
+  "tasks": [
+    {
+      "id": "water",
+      "product_category": "水",
+      "request": "基于区域商户资料，为水产品制定市场开发策略。",
+      "product_facts": "Provide genuine product input at execution; do not invent brand facts or commercial terms."
+    },
+    {
+      "id": "alcohol",
+      "product_category": "酒",
+      "request": "基于同一区域商户资料，为酒产品制定市场开发策略。",
+      "product_facts": "Provide genuine product input at execution; do not invent brand facts or commercial terms."
+    },
+    {
+      "id": "beverage",
+      "product_category": "饮料",
+      "request": "基于同一区域商户资料，为饮料产品制定市场开发策略。",
+      "product_facts": "Provide genuine product input at execution; do not invent brand facts or commercial terms."
+    },
+    {
+      "id": "bread",
+      "product_category": "面包",
+      "request": "基于同一区域商户资料，为面包产品制定市场开发策略。",
+      "product_facts": "Provide genuine product input at execution; do not invent brand facts or commercial terms."
+    }
+  ],
+  "invariants": [
+    "No runtime code edit per product category.",
+    "Agent selects relevant existing merchants and explains suitability.",
+    "Missing information triggers tool/skill use when useful, not mandatory human homework.",
+    "Optional competition and supply evidence may remain unknown; strategy still delivered.",
+    "Copy can be useful with unknown prices; no invented price, profit, stock or authorisation.",
+    "Math, provenance and tool traces remain verifiable."
+  ],
+  "failure_cases": [
+    "Web search has no results: record attempt and continue with supported strategy.",
+    "Provider timeout: retry/alternative tool then report residual unknowns.",
+    "No relevant merchants after assessment: explain evidence and propose an alternative; do not fabricate success."
+  ]
+}

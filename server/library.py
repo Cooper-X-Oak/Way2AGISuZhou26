@@ -34,6 +34,9 @@ def apply_selection(inputs, selection):
     product = selection.get('product')
     if product:
         profile = inputs['profile']
+        # A new product must not inherit the template product's channel copy.
+        profile['material'].pop('channel_pitch_templates', None)
+        profile['material'].pop('channel_pitch_source', None)
         profile['product'] = {'name':product['name'], 'specification':{'facts':[product['facts']], 'source':'library-product'}}
         for point in profile['selling_points']:
             point.update(fact=product['facts'], name=product['name'], source='library-product')

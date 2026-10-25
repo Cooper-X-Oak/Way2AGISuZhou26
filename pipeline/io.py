@@ -1,5 +1,6 @@
 import json
 import hashlib
+import tempfile
 from copy import deepcopy
 from pathlib import Path
 from datetime import datetime, timezone
@@ -100,6 +101,22 @@ class RunStore:
 
 
 def write(path, value):
+    """Publish complete JSON with a same-directory atomic replacement.
+
+    Serialization/replacement failures leave an existing destination untouched.
+    This protects concurrent readers and process interruption, not power loss.
+    """
     path = Path(path)
+    payload = json.dumps(value, ensure_ascii=False, indent=2, allow_nan=False) + "\n"
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(value, ensure_ascii=False, indent=2, allow_nan=False) + "\n", encoding="utf-8", newline="\n")
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile(mode='w', encoding='utf-8', newline='\n',
+                                         dir=path.parent, prefix='.' + path.name + '.',
+                                         suffix='.tmp', delete=False) as stream:
+            temporary = Path(stream.name)
+            stream.write(payload)
+        temporary.replace(path)
+    finally:
+        if temporary is not None:
+            temporary.unlink(missing_ok=True)
