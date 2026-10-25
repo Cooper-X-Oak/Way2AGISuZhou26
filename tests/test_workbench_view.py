@@ -17,4 +17,7 @@ def test_workbench_can_show_clarification_and_partial_steps(tmp_path):
     assert data['steps']==[dict(kind='model',calls=['盘点现有商户'],note='')]
     page=render(data)
     assert 'private reasoning' not in page
-    assert 'height:100dvh' in page and 'overscroll-behavior:contain' in page
+    # P0 visual specification: artifacts grow naturally; only the thread is capped.
+    assert 'height:100dvh' not in page
+    assert 'max-height:calc(100vh - 260px)' in page
+    assert '@media(width < 1200px)' in page
