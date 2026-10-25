@@ -164,13 +164,16 @@ def build(directory, title=None, created_at=None):
 
     first_inventory = next((s for s in steps if s['kind'] == 'tool' and s['tool'] == 'area_inventory'), None)
     model = agent.get('model')
-    stop_reason = '；'.join(v.get('message', '') for v in status.get('violations') or []) or None
+    stop_reason = '；'.join(dict.fromkeys(v.get('message', '') for v in status.get('violations') or [] if v.get('message'))) or None
     return dict(
         id=status.get('run_id'), title=title or f"{profile['product']['name']} · {'Agent 找终端' if agent else '规则版'}",
         created_at=created_at or status.get('started_at'), stopped_at=status.get('stopped_at'), stop_reason=stop_reason,
         product=profile['product']['name'], area=site.get('display_name') or coverage.get('area_id'), request=brief.get('request'),
         run_id=status.get('run_id'), status=status.get('status'), mode=_mode(model), model=str(model or '').removeprefix('replay:') or None,
         radius=radius,
+        brief={k: brief.get(k) for k in ('radius_m', 'delivery_people', 'weeks')},
+        area_id=coverage.get('area_id'),
+        channel_names=names,
         targets=[names.get(r['channel_id'], r['channel_id']) for r in l1 if r['priority'] in ('P1', 'P2')],
         cache=dict(total=len(base), by_category=(first_inventory or {}).get('by_category') or {}),
         counts=dict(model_calls=agent.get('model_calls'), tool_calls=agent.get('tool_calls'), amap_calls=agent.get('amap_calls'), added=len(added)),
