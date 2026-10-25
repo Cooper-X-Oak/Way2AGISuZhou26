@@ -1,5 +1,7 @@
 # 三分钟 Demo：Agent 自主补采
 
+已附本机真实录制。现场兜底直接运行 `uv run python -m pipeline demo --mode replay`，无需 key。实况结果、发现的阻断与修复见 [验证记录](live-validation.md) 和 [业务结果](live-result.md)。
+
 **一条命令：**
 
 ```bash

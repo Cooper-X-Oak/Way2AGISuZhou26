@@ -213,12 +213,17 @@ def test_backtrack_limit(raw,tmp_path):
     assert not (directory/'pack.json').exists()
 
 
-def test_natural_backtrack_not_seeded(raw,tmp_path):
+def test_preflight_avoids_predictable_backtrack(raw,tmp_path):
     for p in raw['pois']:
         if p['name']=='测试餐饮':p['name']='测试火锅'
     raw['params']['min_terminals_per_zone']=2
     directory,state=execute(raw,tmp_path)
-    assert state['status']=='completed' and state['natural_backtrack']
+    assert state['status']=='completed' and state['backtracks']==0
+    assert read(directory/'params.json')['min_terminals_per_zone']==2
+    terminals=read(directory/'terminals.json')['items']
+    for zone in read(directory/'zones.json')['items']:
+        if zone['selected']:
+            assert sum(t['zone_id']==zone['zone_id'] and t['grade'] in ('A','B') for t in terminals)>=2
     assert not any(r.get('seeded_for_demo') for r in ledger(directory))
 
 
