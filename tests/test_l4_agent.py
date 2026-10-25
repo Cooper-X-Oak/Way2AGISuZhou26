@@ -36,8 +36,11 @@ class ScriptedModel:
         msgs = payload['messages']
         if self.calls == 1:
             return message(calls=[('list_targets', {})])
+        assert '技能 pitch-writing' in msgs[0]['content'] and '渠道兜底' in msgs[0]['content'], 'business method comes from the skill file'
         listing = next(json.loads(m['content']) for m in msgs if m['role'] == 'tool')
         assert not listing.get('truncated'), 'target list must reach the model whole'
+        stores = [t for t in listing['targets'] if t['kind'] == '门店']
+        assert stores and all(t['name'] and t['unknowns'] and t['reason'] for t in stores)
         items = [draft(t, listing['product']) for t in listing['targets']]
         if self.calls == 2:
             bad = dict(items[0], pitch=items[0]['pitch'].replace(listing['targets'][0]['required_angle'], ''))
@@ -59,6 +62,10 @@ def test_l4_agent_meets_completion_bar(tmp_path):
     assert materials['judged_by'] == 'llm' and all(r['judged_by'] == 'llm' for r in materials['items'])
     assert materials['agent'] == {'model': 'scripted-model', 'model_calls': 4, 'tool_calls': 3}
     assert all(r['compliance']['passed'] for r in materials['items'])
+    terminals = {t['poi_id'] for t in read(directory / 'terminals.json')['items']}
+    assert all(f"poi:{r['target']}" in r['evidence'] for r in materials['items'] if r['target'] in terminals)
+    folder = next(p for p in (directory / 'pitch').iterdir() if (p / 'status.json').is_file() and read(p / 'status.json')['status'] == 'passed')
+    assert read(folder / 'status.json')['judged_by'] == 'llm' and 'pitch-writing' in read(folder / 'skills.json')
     steps = [json.loads(l) for l in (directory / 'agent' / 'steps.jsonl').read_text(encoding='utf-8').splitlines()]
     l4 = [s for s in steps if s.get('stage') == 'L4']
     checks = [s for s in l4 if s['kind'] == 'tool' and s['tool'] == 'check_pitch']

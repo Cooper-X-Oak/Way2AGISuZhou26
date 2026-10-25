@@ -39,7 +39,9 @@ def test_model_payload_contains_merchant_context_and_skills(contexts):
             merchant = next(m for m in payload['research']['merchants'] if m['merchant'])
             assert merchant['merchant']['name'] == '测试火锅'
             assert merchant['terminal_decision']['poi_id'] == merchant['target']
-            assert set(payload['skill_instructions']) == {'merchant-context', 'pitch-writing', 'pitch-review'}
+            # One business skill at the repo root carries context gathering, writing and review guidance.
+            assert set(payload['skill_instructions']) == {'pitch-writing'}
+            assert '渠道兜底' in payload['skill_instructions']['pitch-writing']
             return {'decision': expected['decision'], 'items': expected['items']}
     c['judge'] = CaptureJudge()
     assert not l4.check(l4.run(c), c)

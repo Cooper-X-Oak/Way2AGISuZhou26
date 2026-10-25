@@ -1,22 +1,21 @@
 # 独立打磨话术
 
 话术现在按「商户资料整理 → 撰写 → 检查」执行，原流水线 L4 调用同一个工作流。
-本轮是拆分已有能力：尚未接入网页搜索，也没有改变服务端默认使用 rules 的设置。
+尚未接入网页搜索。实况任务的「怎么说」由写作 Agent 完成（`agent_l4`），回放与离线仍用模板基线。
 
 ## 改哪里
 
 | 要打磨的内容 | 文件（相对项目根目录） |
 | --- | --- |
-| 资料整理准则 | `pipeline/workflows/pitch/skills/merchant-context/SKILL.md` |
-| 开场、商户切入点、需求问题与下一步 | `pipeline/workflows/pitch/skills/pitch-writing/SKILL.md` |
-| 质量检查准则 | `pipeline/workflows/pitch/skills/pitch-review/SKILL.md` |
+| 资料整理、开场/切入点/需求问题/下一步写法、自查与完成标准（唯一业务技能） | `skills/pitch-writing/SKILL.md` |
+| 实况任务的写作 Agent（逐条自查、全部达标才交稿） | `pipeline/l4_agent.py` |
 | 资料装配与后续搜索接入位置 | `pipeline/workflows/pitch/research.py` |
 | 模型调用与规则模板基线 | `pipeline/workflows/pitch/writing.py` |
 | 程序检查（规则不因技能文档变化而自动改变） | `pipeline/workflows/pitch/review.py` |
 | 调度与中间产物保存 | `pipeline/workflows/pitch/__init__.py` |
 
-三个技能文件每次运行读取并作为撰写上下文传递给模型，保存当次快照。离线模式使用原有模板，不执行模型指令。
-资料整理和程序检查是确定性 Python 步骤；这三个技能不代表三个独立模型 Agent。
+技能文件每次运行读取并保存当次快照。实况任务由写作 Agent 按技能逐条写稿并用正式检查自查，全部达标才交稿；离线模式使用原有模板，不执行模型指令。
+资料整理和程序检查是确定性 Python 步骤。
 
 输入复用同一任务的 brief、任务文档、产品档案、POI、业态、网格竞争策略及终端名单。
 商户事实与上游判断分开保留；只有业态资料时标记 `channel_fallback`，不能冒充商户调研。

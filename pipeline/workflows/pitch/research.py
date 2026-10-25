@@ -4,10 +4,12 @@ from pipeline.common import task_context
 from .context import targets, angles
 
 
+SKILL = Path(__file__).resolve().parents[3] / 'skills' / 'pitch-writing' / 'SKILL.md'
+
+
 def instructions():
-    root = Path(__file__).parent / 'skills'
-    return {name: (root / name / 'SKILL.md').read_text(encoding='utf-8')
-            for name in ('merchant-context', 'pitch-writing', 'pitch-review')}
+    """The business method for 怎么说 lives in one skill file at the repo root (skills/pitch-writing/SKILL.md)."""
+    return {'pitch-writing': SKILL.read_text(encoding='utf-8')}
 
 
 def prepare(c):

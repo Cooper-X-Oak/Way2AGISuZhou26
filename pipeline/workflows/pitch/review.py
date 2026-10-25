@@ -39,5 +39,10 @@ def business(a,c):
     return out
 
 
-def inspect(a,c):return evaluate('L4',a,c,Materials,references,business)
+def inspect(a,c):
+    if isinstance(a,dict) and a.get('agent'):
+        # Agent-written pitches are model judgments even when the run-level judge is rules (e.g. replays).
+        from pipeline.l4_agent import llm_context
+        c=llm_context(c,a['agent'].get('model','agent'))
+    return evaluate('L4',a,c,Materials,references,business)
 def check(a,c):return errors(inspect(a,c))
