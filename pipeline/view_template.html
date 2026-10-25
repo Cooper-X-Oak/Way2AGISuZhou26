@@ -383,9 +383,40 @@ tr.C td{color:var(--muted)}
 .liveline .spin{width:12px;height:12px;border-radius:50%;border:2px solid var(--primary);border-right-color:transparent;animation:spin .8s linear infinite;flex:none}
 .liveline .num{margin-left:auto;color:var(--muted);font-weight:400}
 @keyframes spin{to{transform:rotate(360deg)}}
+/* quick start */
+#qs-dialog{margin:auto;width:min(640px,94vw);max-height:90dvh;padding:22px 24px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:12px;overflow:auto}
+#qs-dialog::backdrop{background:#0009}
+#qs-dialog header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+#qs-form{display:grid;gap:14px}
+#qs-form .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#qs-form label.f{display:grid;gap:6px;font-size:var(--t-sm);color:var(--ink-2)}
+#qs-form select,#qs-form input[type=number],#qs-form textarea{width:100%;padding:8px 10px;background:var(--sunken);color:var(--ink);border:1px solid var(--line);border-radius:6px;font-size:var(--t-md)}
+#qs-form fieldset{border:0;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:8px}
+#qs-form legend{font-size:var(--t-sm);color:var(--ink-2);margin-bottom:6px;padding:0}
+#qs-form .opt{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border:1px solid var(--line);border-radius:999px;font-size:var(--t-sm);cursor:pointer}
+#qs-form .opt:has(input:checked){border-color:var(--primary);background:var(--primary-soft);color:var(--ink)}
+#qs-form .opt input{margin:0;accent-color:var(--primary)}
+#qs-preview{padding:10px 12px;border-radius:8px;background:var(--sunken);font-size:var(--t-sm);line-height:1.7;color:var(--ink)}
+#qs-form .acts{display:flex;justify-content:flex-end;gap:10px;align-items:center}
+#qs-form .go{height:var(--h-md);padding:0 18px;border-radius:8px;background:var(--primary);color:var(--primary-ink);font-weight:600}
+#qs-form .go:disabled{opacity:.5;cursor:not-allowed}
+#qs-err{color:var(--danger);font-size:var(--t-sm)}
+@media(max-width:600px){#qs-form .row{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
+<dialog id="qs-dialog" aria-labelledby="qs-title"><header><h2 id="qs-title">快速开始</h2><button type="button" id="qs-close" class="linkbtn">关闭</button></header>
+<p class="small" style="margin:0 0 14px">选好产品、商圈和要求，直接开始分析；不经过对话。</p>
+<form id="qs-form" autocomplete="off">
+  <div class="row"><label class="f">产品<select id="qs-p"></select></label><label class="f">商圈<select id="qs-a"></select></label></div>
+  <fieldset id="qs-r"><legend>覆盖范围</legend></fieldset>
+  <fieldset id="qs-ch" hidden><legend>重点渠道（可不选，由 Agent 判断）</legend></fieldset>
+  <fieldset id="qs-out"><legend>要交付什么</legend></fieldset>
+  <div class="row"><label class="f">地推人数（可不填，只影响排期）<input id="qs-people" type="number" min="1" max="50" placeholder="例如 2"></label><label class="f">周期（周，可不填）<input id="qs-weeks" type="number" min="1" max="52" placeholder="例如 4"></label></div>
+  <label class="f">补充要求（可不填）<textarea id="qs-extra" rows="2" maxlength="500" placeholder="例如：先看写字楼，避开已有竞品陈列的门店"></textarea></label>
+  <div><span class="small">将提交的任务</span><div id="qs-preview"></div></div>
+  <div class="acts"><span id="qs-err" role="status"></span><button type="submit" class="go" id="qs-go">开始分析</button></div>
+</form></dialog>
 <dialog id="library-dialog"><header><h2 id="library-title">资料库</h2><button type="button" id="library-close" class="linkbtn">关闭</button></header><div id="library-body"></div></dialog>
 <section class="hero" id="hero" aria-label="铺市 Agent" hidden>
   <canvas id="radar" aria-hidden="true"></canvas>
@@ -413,7 +444,7 @@ tr.C td{color:var(--muted)}
   <aside class="side" aria-label="任务">
     <div class="brand"><b>铺市 Agent</b><span class="small">新品进店 · 市场开发策略</span></div>
     <button class="newbtn" id="newbtn" type="button"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.8" fill="none"/></svg>新建任务</button>
-    <button class="newbtn" id="quickstart" type="button" hidden>快速开始一次实况</button>
+    <button class="newbtn" id="quickstart" type="button">快速开始</button>
     <nav class="library-nav" aria-label="资料库"><button type="button" data-library="products">产品库</button><button type="button" data-library="areas">商圈库</button><button type="button" data-library="skills">技能</button></nav>
     <span class="small list-h">任务记录</span>
     <ul class="tasks" id="tasks"></ul>
@@ -762,7 +793,7 @@ function picked(){const ps=$('p-sel'),as=$('a-sel');const prof=productChoices().
   return {product:prof?.name||'洞庭山·新鲜活泉',radius:(areaChoices().find(x=>x.id===as?.value)?.radius_m||3000)/1000,area:areaChoices().find(x=>x.id===as?.value)?.name||AREA[as?.value||'shishan']||'狮山'};}
 function renderComposer(){
   const c=conv(),v=lastView(),running=v&&!DONE(v.status);
-  $('quickstart').hidden=!S.config?.public_demo;$('quickstart').disabled=S.sending||!S.config?.live_ready;
+  $('quickstart').disabled=S.sending;
   const draft=!c||c.draft;
   $('pickers').hidden=!(draft&&S.online&&!chatFor(c));
   if(draft&&S.online&&!$('p-sel')){
@@ -781,7 +812,7 @@ function renderComposer(){
   $('ask').disabled=!!running;$('send').disabled=!!running||S.sending;$('tb').disabled=!!running;
   $('hint').textContent=!S.online?'离线页面：可以编辑和查看，发送需要连接本地服务':
     !S.config?.live_ready?`本地服务已连接，但实况配置缺少：${(S.config?.missing||[]).join('、')||'—'}`:
-    c?.offline?'公共回放示例。可点“快速开始一次实况”创建自己的任务':draft?'先和 Agent 沟通，需要执行时会调用分析流程':running?'执行中…':'发送后在这个对话里继续执行';
+    c?.offline?'公共回放示例。可点「快速开始」直接开始一次分析':draft?'先和 Agent 沟通，需要执行时会调用分析流程':running?'执行中…':'发送后在这个对话里继续执行';
   renderToolbox();
 }
 function toolboxItems(){
@@ -928,7 +959,7 @@ document.addEventListener('click',e=>{
   if(t.matches('.task'))return select(t.dataset.id);
   if(t.matches('.node')){showPane('art');S.stage=t.dataset.stage;S.tab=S.stage==='L0'?'brief':'dec';renderRail();renderComposer();renderArtifacts();return;}
   if(t.id==='newbtn')return newTask();
-  if(t.id==='quickstart'){if(S.sending)return;newTask();return send(TEMPLATES(picked())[0]);}
+  if(t.id==='quickstart'){if(S.sending)return;return openQuick();}
   if(t.id==='replay')return startReplay();
   if(t.id==='tb'){S.toolbox=!S.toolbox;S.tbIndex=-1;renderToolbox();}
 });
@@ -943,6 +974,71 @@ $('ask').addEventListener('keydown',e=>{
   if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();$('composer').requestSubmit();}
 });
 
+
+/* ================= quick start: pick product, area and requirements, then run the analysis directly ================= */
+const QS_OUT=[['customers','卖给谁、找哪些渠道的分析'],['stores','首访门店名单和拜访理由'],['pitch','每家店的进店话术，没资料的内容写成到店要问的问题']];
+let QS_CAT=null;
+async function openQuick(){
+  if(!S.online){alertDraft('这是离线页面，没有连接 Agent 服务，不能开始新的分析。');return;}
+  if(QS_CAT===null){try{QS_CAT=await api('library');}catch{QS_CAT={products:[],areas:[]};}}
+  const ps=productChoices(),as=areaChoices();
+  $('qs-p').innerHTML=ps.map(p=>`<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('');
+  $('qs-a').innerHTML=as.map(a=>`<option value="${esc(a.id)}">${esc(a.name||AREA[a.id]||a.id)}</option>`).join('');
+  $('qs-p').value=$('p-sel')?.value||(ps.some(p=>p.id==='xinxian-huoquan')?'xinxian-huoquan':ps[0]?.id);
+  $('qs-a').value=$('a-sel')?.value||(as.some(a=>a.id==='shishan')?'shishan':as[0]?.id);
+  $('qs-out').innerHTML='<legend>要交付什么</legend>'+QS_OUT.map(([k,n])=>`<label class="opt"><input type="checkbox" name="out" value="${k}" checked>${esc(n)}</label>`).join('');
+  $('qs-people').value='';$('qs-weeks').value='';$('qs-extra').value='';$('qs-err').textContent='';
+  quickOptions();
+  if(!$('qs-dialog').open)$('qs-dialog').showModal();
+}
+function quickOptions(){
+  const a=areaChoices().find(x=>x.id===$('qs-a').value),max=a?.radius_m?Math.min(3,a.radius_m/1000):3;
+  const radii=[1,2,3].filter(r=>r<=max);if(!radii.length)radii.push(+max.toFixed(1));
+  const cur=+($('qs-r').querySelector('input:checked')?.value||radii.at(-1));
+  $('qs-r').innerHTML='<legend>覆盖范围</legend>'+radii.map(r=>`<label class="opt"><input type="radio" name="radius" value="${r}" ${r===(radii.includes(cur)?cur:radii.at(-1))?'checked':''}>${r} 公里</label>`).join('');
+  const p=productChoices().find(x=>x.id===$('qs-p').value),base=p?.base||p?.id;
+  const chans=(QS_CAT?.products||[]).find(x=>x.id===base)?.channels||[];
+  $('qs-ch').hidden=!chans.length;
+  $('qs-ch').innerHTML='<legend>重点渠道（可不选，由 Agent 判断）</legend>'+chans.map(n=>`<label class="opt"><input type="checkbox" name="ch" value="${esc(n)}">${esc(n)}</label>`).join('');
+  quickPreview();
+}
+function quickText(){
+  const p=productChoices().find(x=>x.id===$('qs-p').value),a=areaChoices().find(x=>x.id===$('qs-a').value);
+  const r=$('qs-r').querySelector('input:checked')?.value||'3',people=+$('qs-people').value||0,weeks=+$('qs-weeks').value||0;
+  const ch=[...$('qs-ch').querySelectorAll('input:checked')].map(i=>i.value);
+  const out=[...$('qs-out').querySelectorAll('input:checked')].map(i=>QS_OUT.find(o=>o[0]===i.value)[1]);
+  const extra=$('qs-extra').value.trim();
+  let t=`${a?.name||AREA[a?.id]||''}商圈周边 ${r} 公里推广${p?.name||''}`;
+  if(people)t+=`，${people} 个地推`;if(weeks)t+=`，做 ${weeks} 周`;t+='。';
+  if(ch.length)t+=`优先${ch.join('、')}。`;
+  if(out.length)t+=`请给出：${out.join('；')}。`;
+  if(extra)t+=extra.replace(/[。.]?$/,'。');
+  return t;
+}
+function quickPreview(){$('qs-preview').textContent=quickText();$('qs-go').disabled=!$('qs-out').querySelector('input:checked')||S.sending;}
+async function startQuick(){
+  if(S.sending)return;
+  if(!S.config?.live_ready){$('qs-err').textContent=`本地服务缺少实况配置（${(S.config?.missing||[]).join('、')}），不能开始。`;return;}
+  const p=productChoices().find(x=>x.id===$('qs-p').value),a=areaChoices().find(x=>x.id===$('qs-a').value);
+  const input=quickText();
+  const body={profile:p?.base||p?.id,area:a?.base||a?.id,input,mode:'live',
+    library:{product:p?.base?{name:p.name,facts:p.facts,source:p.source}:null,area:a?.base?{name:a.name,radius_m:a.radius_m}:null,
+             skills:LIB.skills.filter(s=>s.enabled).map(({name,instructions,stages})=>({name,instructions,stages}))}};
+  S.sending=true;$('qs-go').disabled=true;$('qs-go').textContent='正在提交…';$('qs-err').textContent='';
+  try{
+    const {run_id}=await api('tasks',body);
+    $('qs-dialog').close();
+    await refreshList();
+    S.views[run_id]={pending:true,status:'queued',task:{message:input}};
+    const target=S.convs.find(x=>x.turns?.includes(run_id));
+    S.sending=false;select(target?target.id:run_id);
+  }catch(e){$('qs-err').textContent=e.message||'提交失败，请重试';}
+  finally{S.sending=false;$('qs-go').textContent='开始分析';quickPreview();renderComposer();}
+}
+$('qs-close').addEventListener('click',()=>$('qs-dialog').close());
+$('qs-form').addEventListener('change',e=>{if(e.target.matches('#qs-p,#qs-a'))quickOptions();else quickPreview();});
+$('qs-form').addEventListener('input',quickPreview);
+$('qs-form').addEventListener('submit',e=>{e.preventDefault();startQuick();});
 
 /* Browser-owned library; task submission freezes the chosen records. */
 let LIB={products:[],areas:[],skills:[]},catalog={products:[],areas:[]},libKind='products',editId=null;
