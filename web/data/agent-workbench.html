@@ -812,7 +812,7 @@ function renderComposer(){
   $('ask').disabled=!!running;$('send').disabled=!!running||S.sending;$('tb').disabled=!!running;
   $('hint').textContent=!S.online?'离线页面：可以编辑和查看，发送需要连接本地服务':
     !S.config?.live_ready?`本地服务已连接，但实况配置缺少：${(S.config?.missing||[]).join('、')||'—'}`:
-    c?.offline?'公共回放示例。可点「快速开始」直接开始一次分析':draft?'先和 Agent 沟通，需要执行时会调用分析流程':running?'执行中…':'发送后在这个对话里继续执行';
+    c?.offline?'公共回放示例。可点「快速开始」直接开始一次分析':draft?'发送后直接开始分析':running?'执行中…':'发送后在这个对话里继续执行';
   renderToolbox();
 }
 function toolboxItems(){
@@ -918,18 +918,19 @@ async function send(text){
   try{
     const body=taskRequestBody({conv:c,view:lastView(),text,profile:$('p-sel')?.value,area:$('a-sel')?.value});
     if(!c||c.draft)Object.assign(body,selectedLibrary());
-    const existing=chatFor(c);if(existing){body.conversation_id=existing.data.conversation_id;body.profile=existing.profile;body.area=existing.area;body.library=existing.library;}
-    const response=await api('chat',body),run_id=response.run_id;
+    // Every message starts (or continues) a real run directly; no chat-model round trip that may only promise to start.
+    const existing=chatFor(c);
+    const direct={area:body.area||existing?.area,profile:body.profile||existing?.profile,input:text,mode:'live'};
+    if(body.parent_id)direct.parent_id=body.parent_id;
+    if((!c||c.draft)&&(body.library||existing?.library))direct.library=body.library||existing.library;
+    const {run_id}=await api('tasks',direct);
     accepted=true;delete S.outbox[origin];const viewing=S.cur===origin;
-    const root=run_id?(c?.draft?run_id:c.id):(c?.draft?'chat-'+response.conversation_id:c.id);
-    CHAT[response.conversation_id]={root,profile:body.profile,area:body.area,library:body.library,data:response};saveChats();
     if(viewing)S._jump=true;
-    if(!run_id){if(c?.draft){c.id=root;c.title=c.title||text.slice(0,60);if(viewing)S.cur=root;}if(viewing)S.tab='document';render();return;}
     if(!c||c.draft){S.convs=S.convs.filter(x=>x.id!==origin);}
     await refreshList();
     const target=S.convs.find(x=>x.turns?.includes(run_id));
     S.views[run_id]={pending:true,status:'queued',task:{message:text}};
-    if(viewing){select(target?target.id:run_id);S.tab='document';renderArtifacts();}else renderList();
+    if(viewing){select(target?target.id:run_id);S.tab='map';renderArtifacts();}else renderList();
   }catch(e){if(!accepted)S.outbox[origin]={text,status:'failed',error:e.message};else S.error=e.message;render();}
   finally{S.sending=false;renderComposer();renderThread();}
 }
