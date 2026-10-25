@@ -5,4 +5,6 @@ import uuid
 
 def pytest_configure(config):
     if not config.option.basetemp:
-        config.option.basetemp = str(Path(__file__).resolve().parents[1] / '.work/tmp' / ('pytest-v2-' + uuid.uuid4().hex))
+        parent = Path(__file__).resolve().parents[1] / '.work/tmp'
+        parent.mkdir(parents=True, exist_ok=True)
+        config.option.basetemp = str(parent / ('pytest-v2-' + uuid.uuid4().hex))

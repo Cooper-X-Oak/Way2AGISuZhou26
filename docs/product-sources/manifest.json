@@ -1,0 +1,17 @@
+{
+  "files": [
+    {
+      "file": "dongting-brief.md",
+      "sha256": "95376abe3705c5fa0b1c3e63abde77e6b99770b121eb7679e91cbf30a02e5b0d",
+      "transformation": "byte-preserved public product brief"
+    },
+    {
+      "file": "handbook.md",
+      "sha256": "ae68ec01a38b092ae5fc62f836d7edab44193f8eb73beed5b944552edb2ff4f8",
+      "transformation": "chapter 4 excerpt; other chapters excluded"
+    }
+  ],
+  "source": "https://ocn8hd90aveq.feishu.cn/wiki/Or2iwYxW0iUISXkLDu2crPS9nJe",
+  "purpose": "Reproduce existing repository profiles; brand statements are source claims, not new independently verified facts.",
+  "handbook_scope": "Only chapter 4 brand challenge context. No credentials, media assets or unrelated event instructions."
+}
