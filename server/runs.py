@@ -104,6 +104,16 @@ class RunManager:
             inputs.update(agent_l1d=True, auto_approve=True,
                           task=dict(mode=task_mode, message=request.input, area=request.area, profile=request.profile,
                                     product=profile['product']['name'], parent_id=parent, created_at=now()))
+        if getattr(request, 'document', None): inputs['task_document'] = request.document
+        from server.library import apply_selection
+        selection = getattr(request, 'library', None)
+        if task_mode and parent:
+            if selection is not None: raise ValueError('继续对话沿用原任务资料；更换资料请新建任务')
+            selection = previous.get('library_selection')
+        if selection:
+            if task_mode == 'replay': raise ValueError('历史回放不接受新的资料或技能')
+            apply_selection(inputs, selection)
+            if task_mode: inputs['task']['product'] = inputs['profile']['product']['name']
         with self.lock:
             if self.closed or not self.slots.acquire(blocking=False):
                 raise RuntimeError('最多同时运行两个任务（含等待人工确认的任务）')

@@ -9,6 +9,9 @@ from pipeline.export import public
 from pipeline.io import read
 
 
+from server.library import LibrarySelection
+
+
 class TaskRequest(BaseModel):
     model_config = ConfigDict(extra='forbid')
     area: str = Field(min_length=1, max_length=80)
@@ -18,6 +21,8 @@ class TaskRequest(BaseModel):
     parent_id: str | None = Field(default=None, pattern=r'^[a-f0-9]{32}$')
     auto_approve: bool = True
     demo_replay: None = None
+    library: LibrarySelection | None = None
+    document: dict[str, str] | None = None
 
 
 def lines(path):

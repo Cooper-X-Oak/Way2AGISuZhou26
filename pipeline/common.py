@@ -4,13 +4,13 @@ from pipeline.contracts import Violation, violation
 from pipeline.geo import distance, grid_id
 
 
-def task_context(inputs):
+def task_context(inputs, stage=None):
     """Shared task requirements and validated stage conclusions, for every model call."""
     brief = dict(inputs.get("brief") or {})
     brief["request"] = inputs.get("request", brief.get("request", ""))
     brief["product"] = inputs.get("profile", {}).get("product", {})
     brief["area_id"] = inputs.get("area_id")
-    return {"brief": brief, "previous_round": inputs.get("previous_round"), "completed_decisions": {
+    return {"brief": brief, "task_document": inputs.get("task_document"), "skills": [s for s in inputs.get("skills", []) if stage in s.get("stages", [])], "previous_round": inputs.get("previous_round"), "completed_decisions": {
         key: inputs[key].get("decision") for key in
         ("l1", "l1d", "l2", "l2c", "l3", "l3p", "l4")
         if isinstance(inputs.get(key), dict) and inputs[key].get("decision")
@@ -19,7 +19,7 @@ def task_context(inputs):
 
 def decide(inputs, stage, payload, rules, contract):
     return inputs["judge"].decide(stage, {
-        **payload, "task_context": task_context(inputs), "previous": inputs.get("previous"),
+        **payload, "task_context": task_context(inputs, stage), "previous": inputs.get("previous"),
         "violations": inputs.get("violations", []), "output_contract": contract,
     }, rules)
 

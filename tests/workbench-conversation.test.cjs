@@ -25,3 +25,13 @@ test('a new task uses the picked product and area and has no parent',()=>{
  const body=ctx.taskRequestBody({conv:{draft:true},text:'狮山 3 公里',profile:'jiangnan-gongquan',area:'guanqian'});
  assert.equal(body.parent_id,undefined);assert.equal(body.profile,'jiangnan-gongquan');assert.equal(body.area,'guanqian');
 });
+
+
+test('assistant markdown renders common blocks and never executes source HTML',()=>{
+ const html=ctx.markdown('# 标题\n\n**重点**与 `code`\n\n1. 第一步\n2. 第二步\n\n| 项目 | 状态 |\n| --- | --- |\n| 计划 | 待验证 |\n\n```js\n<script>alert(1)</script>\n```');
+ assert.match(html,/<h1>标题<\/h1>/);assert.match(html,/<strong>重点<\/strong>/);
+ assert.match(html,/<ol>/);assert.match(html,/<table>/);assert.match(html,/&lt;script&gt;/);
+ assert.doesNotMatch(html,/<script>/);
+ const unsafe=ctx.markdown('<img src=x onerror=alert(1)> [bad](javascript:alert(1))');
+ assert.doesNotMatch(unsafe,/<img|href="javascript:/);
+});

@@ -20,6 +20,10 @@ def facts(inputs):
     m = max(matches, key=lambda m: m.start()) if matches else None
     if m:
         supplied["radius_m"] = int(float(m[1]) * (1000 if m[2].lower() in ("km", "公里", "千米") else 1))
+    if "radius_m" not in supplied and inputs.get("library_selection", {}).get("area"):
+        area = inputs["library_selection"]["area"]
+        supplied["radius_m"] = area["radius_m"]
+        assumptions.append(f"覆盖半径={area['radius_m']}米，来自本次选中的商圈资料；用户明确范围优先。")
     patterns = {
         "delivery_people": [r"(-?\d+)\s*(?:个|名|位)?\s*(?:地推|人)", r"(?:地推|配送员)\s*(-?\d+)\s*人"],
         "weeks": [r"(?:做|执行|计划)?\s*(-?\d+)\s*周"],

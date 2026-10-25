@@ -27,7 +27,7 @@ def execute(inputs,root=Path('.'),stages=STAGES,*,run_id=None,observer=None,appr
     sources={}
     for row in inputs['profile']['scenes']+inputs['profile']['selling_points']:
         file=row['source'].split('#')[0]
-        sources[file]=source_path(file, source_root).read_text(encoding='utf-8')
+        sources[file]=inputs.get('library_documents', {}).get(file) or source_path(file, source_root).read_text(encoding='utf-8')
     public['source_documents']=sources
     persist(directory/'inputs.json',public);persist(directory/'params.json',inputs['params'])
     persist(directory/'pois.json',inputs['pois']);persist(directory/'coverage.json',inputs['coverage']);persist(directory/'profile.json',inputs['profile'])

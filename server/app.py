@@ -73,6 +73,14 @@ def create_app(manager=None, task_access=None):
         return [dict(id=path.stem, name=load(path.stem)['product']['name'])
                 for path in sorted(PROFILE_DIR.glob('*.yaml'))]
 
+    @app.get('/api/library')
+    def library():
+        return {'products': [dict(id=p.stem, name=load(p.stem)['product']['name'],
+                                 facts='；'.join(x['fact'] for x in load(p.stem)['selling_points']),
+                                 source=load(p.stem).get('source','产品档案'),
+                                 channels=[x['name'] for x in load(p.stem)['channels']])
+                             for p in sorted(PROFILE_DIR.glob('*.yaml'))], 'areas': areas()}
+
     @app.post('/api/runs', status_code=202)
     def start(body: RunRequest, request: Request):
         try:
@@ -123,6 +131,8 @@ def create_app(manager=None, task_access=None):
 
     from server.tasks import install
     install(app, access=task_access)
+    from server.chat import install as install_chat
+    install_chat(app, access=task_access)
     return app
 
 

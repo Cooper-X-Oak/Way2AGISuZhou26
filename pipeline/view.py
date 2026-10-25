@@ -171,7 +171,7 @@ def build(directory, title=None, created_at=None):
         product=profile['product']['name'], area=site.get('display_name') or coverage.get('area_id'), request=brief.get('request'),
         run_id=status.get('run_id'), status=status.get('status'), mode=_mode(model), model=str(model or '').removeprefix('replay:') or None,
         radius=radius,
-        brief={**{k: brief.get(k) for k in ('request', 'radius_m', 'delivery_people', 'weeks', 'assumptions', 'questions', 'site_note', 'location_note')}, 'product_background': profile.get('product', {})},
+        brief={**{k: brief.get(k) for k in ('request', 'radius_m', 'delivery_people', 'weeks', 'assumptions', 'questions', 'site_note', 'location_note')}, 'product_background': profile.get('product', {}), 'library_selection': _opt(directory, 'inputs.json', {}).get('library_selection')},
         area_id=coverage.get('area_id'),
         channel_names=names,
         targets=[names.get(r['channel_id'], r['channel_id']) for r in l1 if r['priority'] in ('P1', 'P2')],
