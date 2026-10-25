@@ -25,7 +25,16 @@ def run(c):
     try:
         if c.get('agent_l4'):
             from pipeline import l4 as stage, l4_agent
-            artifact = l4_agent.run(c, stage, context)
+            from pipeline.agent_loop import AgentError
+            try:
+                artifact = l4_agent.run(c, stage, context)
+            except AgentError as exc:
+                # Stated fallback, never silent: the writing agent did not meet the bar within its step budget,
+                # so this attempt uses the template baseline (judged by the run's own judge) and says so.
+                persist('agent_failed', {'error': str(exc)})
+                artifact = compose(c, context)
+                artifact['open'] = list(artifact.get('open') or []) + ['来源：写作 Agent 未在步数上限内让全部话术达标（' + str(exc)[:80] + '），本版为模板基线，待人工打磨。']
+                artifact['decision'] = '写作 Agent 未达标，本版话术为模板基线：' + artifact['decision']
         else:
             artifact = compose(c, context)
         persist('draft', artifact)
