@@ -4,6 +4,7 @@ import json
 import random
 from pathlib import Path
 import pytest
+from pipeline.profiles import source_path
 from pipeline import l0,l1,l2,l3,l4,pack
 from pipeline.engine import execute,STAGES
 from pipeline.io import read
@@ -28,7 +29,7 @@ def raw():
 @pytest.fixture
 def contexts(raw):
     c=deepcopy({k:v for k,v in raw.items() if k!='judge'});c['judge']=raw['judge']
-    c.update(checks={},approvals={'L2':'auto (demo)','L3':'auto (demo)'},source_documents={raw['profile']['source']:Path(raw['profile']['source']).read_text(encoding='utf-8')})
+    c.update(checks={},approvals={'L2':'auto (demo)','L3':'auto (demo)'},source_documents={raw['profile']['source']:source_path(raw['profile']['source']).read_text(encoding='utf-8')})
     result={}
     for name,module in STAGES:
         result[name]=deepcopy(c)

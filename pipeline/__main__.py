@@ -37,8 +37,13 @@ def load_replay(path):
     """Recorded AMap pages: {"pages": [{"keywords"|"types": ..., "page": n, "payload": {...}}]}."""
     from pipeline.amap import basic_payload
     data = read(path)
+    return load_replay_pages(data.get('pages') or data.get('amap_pages') or [])
+
+
+def load_replay_pages(pages):
+    from pipeline.amap import basic_payload
     return {json.dumps({k: row[k] for k in ('keywords', 'types') if row.get(k)} | {'page': row.get('page', 1)}, sort_keys=True, ensure_ascii=False):
-            basic_payload(row['payload']) for row in data['pages']}
+            basic_payload(row['payload']) for row in pages}
 
 
 def main():
@@ -47,6 +52,8 @@ def main():
     export = sub.add_parser('export', help='导出离线网页演示数据')
     export.add_argument('--run', type=Path, required=True)
     export.add_argument('--out', type=Path, required=True)
+    demo = sub.add_parser('demo', help='一条命令的黑客松演示：新鲜活泉 × 狮山，规则对照 + Agent 补采')
+    demo.add_argument('--mode', choices=['auto', 'live', 'replay'], default='auto')
     sub.add_parser('fetch', help='显式刷新OSM缓存')
     market=sub.add_parser('fetch-market',help='三个商圈竞品和渠道伙伴；累计150搜索调用')
     market.add_argument('--amap-calls',type=int,default=150)
@@ -72,6 +79,9 @@ def main():
     run.add_argument('--no-defaults', '--no-demo-profile', action='store_true', dest='no_defaults')
     run.add_argument('-o', '--output', type=Path, help='写JSON执行摘要')
     args = parser.parse_args()
+    if args.command == 'demo':
+        from pipeline.demo import main as demo_main
+        return demo_main(args.mode)
     try:
         if args.command == 'export':
             from pipeline.export import export_run

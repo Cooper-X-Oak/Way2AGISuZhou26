@@ -129,8 +129,6 @@ def test_unrecorded_query_without_key_reports_and_lists_recordings(tmp_path):
     assert state['status'] == 'blocked' and state['stopped_at'] == 'L2'
 
 
-@pytest.mark.skipif(not (ROOT / '.work/handbook/dongting-brief.md').is_file(),
-                    reason='jiangnan-gongquan 原文在被忽略的 .work/handbook（见 #20）；可用 docs/runtime-review/reproduce.py --prepare-sources 准备')
 def test_rules_mode_inserts_l1d_without_changing_existing_profile(tmp_path):
     directory, state = execute(inputs('jiangnan-gongquan'), root=tmp_path)
     assert state['status'] == 'completed'

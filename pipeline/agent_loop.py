@@ -106,9 +106,11 @@ def run_agent(system, user, tools, *, post, validate, limits=Limits(), on_step=l
         calls = message.get('tool_calls') or []
         record(kind='model', tool_calls=[c['function']['name'] for c in calls],
                note=(message.get('content') or '')[:300], duration_seconds=round(time.perf_counter() - started, 3))
-        messages.append({k: v for k, v in message.items() if k in ('role', 'content', 'tool_calls')} | {'role': 'assistant'})
+        kept = {k: v for k, v in message.items() if k in ('content', 'tool_calls') and v is not None}
+        messages.append({'role': 'assistant', 'content': kept.get('content') or '', **({'tool_calls': calls} if calls else {})})
         if calls:
-            for call in calls:
+            for n, call in enumerate(calls):
+                call.setdefault('id', f'call_{log.model_calls}_{n}')
                 name = call['function']['name']
                 if log.tool_calls >= limits.max_tool_calls:
                     result = {'ok': False, 'error': f'工具调用已达上限 {limits.max_tool_calls}；请基于已有结果给出最终 JSON。'}
@@ -117,7 +119,8 @@ def run_agent(system, user, tools, *, post, validate, limits=Limits(), on_step=l
                 else:
                     log.tool_calls += 1
                     try:
-                        args = json.loads(call['function'].get('arguments') or '{}')
+                        raw = call['function'].get('arguments') or '{}'
+                        args = raw if isinstance(raw, dict) else json.loads(raw)
                         if not isinstance(args, dict):
                             raise ValueError('arguments must be an object')
                     except ValueError:
@@ -130,6 +133,8 @@ def run_agent(system, user, tools, *, post, validate, limits=Limits(), on_step=l
                             result = {'ok': False, 'error': '参数不符合工具定义'}
                         except AgentError as exc:
                             result = {'ok': False, 'error': str(exc)}
+                        except Exception as exc:  # a broken tool call must not kill the demo run
+                            result = {'ok': False, 'error': f'工具执行失败（{type(exc).__name__}）'}
                         record(kind='tool', tool=name, args=args, ok=result.get('ok', True),
                                result=result, duration_seconds=round(time.perf_counter() - t0, 3))
                 messages.append({'role': 'tool', 'tool_call_id': call['id'], 'content': clip(result, limits.summary_max_chars)})
