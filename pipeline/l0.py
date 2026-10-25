@@ -24,6 +24,11 @@ def facts(inputs):
         area = inputs["library_selection"]["area"]
         supplied["radius_m"] = area["radius_m"]
         assumptions.append(f"覆盖半径={area['radius_m']}米，来自本次选中的商圈资料；用户明确范围优先。")
+    if "radius_m" not in supplied and not inputs.get("no_defaults"):
+        # The agent proceeds on a stated assumption instead of stopping to ask.
+        radius = int(min(3000, (inputs.get("coverage") or {}).get("radius_m") or 3000))
+        supplied["radius_m"] = radius
+        assumptions.append(f"覆盖半径={radius}米：用户未说明，按商圈快照的覆盖范围假设，待确认；用户给出范围后以用户为准。")
     patterns = {
         "delivery_people": [r"(-?\d+)\s*(?:个|名|位)?\s*(?:地推|人)", r"(?:地推|配送员)\s*(-?\d+)\s*人"],
         "weeks": [r"(?:做|执行|计划)?\s*(-?\d+)\s*周"],
@@ -66,7 +71,7 @@ def check(artifact, inputs):
     errors += provenance(artifact, inputs)
     for k in ANALYSIS_REQUIRED:
         if artifact[k] is None: errors.append(violation("missing", k, "关键字段缺失，等待澄清"))
-    if artifact["questions"]: errors.append(violation("clarification", "questions", "仍有未澄清问题"))
+    # Open questions are recorded as 待确认 and never stop the run; only missing analysis inputs or hard limits do.
     if artifact["lat"] is not None and artifact["lon"] is not None and not (30.7 <= artifact["lat"] <= 32.1 and 119.9 <= artifact["lon"] <= 121.4):
         errors.append(violation("bbox", "lat/lon", "不在苏州市域约束 bbox 内"))
     if artifact["radius_m"] is not None and not 0 < artifact["radius_m"] <= 3000:
