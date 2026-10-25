@@ -28,6 +28,19 @@ class RunManager:
         self.executor = ThreadPoolExecutor(max_workers=2, thread_name_prefix='pipeline')
         self.runs = {}
         self.closed = False
+        # Restore task conversations after a server restart; never restart work silently.
+        from pipeline.io import read
+        for path in (self.root / 'runs').glob('*/inputs.json'):
+            try:
+                task = read(path).get('task')
+                if not task: continue
+                state = read(path.parent / 'status.json')
+                if state['status'] not in ('completed', 'blocked', 'failed'):
+                    state.update(status='failed', error_type='ServerRestarted')
+                done = threading.Event(); done.set()
+                self.runs[path.parent.name] = {**state, 'task': task, 'gate': None, 'done': done}
+            except (FileNotFoundError, ValueError):
+                continue
 
     def start(self, request):
         # Validation is cache-only and occurs before a slot or ID is allocated.
@@ -39,12 +52,43 @@ class RunManager:
                       area_id=request.area, judge=Judge(True),
                       market=load_market(request.area), no_defaults=False,
                       auto_approve=request.auto_approve, demo_replay=request.demo_replay)
+        task_mode = getattr(request, 'mode', None)
+        if task_mode:
+            from pipeline.demo import CASE, RECORDING, Replayer, live_ready
+            from pipeline.__main__ import load_replay_pages
+            from pipeline.io import read
+            parent = getattr(request, 'parent_id', None)
+            if task_mode == 'live':
+                missing = live_ready()
+                if missing: raise ValueError('实况配置缺少：' + '、'.join(missing))
+            else:
+                if parent or (request.profile, request.area, request.input) != (CASE['profile'], CASE['area'], CASE['request']):
+                    raise ValueError('录制只适用于新鲜活泉 × 狮山的原始任务；新任务请选择实况')
+                data = read(RECORDING)
+                inputs.update(llm_post=Replayer(data['model_replies'], data['model']),
+                              amap_replay=load_replay_pages(data['amap_pages']))
+            if parent:
+                directory = self.directory(parent)
+                state = self.status(parent)
+                previous = read(directory / 'inputs.json')
+                if state['status'] not in ('completed','blocked','failed'):
+                    raise ValueError('请等待当前轮执行结束后补充要求')
+                if previous.get('area_id') != request.area or previous['profile']['id'] != request.profile:
+                    raise ValueError('更换产品或商圈请新建任务')
+                inputs['request'] = previous['request'] + '\n追加要求：' + request.input
+                if len(inputs['request']) > 20000: raise ValueError('本次任务上下文过长，请新建任务')
+                # Accepted discoveries survive follow-up turns without changing shared caches.
+                inputs['pois'] = read(directory / 'pois.json')
+            inputs.update(agent_l1d=True, auto_approve=True,
+                          task=dict(mode=task_mode, message=request.input, area=request.area, profile=request.profile,
+                                    product=profile['product']['name'], parent_id=parent, created_at=now()))
         with self.lock:
             if self.closed or not self.slots.acquire(blocking=False):
                 raise RuntimeError('最多同时运行两个任务（含等待人工确认的任务）')
             run_id = uuid.uuid4().hex
             self.runs[run_id] = dict(run_id=run_id, status='queued', current_stage=None,
                                      completed_stages=[], gate=None, done=threading.Event())
+            if task_mode: self.runs[run_id]['task'] = inputs['task']
             try:
                 self.executor.submit(self._run, run_id, inputs)
             except Exception:

@@ -121,6 +121,8 @@ def create_app(manager=None):
             raise HTTPException(409, str(exc)) from None
         return {'stage': stage, 'decision': body.decision, 'approved_by': 'human'}
 
+    from server.tasks import install
+    install(app)
     return app
 
 
