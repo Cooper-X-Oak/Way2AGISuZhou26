@@ -13,7 +13,8 @@ from pipeline.io import read
 ORDER = ('L0', 'L1', 'L1D', 'L2', 'L2C', 'L3', 'L3P', 'L4', 'PACK')
 NAMES = {'L0': '立项', 'L1': '卖给谁', 'L1D': '找终端', 'L2': '去哪里', 'L2C': '对手在哪', 'L3': '进哪家',
          'L3P': '谁来供货', 'L4': '怎么说', 'PACK': '作战包'}
-TOOL_LABEL = {'area_inventory': '盘点现有商户', 'search_merchants': '高德补采', 'list_merchants': '查看候选'}
+TOOL_LABEL = {'area_inventory': '盘点现有商户', 'search_merchants': '高德补采', 'list_merchants': '查看候选',
+              'list_targets': '读取话术目标', 'check_pitch': '自查话术'}
 
 
 def _opt(directory, name, default=None):
@@ -75,8 +76,11 @@ def build(directory, title=None, created_at=None):
     for line in steps_path.read_text(encoding='utf-8').splitlines() if steps_path.is_file() else []:
         try: raw_steps.append(json.loads(line))
         except ValueError: pass
-    steps = []
+    steps, pitch_steps = [], []
     for s in raw_steps:
+        if s.get('stage') == 'L4':
+            pitch_steps.append(s)
+            continue
         if s['kind'] == 'model':
             steps.append(dict(kind='model', calls=[TOOL_LABEL.get(c, c) for c in s.get('tool_calls', [])], note=''))
         elif s['kind'] == 'tool':
@@ -98,7 +102,8 @@ def build(directory, title=None, created_at=None):
             attempts[e['stage']] = attempts.get(e['stage'], 0) + 1
     zones = (_opt(directory, 'zones.json') or {}).get('items', [])
     terminals = (_opt(directory, 'terminals.json') or {}).get('items', [])
-    materials = (_opt(directory, 'materials.json') or {}).get('items', [])
+    materials_doc = _opt(directory, 'materials.json') or {}
+    materials = materials_doc.get('items', [])
     pack = _opt(directory, 'pack.json') or {}
     l1 = (_opt(directory, 'channels.json') or {}).get('items', [])
     grades = {g: sum(t['grade'] == g for t in terminals) for g in 'ABC'}
@@ -179,7 +184,7 @@ def build(directory, title=None, created_at=None):
         counts=dict(model_calls=agent.get('model_calls'), tool_calls=agent.get('tool_calls'), amap_calls=agent.get('amap_calls'), added=len(added)),
         decision=discovery.get('decision'),
         channels=[dict(id=r['channel_id'], name=names.get(r['channel_id'], r['channel_id']), after=r.get('candidate_count',0)) for r in (discovery.get('items') or l1)],
-        stages=stages, steps=steps,
+        stages=stages, steps=steps, pitch_agent=_pitch_agent(materials_doc, pitch_steps, ledger, names, terminals, by_id),
         map=dict(base=base, found=found, zones=[dict(id=z['zone_id'], rank=z.get('rank')) for z in selected]),
         terminals=term_rows, pitches=pitches,
         route=dict(days=len(days), pending=scheduling_pending, planning_note=pack.get('planning_note'), first=[by_id.get(pid, {}).get('name') for pid in (first_day or {}).get('poi_ids', [])]),
@@ -187,6 +192,34 @@ def build(directory, title=None, created_at=None):
                   '补采商户来自高德 POI 基础字段，不代表实际经营情况或进货意愿，需走访确认。',
                   '价格、毛利、首单政策未知，话术中不做承诺。'],
     )
+
+
+def _pitch_agent(doc, raw, ledger, names, terminals, by_id):
+    """怎么说 agent steps from the attempt that passed L4 (None when the stage ran on rules)."""
+    agent = (doc or {}).get('agent')
+    if not agent:
+        return None
+    passed = max([e['attempt'] for e in ledger if e.get('stage') == 'L4' and e.get('status') == 'passed' and e.get('attempt')] or [0])
+    label = {t['poi_id']: by_id.get(t['poi_id'], {}).get('name') for t in terminals}
+    steps = []
+    for s in raw:
+        if passed and s.get('attempt') != passed:
+            continue
+        if s['kind'] == 'model':
+            steps.append(dict(kind='model', calls=[TOOL_LABEL.get(c, c) for c in s.get('tool_calls', [])], note=''))
+        elif s['kind'] == 'rejected':
+            steps.append(dict(kind='rejected', problems=s.get('problems', [])[:5]))
+        elif s['kind'] == 'tool':
+            r = s.get('result') or {}
+            row = dict(kind='tool', tool=s['tool'], label=TOOL_LABEL.get(s['tool'], s['tool']), ok=bool(s.get('ok', True)), error=r.get('error'))
+            if s['tool'] == 'list_targets':
+                row.update(total=len(r.get('targets') or []))
+            elif s['tool'] == 'check_pitch':
+                target = (s.get('args') or {}).get('target')
+                row.update(args={'target': label.get(target) or names.get(target) or target}, passed=r.get('passed'), problems=(r.get('problems') or [])[:3])
+            steps.append(row)
+    return dict(model=str(agent.get('model') or '').removeprefix('replay:') or None, model_calls=agent.get('model_calls'),
+                tool_calls=agent.get('tool_calls'), steps=steps)
 
 
 def _judgment_note(stages):

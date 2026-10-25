@@ -486,7 +486,7 @@ const STAGES=[['L0','立项'],['L1','卖给谁'],['L1D','找终端'],['L2','去�
 const SNAME=Object.fromEntries(STAGES);
 const AREA={shishan:'狮山',guanqian:'观前街',ligongdi:'李公堤'};
 const CAT={restaurant:'餐馆',tea:'茶馆',office:'写字楼',gym:'健身',other:'其他'};
-const ARG={keywords:'关键词',types:'类型码',max_pages:'页数',channel_id:'渠道',category:'类别',type_prefix:'类型前缀',page:'页'};
+const ARG={target:'目标',keywords:'关键词',types:'类型码',max_pages:'页数',channel_id:'渠道',category:'类别',type_prefix:'类型前缀',page:'页'};
 const FOLLOW={
   L0:['把半径改成 2 公里，3 个地推，做 6 周','这个产品还缺哪些资料？'],
   L1:['解释为什么这几个渠道是 P1','加一个渠道：社区便利店'],
@@ -646,6 +646,8 @@ function stepHTML(s,v){
   else if(s.tool==='search_merchants')r=`<span class="res">返回 <span class="num">${s.returned??0}</span> 条，新增 <span class="num">${s.new??0}</span> 家</span>`;
   else if(s.by_channel){const ch=(v.channels?.length?v.channels:Object.keys(s.by_channel).map(id=>({id,name:v.channel_names?.[id]||id})));
     r=`<span class="res">${s.by_category?Object.entries(s.by_category).map(([k,n])=>`${esc(CAT[k]||k)} ${n}`).join('、')+'；':''}目标渠道 ${ch.map(c=>`${esc(c.name)} <span class="num">${s.by_channel[c.id]??0}</span>`).join('、')}</span>`;}
+  else if(s.tool==='check_pitch')r=s.passed?'<span class="res">通过</span>':`<span class="res err">未通过：${esc((s.problems||[]).join('；'))}</span>`;
+  else if(s.tool==='list_targets')r=`<span class="res">共 <span class="num">${s.total??0}</span> 个目标</span>`;
   else if(s.total!=null)r=`<span class="res">共 <span class="num">${s.total}</span> 条</span>`;
   return `<li class="t"><span class="h">${esc(s.label||s.tool)}</span>${a?`<div class="args">${a}</div>`:''}${r}</li>`;
 }
@@ -667,6 +669,11 @@ function turnHTML(id,idx,isLast,hideUser=false){
   const agentRan=(v.steps||[]).length>0||v.stages?.find(s=>s.id==='L1D')?.judged_by==='模型';
   if(agentRan&&v.decision&&!replaying&&(DONE(v.status)||v.stages?.find(s=>s.id==='L1D')?.done)){
     out.push(msg('a','Agent','结论',`<div class="prose"><p>${esc(v.decision)}</p>${v.channels?.length?`<p class="small">补采后：${v.channels.map(c=>`${esc(c.name)} ${c.after} 家`).join('，')}</p>`:''}</div>`));
+  }
+  const pa=v.pitch_agent;
+  if(pa?.steps?.length&&!replaying){
+    const pc=pa.steps.filter(s=>s.tool==='check_pitch'),ok=pc.filter(s=>s.passed).length,n=pa.steps.find(s=>s.tool==='list_targets')?.total,back=pa.steps.filter(s=>s.kind==='rejected').length;
+    out.push(msg('a','Agent',esc('怎么说'+(pa.model?' · '+pa.model:'')),`<div class="prose"><p>${n?`为 <span class="num">${n}</span> 个目标写进店话术，`:''}用本关的正式检查自查 <span class="num">${pc.length}</span> 次（通过 ${ok} 次）${back?`，交稿被打回 ${back} 次`:''}，全部达标后才交稿。</p><details class="run"><summary>执行过程 · ${pa.steps.length} 步</summary><ol class="tl">${pa.steps.map(s=>stepHTML(s,v)).join('')}</ol></details><div class="links"><button class="linkbtn" data-tab="pitch" type="button">看话术</button></div></div>`));
   }
   if(running&&!(v.current_stage==='L1D'))out.push(msg('s','流水线',esc('正在'+(SNAME[v.current_stage]||'')),'<div class="typing"><i></i><i></i><i></i></div>'));
   if(replaying||running)return out.join('');

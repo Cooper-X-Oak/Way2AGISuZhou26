@@ -22,7 +22,7 @@ def execute(inputs,root=Path('.'),stages=STAGES,*,run_id=None,observer=None,appr
     # Storage-only transformation: gates and retry feedback keep full objects.
     persist=store.write
     # Runtime hooks (injected transports, keys, replay payloads) never reach run files.
-    RUNTIME=('judge','llm_post','amap_client','amap_key','amap_replay')
+    RUNTIME=('judge','llm_post','llm_post_l4','amap_client','amap_key','amap_replay')
     public=deepcopy({k:v for k,v in inputs.items() if k not in RUNTIME})
     sources={}
     for row in inputs['profile']['scenes']+inputs['profile']['selling_points']:

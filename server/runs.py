@@ -64,6 +64,7 @@ class RunManager:
                 # Live tasks: every judgment stage asks the model; code still computes scores, grades and routes,
                 # and the same checks/retries apply. Replays keep rules because the recording holds L1D calls only.
                 inputs['judge'] = Judge(False)
+                inputs['agent_l4'] = True
             else:
                 if parent or (request.profile, request.area, request.input) != (CASE['profile'], CASE['area'], CASE['request']):
                     raise ValueError('录制只适用于新鲜活泉 × 狮山的原始任务；新任务请选择实况')

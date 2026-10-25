@@ -25,6 +25,11 @@ def targets(c):
 
 
 def run(c):
+    if c.get('agent_l4'):
+        # Live tasks: the model writes and self-checks pitches; the same checks below decide completion.
+        import sys
+        from pipeline import l4_agent
+        return l4_agent.run(c,sys.modules[__name__])
     points={r['id']:r for r in c['profile']['selling_points']}
     scenes={r['id']:r for r in c['profile']['scenes']}
     def rules():
@@ -92,5 +97,9 @@ def business(a,c):
     return out
 
 
-def inspect(a,c):return evaluate('L4',a,c,Materials,references,business)
+def inspect(a,c):
+    if isinstance(a,dict) and a.get('agent'):
+        from pipeline.l4_agent import llm_context
+        c=llm_context(c,a['agent'].get('model','agent'))
+    return evaluate('L4',a,c,Materials,references,business)
 def check(a,c):return errors(inspect(a,c))

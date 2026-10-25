@@ -90,6 +90,7 @@ class Material(Evidence):
 class Materials(Envelope):
     items: list[Material]
     seeded_for_demo: bool = False
+    agent: dict | None = None
 
 
 class CompetitionRow(Evidence):
