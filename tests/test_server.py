@@ -61,7 +61,7 @@ def test_catalog_and_cors(api):
     areas = client.get('/api/areas').json()
     assert {row['id'] for row in areas} == {'shishan', 'guanqian', 'ligongdi'}
     assert all(row['site'] and row['total'] > 0 and isinstance(row['truncated'], bool) for row in areas)
-    assert {row['id'] for row in client.get('/api/profiles').json()} == {'jiangnan-gongquan', 'xinxian-huoquan'}
+    assert {row['id'] for row in client.get('/api/profiles').json()} == {'jiangnan-gongquan', 'xinxian-huoquan', 'bread-trial'}
     for origin in ('http://localhost:12345', 'http://127.0.0.1:9000', 'http://[::1]:8787'):
         r = client.options('/api/runs', headers={'Origin': origin, 'Access-Control-Request-Method': 'POST',
                                                'Access-Control-Request-Headers': 'content-type,last-event-id'})

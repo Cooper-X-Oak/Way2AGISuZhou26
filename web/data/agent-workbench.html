@@ -1,0 +1,1282 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>铺市 Agent</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: task list | conversation | artifacts. One sans family, five sizes, colour only for meaning. */
+:root{
+  --bg:#f4f6f7; --surface:#ffffff; --sunken:#eef2f3;
+  --ink:#16242b; --ink-2:#44555d; --muted:#66767d; --line:#e1e7e9; --line-strong:#cdd6d9;
+  --primary:#0b6a88; --primary-ink:#ffffff; --primary-soft:#e3f1f6;
+  --found:#b5600a; --found-soft:#fbeedd;
+  --danger:#b3372f; --danger-soft:#fbe7e5;
+  --ok:#2b7a4b; --ok-soft:#e3f2e9;
+  --idle:#8a979c; --dot:#c3cdd1;
+  --font:"PingFang SC","Microsoft YaHei UI","Microsoft YaHei","Noto Sans SC","Hiragino Sans GB",system-ui,sans-serif;
+  --mono:"JetBrains Mono","Cascadia Mono","SFMono-Regular",Consolas,ui-monospace,monospace;
+  --t-xs:12px; --t-sm:13px; --t-md:14px; --t-lg:16px; --t-xl:20px;
+  --r-sm:6px; --r-lg:12px; --h-sm:28px; --h-md:36px;
+  --shadow:0 1px 2px rgba(16,36,43,.06),0 8px 24px rgba(16,36,43,.06);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f171b; --surface:#152127; --sunken:#1b2a31;
+  --ink:#e6edf0; --ink-2:#b8c6cc; --muted:#93a3aa; --line:#24343b; --line-strong:#35484f;
+  --primary:#2b8fb0; --primary-ink:#ffffff; --primary-soft:#173847;
+  --found:#f0a24a; --found-soft:#3a2b18;
+  --danger:#ec7b72; --danger-soft:#3b2120;
+  --ok:#6cc391; --ok-soft:#183427;
+  --idle:#7f9097; --dot:#3d525a; --shadow:none; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f171b; --surface:#152127; --sunken:#1b2a31;
+  --ink:#e6edf0; --ink-2:#b8c6cc; --muted:#93a3aa; --line:#24343b; --line-strong:#35484f;
+  --primary:#2b8fb0; --primary-ink:#ffffff; --primary-soft:#173847;
+  --found:#f0a24a; --found-soft:#3a2b18;
+  --danger:#ec7b72; --danger-soft:#3b2120;
+  --ok:#6cc391; --ok-soft:#183427;
+  --idle:#7f9097; --dot:#3d525a; --shadow:none; color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;height:100dvh;overflow:hidden}
+html{height:100dvh}
+body{background:var(--bg);color:var(--ink);font:var(--t-md)/1.6 var(--font);-webkit-font-smoothing:antialiased;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px}
+h1,h2,h3,p{margin:0}
+button,select,textarea,input{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0;padding:0}
+:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:4px}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums;font-weight:600}
+.small{font-size:var(--t-xs);color:var(--muted)}
+.muted{color:var(--muted)}
+*{scrollbar-width:thin;scrollbar-color:var(--line-strong) transparent}
+::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:4px}::-webkit-scrollbar-track{background:transparent}
+
+.app{max-width:1600px;height:calc(100dvh - 32px);margin:0 auto;display:grid;grid-template-columns:clamp(220px,17vw,264px) minmax(0,1fr);gap:24px}
+
+/* ---------- sidebar ---------- */
+.side{display:flex;flex-direction:column;gap:12px;min-height:0}
+.brand{display:grid;gap:2px;padding:4px 10px 0}
+.brand b{font-size:var(--t-lg);font-weight:600;letter-spacing:.01em}
+.newbtn{height:var(--h-md);border:1px solid var(--primary);color:var(--primary);border-radius:var(--r-sm);font-weight:600;font-size:var(--t-sm);display:flex;align-items:center;gap:6px;padding:0 12px}
+.newbtn:hover{background:var(--primary-soft)}
+.list-h{padding:6px 10px 0}
+.tasks{list-style:none;margin:0;padding:0;overflow:auto;overscroll-behavior:contain;display:grid;gap:2px;align-content:start;min-height:0}
+.task{width:100%;text-align:left;border-radius:var(--r-sm);padding:9px 10px 9px 13px;display:grid;gap:3px;position:relative}
+.task:hover{background:var(--sunken)}
+.task[aria-current="true"]{background:var(--sunken)}
+.task[aria-current="true"]::before{content:"";position:absolute;left:0;top:8px;bottom:8px;width:3px;border-radius:2px;background:var(--primary)}
+.task .t{font-size:var(--t-md);font-weight:500;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.task .m{display:flex;align-items:center;gap:8px;font-size:var(--t-xs);color:var(--muted);min-width:0}
+.task .m span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.chip{display:inline-flex;align-items:center;gap:5px;height:20px;padding:0 7px;border-radius:var(--r-sm);font-size:var(--t-xs);font-weight:500;white-space:nowrap;flex:none}
+.chip.draft{border:1px solid var(--line-strong);color:var(--muted)}
+.chip.queued{background:var(--sunken);color:var(--idle)}
+.chip.running{background:var(--primary-soft);color:var(--primary)}
+.chip.ask{background:var(--found-soft);color:var(--found)}
+.chip.done{background:var(--ok-soft);color:var(--ok)}
+.chip.stop{background:var(--danger-soft);color:var(--danger)}
+.chip.fail{background:var(--danger);color:#fff}
+.pulse{width:6px;height:6px;border-radius:50%;background:currentColor;animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+
+/* ---------- main ---------- */
+.main{display:grid;grid-template-rows:auto auto minmax(0,1fr);gap:14px;min-height:0;min-width:0}
+.head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:6px 24px}
+.head h1{font-size:var(--t-xl);font-weight:600;line-height:1.35;min-width:0}
+.head h1 .sep{color:var(--idle);font-weight:400;margin:0 6px}
+.meta{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;font-size:var(--t-sm);color:var(--muted)}
+
+/* progress rail */
+.rail{list-style:none;margin:0;padding:0;display:flex;gap:4px;height:44px;min-height:44px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
+.rail::-webkit-scrollbar{display:none}
+.node{position:relative;display:flex;flex:1 0 auto;align-items:center;justify-content:center;gap:6px;padding:0 10px;height:40px;white-space:nowrap;cursor:pointer;border-radius:var(--r-sm)}
+.node:hover{background:var(--sunken)}
+.node::before{display:none}
+.node:first-child::before{display:none}
+.node.passed::before{background:var(--ok)}
+.dotn{position:relative;z-index:1;width:16px;height:16px;border-radius:50%;border:2px solid var(--line-strong);background:var(--surface);display:grid;place-items:center;color:#fff;font-size:10px;font-weight:700;flex-shrink:0;margin-top:0}
+.node.done .dotn{background:var(--ok);border-color:var(--ok)}
+.node.done .dotn::after{content:"";width:6px;height:3px;border:2px solid #fff;border-top:0;border-right:0;transform:rotate(-45deg) translate(1px,-1px)}
+.node.run .dotn{background:var(--primary);border-color:var(--primary);box-shadow:0 0 0 4px var(--primary-soft);animation:ring 1.8s ease-in-out infinite}
+.node.agent.run .dotn{background:var(--found);border-color:var(--found);box-shadow:0 0 0 4px var(--found-soft)}
+.node.ask .dotn{background:var(--found);border-color:var(--found)}
+.node.ask .dotn::after,.node.stop .dotn::after{content:"!"}
+.node.stop .dotn{background:var(--danger);border-color:var(--danger)}
+@keyframes ring{50%{box-shadow:0 0 0 7px transparent}}
+.node .nm{font-size:var(--t-sm);color:var(--idle);white-space:nowrap}
+.node.done .nm,.node.run .nm,.node.ask .nm,.node.stop .nm{color:var(--ink)}
+.node.run .nm{font-weight:600}
+.node .ag{font-size:10px;color:var(--found);font-weight:600;margin-left:3px;letter-spacing:.04em}
+.node .sm{font-size:var(--t-xs);color:var(--muted);line-height:1.35;max-width:120px}
+.node.sel .nm{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:5px}
+
+.panes{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.08fr);gap:16px;min-height:0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow);display:flex;flex-direction:column;min-height:0;min-width:0;overflow:hidden}
+.card-h{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);min-height:52px}
+.card-h h2{font-size:var(--t-lg);font-weight:600}
+.linkbtn{color:var(--primary);font-size:var(--t-sm)}
+.linkbtn:hover{text-decoration:underline}
+
+/* ---------- conversation ---------- */
+.livebar{display:flex;align-items:center;gap:8px;padding:8px 16px;background:var(--primary-soft);color:var(--primary);font-size:var(--t-sm);border-bottom:1px solid var(--line)}
+.livebar b{font-weight:600}
+.thread{flex:1;overflow:auto;overscroll-behavior:contain;padding:18px 16px 8px;display:grid;gap:18px;align-content:start;min-height:0}
+.msg{display:grid;grid-template-columns:26px minmax(0,1fr);gap:10px;animation:fade .25s ease both}
+@keyframes fade{from{opacity:0;transform:translateY(3px)}}
+.av{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:600}
+.av.u{background:var(--ink);color:var(--surface)}
+.av.a{background:var(--primary);color:#fff}
+.av.s{background:var(--sunken);color:var(--muted)}
+.av svg{width:14px;height:14px}
+.mb{display:grid;gap:6px;min-width:0}
+.who{display:flex;align-items:baseline;gap:8px;font-size:var(--t-xs);color:var(--muted)}
+.who b{font-size:var(--t-sm);font-weight:600;color:var(--ink)}
+.bubble{background:var(--sunken);border-radius:var(--r-sm) var(--r-lg) var(--r-lg) var(--r-lg);padding:9px 12px;justify-self:start;max-width:100%;white-space:pre-wrap;overflow-wrap:anywhere}
+.prose{display:grid;gap:6px}
+.prose ul{margin:0;padding-left:18px}
+.callout{border-left:3px solid var(--found);padding:4px 0 4px 12px;display:grid;gap:8px}
+.callout.stop{border-color:var(--danger)}
+.answers{display:flex;flex-wrap:wrap;gap:6px}
+.pill{height:var(--h-sm);padding:0 12px;border-radius:999px;background:var(--sunken);font-size:var(--t-sm);white-space:nowrap}
+.pill:hover{background:var(--primary-soft);color:var(--primary)}
+.pill.primary{background:var(--primary);color:var(--primary-ink)}
+.links{display:flex;flex-wrap:wrap;gap:4px 14px}
+
+/* execution timeline */
+details.run{border-radius:var(--r-sm)}
+details.run>summary{list-style:none;cursor:pointer;font-size:var(--t-sm);color:var(--muted);display:flex;align-items:center;gap:6px}
+details.run>summary::-webkit-details-marker{display:none}
+details.run>summary::before{content:"";width:6px;height:6px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(-45deg);transition:transform .15s}
+details.run[open]>summary::before{transform:rotate(45deg)}
+.tl{list-style:none;margin:10px 0 0;padding:0 0 0 14px;border-left:2px solid var(--line);display:grid;gap:10px}
+.tl li{position:relative;display:grid;gap:3px;animation:fade .25s ease both}
+.msg.still,.tl li.still{animation:none}
+.tl li::before{content:"";position:absolute;left:-19px;top:7px;width:8px;height:8px;border-radius:50%;background:var(--idle)}
+.tl li.m::before{background:var(--primary)}
+.tl li.t::before{background:var(--found)}
+.tl li.r::before{background:var(--danger)}
+.tl .h{font-size:var(--t-sm);font-weight:600}
+.tl .note{font-size:var(--t-sm);color:var(--ink-2);font-style:italic;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer}
+.tl .note.open{-webkit-line-clamp:unset}
+.args{display:flex;flex-wrap:wrap;gap:4px}
+.arg{font-size:var(--t-xs);background:var(--sunken);border-radius:4px;padding:1px 6px;overflow-wrap:anywhere}
+.arg i{font-style:normal;color:var(--muted);margin-right:4px}
+.res{font-size:var(--t-sm);color:var(--ink-2)}
+.res .num{color:var(--found)}
+.res.err{color:var(--danger)}
+.typing{display:flex;gap:4px;padding:4px 0}
+.typing i{width:5px;height:5px;border-radius:50%;background:var(--idle);animation:pulse 1.2s infinite}
+.typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
+
+/* composer */
+.composer{border-top:1px solid var(--line);padding:10px 12px 12px;display:grid;gap:8px;position:relative}
+.quick{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;align-items:center}
+.quick::-webkit-scrollbar{display:none}
+.quick .lab{font-size:var(--t-xs);color:var(--muted);white-space:nowrap;margin-right:2px}
+.pickers{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:var(--t-sm)}
+.pickers select{height:var(--h-sm);border:1px solid var(--line-strong);border-radius:var(--r-sm);background:var(--surface);padding:0 8px}
+.box{display:flex;align-items:flex-end;gap:6px;border:1px solid var(--line-strong);border-radius:var(--r-lg);background:var(--surface);padding:6px 6px 6px 12px}
+.box:focus-within{border-color:var(--primary);box-shadow:0 0 0 1px var(--primary)}
+.box textarea{flex:1;min-width:0;border:0;outline:0;background:transparent;resize:none;line-height:1.5;padding:4px 0;max-height:120px;font-size:var(--t-md)}
+.ibtn{width:32px;height:32px;border-radius:var(--r-sm);display:grid;place-items:center;color:var(--muted);flex:none}
+.ibtn:hover{background:var(--sunken);color:var(--ink)}
+.ibtn[aria-expanded="true"]{color:var(--primary);background:var(--primary-soft)}
+.ibtn svg{width:18px;height:18px}
+.send{background:var(--primary);color:var(--primary-ink)}
+.send:hover{background:var(--primary);color:var(--primary-ink);filter:brightness(1.08)}
+.send:disabled{background:var(--sunken);color:var(--idle);cursor:not-allowed;filter:none}
+.hint{font-size:var(--t-xs);color:var(--muted)}
+.toolbox{position:absolute;left:12px;right:12px;bottom:calc(100% - 4px);background:var(--surface);border:1px solid var(--line-strong);border-radius:var(--r-lg);box-shadow:0 12px 32px rgba(10,30,40,.18);max-height:360px;overflow:auto;padding:8px;z-index:5}
+.tb-g{padding:6px 6px 8px}
+.tb-g h3{font-size:var(--t-xs);color:var(--muted);font-weight:500;margin-bottom:4px}
+.tb-i{display:block;width:100%;text-align:left;padding:6px 8px;border-radius:var(--r-sm);font-size:var(--t-sm)}
+.tb-i:hover,.tb-i.on{background:var(--sunken)}
+
+/* ---------- artifacts ---------- */
+.seg{display:flex;min-width:0;overflow-x:auto;scrollbar-width:none;background:var(--sunken);border-radius:var(--r-sm);padding:2px}
+.seg button{flex-shrink:0;white-space:nowrap;height:28px;padding:0 12px;border-radius:5px;font-size:var(--t-sm);color:var(--muted)}
+.seg button[aria-selected="true"]{background:var(--surface);color:var(--ink);font-weight:500;box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.panel{flex:1;overflow:auto;overscroll-behavior:contain;padding:14px 16px 16px;display:grid;gap:12px;align-content:start;min-height:0}
+.counts{display:flex;flex-wrap:wrap;gap:4px 18px;font-size:var(--t-sm);color:var(--ink-2);align-items:baseline}
+.counts .num{font-size:var(--t-lg);color:var(--ink);margin-left:4px}
+.counts .found .num{color:var(--found)}
+.legend{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:4px 14px;font-size:var(--t-xs);color:var(--muted)}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.mapwrap{position:relative;width:100%;max-width:min(100%,60vh,560px);margin:0 auto;aspect-ratio:1}
+.mapwrap svg{width:100%;height:100%;display:block}
+.mapnote{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none}
+.mapnote span{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-sm);padding:6px 12px;font-size:var(--t-sm);color:var(--muted)}
+.m-ring{fill:none;stroke:var(--line-strong);stroke-width:20}
+.m-ring.tbd{stroke-dasharray:80 60}
+.m-grid{stroke:var(--line);stroke-width:8}
+.m-base{fill:var(--dot)}
+.m-found{fill:var(--found)}
+.m-zone{fill:var(--primary-soft);stroke:var(--primary);stroke-width:20}
+.m-term{fill:none;stroke:var(--primary);stroke-width:18}
+.m-term.A{stroke:var(--ink);stroke-width:24}
+.m-ctr{fill:var(--ink)}
+.m-lab{fill:var(--muted);font:150px var(--font)}
+
+.dec{list-style:none;margin:0;padding:0}
+.dec li{display:grid;gap:4px;padding:12px 0;border-top:1px solid var(--line)}
+.dec li:first-child{border-top:0;padding-top:0}
+.dec li.hl{background:linear-gradient(90deg,var(--primary-soft),transparent 70%);margin:0 -16px;padding-left:16px;padding-right:16px}
+.dec .top{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px}
+.dec .id{font-family:var(--mono);font-size:var(--t-xs);color:var(--muted);width:34px}
+.dec .nm{font-weight:600}
+.src{font-size:var(--t-xs);color:var(--muted)}
+.src.llm{color:var(--found);font-weight:500}
+.checks{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:var(--t-xs);color:var(--muted)}
+.checks span::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:5px;vertical-align:1px;background:var(--ok)}
+.checks .needs_review::before{background:var(--found)}
+.checks .failed::before,.checks .blocked::before{background:var(--danger)}
+table{border-collapse:collapse;width:100%;font-size:var(--t-sm)}
+th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:var(--t-xs);font-weight:500;color:var(--muted);white-space:nowrap}
+.grade{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:4px;font:600 12px var(--mono)}
+.grade.A{background:var(--ink);color:var(--surface)}
+.grade.B{background:var(--line-strong);color:var(--ink)}
+.grade.C{border:1px solid var(--line-strong);color:var(--muted)}
+tr.C td{color:var(--muted)}
+.tagf{font-size:var(--t-xs);color:var(--found);margin-left:6px;white-space:nowrap}
+.nowrap{white-space:nowrap}
+.pitch{display:grid;gap:6px;padding:12px 0;border-top:1px solid var(--line)}
+.pitch:first-child{border-top:0;padding-top:0}
+.pitch h3{font-size:var(--t-sm);font-weight:600;display:flex;gap:8px;align-items:baseline}
+.pitch p{line-height:1.75;max-width:62ch;color:var(--ink-2)}
+.ok{color:var(--ok);font-size:var(--t-xs);font-weight:500}
+.empty{display:grid;justify-items:center;gap:8px;padding:48px 16px;color:var(--muted);font-size:var(--t-sm);text-align:center}
+.empty svg{width:24px;height:24px;color:var(--idle)}
+.boundary{font-size:var(--t-xs);color:var(--muted);border-top:1px solid var(--line);padding-top:10px;display:grid;gap:2px}
+
+/* new task */
+.welcome{display:grid;gap:14px;padding:24px 4px}
+.welcome h3{font-size:var(--t-lg);font-weight:600}
+.examples{display:grid;gap:6px}
+.example{text-align:left;padding:10px 12px;border:1px solid var(--line);border-radius:var(--r-sm);font-size:var(--t-sm);color:var(--ink-2)}
+.example:hover{border-color:var(--primary);color:var(--ink)}
+
+.mobtabs{display:none}
+.app{grid-template-rows:minmax(0,1fr);overflow:hidden}
+.card-h,.composer,.livebar{flex:none}
+@media (max-width:1180px){
+  .main{grid-template-rows:auto auto auto minmax(0,1fr)}
+  .mobtabs{display:flex;gap:8px}.mobtabs button{padding:4px 12px;border:1px solid var(--line);border-radius:var(--r-sm)}
+  .mobtabs button[aria-pressed="true"]{background:var(--primary-soft);color:var(--primary)}
+  .panes{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr)}
+  .panes .card.art{display:none}
+  .panes[data-show="art"]>.card:first-child{display:none}
+  .panes[data-show="art"]>.card.art{display:flex}
+}
+@media (max-width:860px){
+  .app{grid-template-columns:minmax(0,1fr);grid-template-rows:72px minmax(0,1fr);gap:12px}
+  .side{display:grid;grid-template-columns:auto 1fr;align-items:center}
+  .side .brand,.side .list-h{display:none}
+  body.public-demo .app{grid-template-rows:108px minmax(0,1fr)}
+  body.public-demo .side{grid-template-columns:1fr 1fr;grid-template-rows:36px minmax(0,1fr)}
+  body.public-demo .tasks{grid-column:1/-1}
+  .tasks{grid-auto-flow:column;grid-auto-columns:minmax(200px,70vw);overflow-x:auto}
+  .node{flex:0 0 auto}
+}
+/* ---------- hero (entry) : always dark, a stage rather than a tool ---------- */
+.hero{--h-bg:#050d11;--h-ink:#e9f4f7;--h-2:#a9bec5;--h-mut:#6f8890;--h-cy:#4fd1e6;--h-or:#ff9f43;--h-line:rgba(110,190,210,.16);
+  position:fixed;inset:0;z-index:50;overflow-y:auto;background:radial-gradient(1200px 800px at 70% 45%,#0b2229 0%,var(--h-bg) 60%);color:var(--h-ink);
+  overflow-x:hidden;transition:opacity .55s ease,transform .7s cubic-bezier(.2,.7,.2,1);color-scheme:dark}
+.hero.leaving{opacity:0;transform:scale(1.06);pointer-events:none}
+.hero canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
+.hero .veil{position:fixed;inset:0;background:linear-gradient(90deg,rgba(5,13,17,.92) 0%,rgba(5,13,17,.65) 38%,rgba(5,13,17,0) 62%);pointer-events:none}
+.hero .wrap{position:relative;min-height:100%;max-width:1440px;margin:0 auto;padding:28px max(24px,4vw);display:flex;flex-direction:column;gap:20px}
+.hero .top{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.hero .logo{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.02em;font-size:var(--t-lg)}
+.hero .logo i{width:22px;height:22px;border-radius:50%;border:2px solid var(--h-cy);position:relative;box-shadow:0 0 16px rgba(79,209,230,.5)}
+.hero .logo i::after{content:"";position:absolute;inset:5px;border-radius:50%;background:var(--h-or)}
+.hero .hist{font-size:var(--t-sm);color:var(--h-2);border:1px solid var(--h-line);border-radius:999px;padding:6px 14px;transition:border-color .2s,color .2s}
+.hero .hist:hover{color:var(--h-ink);border-color:var(--h-cy)}
+.hero .copy{margin:auto 0;max-width:600px;display:flex;flex-direction:column;gap:22px}
+.hero .kick{font:600 var(--t-xs)/1 var(--mono);letter-spacing:.18em;color:var(--h-cy);display:flex;align-items:center;gap:10px}
+.hero .kick::before{content:"";width:28px;height:1px;background:var(--h-cy)}
+.hero h1{font-size:clamp(34px,4.6vw,60px);line-height:1.12;font-weight:800;letter-spacing:-.01em}
+.hero h1 em{font-style:normal;background:linear-gradient(90deg,var(--h-cy),var(--h-or));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .lead{font-size:var(--t-lg);line-height:1.75;color:var(--h-2);max-width:34em}
+.hero .flow{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:var(--t-sm);color:var(--h-mut)}
+.hero .flow span{padding:3px 10px;border-radius:999px;border:1px solid transparent;transition:all .35s}
+.hero .flow span.on{color:var(--h-ink);border-color:var(--h-cy);background:rgba(79,209,230,.12);box-shadow:0 0 18px rgba(79,209,230,.25)}
+.hero .flow b{font-weight:400;opacity:.5}
+.hero form{display:flex;flex-direction:column;gap:10px}
+.hero .pick{display:flex;flex-wrap:wrap;gap:8px;font-size:var(--t-sm);color:var(--h-mut)}
+.hero .pick label{display:flex;align-items:center;gap:6px}
+.hero .pick select,.hero .pick .fixed{background:rgba(255,255,255,.06);border:1px solid var(--h-line);border-radius:999px;padding:4px 12px;color:var(--h-ink);font-size:var(--t-sm)}
+.hero .pick select option{background:#0b1a20}
+.hero .field{display:flex;align-items:center;gap:8px;padding:8px 8px 8px 18px;border-radius:16px;background:rgba(8,24,30,.75);border:1px solid rgba(79,209,230,.35);
+  box-shadow:0 0 0 6px rgba(79,209,230,.06),0 20px 60px rgba(0,0,0,.45);backdrop-filter:blur(8px);transition:border-color .2s,box-shadow .2s}
+.hero .field:focus-within{border-color:var(--h-cy);box-shadow:0 0 0 6px rgba(79,209,230,.14),0 20px 60px rgba(0,0,0,.45)}
+.hero .field input{flex:1;min-width:0;background:none;border:0;outline:0;font-size:var(--t-lg);color:var(--h-ink);height:44px}
+.hero .field input::placeholder{color:var(--h-mut)}
+.hero .go{height:44px;padding:0 20px;border-radius:12px;background:linear-gradient(135deg,#2fb6cf,#1b8aa6);color:#fff;font-weight:700;display:flex;align-items:center;gap:8px;white-space:nowrap;transition:filter .2s,transform .1s}
+.hero .go:hover{filter:brightness(1.12)}.hero .go:active{transform:scale(.97)}
+.hero .go svg{width:16px;height:16px}
+.hero .ex{display:flex;flex-wrap:wrap;gap:8px}
+.hero .ex button{font-size:var(--t-xs);color:var(--h-2);border:1px dashed var(--h-line);border-radius:999px;padding:4px 12px;transition:all .2s;text-align:left}
+.hero .ex button:hover{color:var(--h-ink);border-color:var(--h-cy);border-style:solid}
+.hero .warn{font-size:var(--t-sm);color:#ffc58a;background:rgba(255,159,67,.1);border:1px solid rgba(255,159,67,.35);border-radius:10px;padding:10px 14px;display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center}
+.hero .warn button{color:var(--h-cy);text-decoration:underline;text-underline-offset:3px}
+.hero .actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.hero .play{display:inline-flex;align-items:center;gap:12px;font-weight:600;color:var(--h-ink);text-align:left;line-height:1.4}
+.hero .play i{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--h-or);color:var(--h-or);box-shadow:0 0 18px rgba(255,159,67,.35);transition:transform .2s}
+.hero .play:hover i{transform:scale(1.08)}
+.hero .play small{font-weight:400;color:var(--h-mut);font-size:var(--t-xs)}
+.hero .stats{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-end;padding-top:14px;border-top:1px solid var(--h-line)}
+.hero .stat b{display:block;font:700 28px/1.1 var(--mono);font-variant-numeric:tabular-nums}
+.hero .stat span{font-size:var(--t-xs);color:var(--h-mut)}
+.hero .stat.or b{color:var(--h-or)}.hero .stat.cy b{color:var(--h-cy)}
+.hero .stats .src{font-size:var(--t-xs);color:var(--h-mut);margin-left:auto;align-self:flex-end}
+.hero .hud{position:absolute;right:max(24px,4vw);bottom:28px;width:min(380px,34vw);font:var(--t-xs)/1.7 var(--mono);color:var(--h-2);
+  background:rgba(5,15,19,.72);border:1px solid var(--h-line);border-radius:12px;padding:12px 14px;backdrop-filter:blur(6px)}
+.hero .hud h4{margin:0 0 6px;font-weight:600;color:var(--h-cy);letter-spacing:.08em;display:flex;align-items:center;gap:8px}
+.hero .hud h4 .pulse{background:var(--h-or)}
+.hero .hud ol{list-style:none;margin:0;padding:0;min-height:calc(1.7em * 5)}
+.hero .hud li{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;animation:hudIn .4s ease both}
+.hero .hud li:not(:last-child){opacity:.55}
+.hero .hud li .k{color:var(--h-or)}
+@keyframes hudIn{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
+.hero .reveal{animation:heroIn .8s cubic-bezier(.2,.7,.2,1) both}
+@keyframes heroIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.app.enter{animation:heroIn .6s cubic-bezier(.2,.7,.2,1) both}
+.brand{cursor:pointer}
+@media (max-height:820px) and (min-width:901px){
+  .hero .wrap{padding-block:18px;gap:12px}.hero .copy{gap:14px}
+  .hero h1{font-size:clamp(30px,3.6vw,46px)}.hero .lead{font-size:var(--t-md)}
+  .hero .ex button:nth-child(2){display:none}.hero .stat b{font-size:22px}.hero .stats{padding-top:10px}
+  .hero .hud{bottom:18px}.hero .hud ol{min-height:calc(1.7em * 4)}
+}
+@media (max-width:900px){
+  .hero .veil{background:linear-gradient(180deg,rgba(5,13,17,0) 0%,rgba(5,13,17,.5) 30%,rgba(5,13,17,.95) 52%)}
+  .hero .wrap{height:auto;min-height:100%}
+  .hero .copy{margin-top:34vh}
+  .hero .hud{display:none}
+  .hero .stats{gap:18px}.hero .stat b{font-size:22px}
+  .hero .go span{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.library-nav{display:flex;gap:8px}.library-nav button{flex:1;padding:8px 4px;border:1px solid var(--line);border-radius:6px;color:var(--muted)}
+#library-dialog{margin:auto;width:min(760px,94vw);max-height:88dvh;padding:24px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:12px;overflow:auto}#library-dialog::backdrop{background:#0009}#library-dialog header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.lib-card{border:1px solid var(--line);padding:14px;border-radius:8px;margin:12px 0}.lib-card p{margin:8px 0}#lib-form{display:grid;gap:12px;padding:16px 0}#lib-form>label{display:grid;gap:6px}#lib-form input:not([type=checkbox]),#lib-form textarea,#lib-form select{width:100%;padding:9px;background:var(--sunken);color:var(--ink);border:1px solid var(--line);border-radius:6px}#lib-form fieldset{display:flex;flex-wrap:wrap;gap:12px;padding:12px}#library-body>h3{margin-top:20px}
+@media(max-width:860px){body.public-demo .app{grid-template-rows:150px minmax(0,1fr)}body.public-demo .side{grid-template-rows:36px 32px minmax(0,1fr)}.library-nav{grid-column:1/-1;grid-row:2}.library-nav button{padding:4px}.tasks{grid-row:3}}
+
+.markdown h1,.markdown h2,.markdown h3,.markdown h4{margin:16px 0 8px;line-height:1.4}.markdown h1{font-size:1.35em}.markdown h2{font-size:1.2em}.markdown h3,.markdown h4{font-size:1.05em}.markdown ul,.markdown ol{padding-left:24px;margin:8px 0}.markdown li{margin:5px 0}.markdown p{margin:8px 0}.markdown pre{overflow:auto;padding:12px;background:var(--sunken);border-radius:6px;white-space:pre}.markdown code{font-family:monospace;background:var(--sunken);padding:1px 4px}.markdown blockquote{border-left:3px solid var(--primary);padding-left:12px;color:var(--muted)}.markdown hr{border:0;border-top:1px solid var(--line);margin:16px 0}.md-table{overflow:auto}.markdown table{width:100%;border-collapse:collapse}.markdown th,.markdown td{padding:8px;border:1px solid var(--line)}
+/* live activity stream */
+.feed{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:6px;font-size:var(--t-sm)}
+.feed li{display:grid;grid-template-columns:62px 10px minmax(0,1fr);gap:8px;align-items:start;animation:fade .25s ease both}
+.feed li.still{animation:none}
+.feed time{font-family:var(--mono);font-size:var(--t-xs);color:var(--muted);padding-top:1px}
+.feed i{width:8px;height:8px;border-radius:50%;margin-top:6px;background:var(--idle)}
+.feed .stage i{background:var(--primary)}.feed .tool i{background:var(--found)}.feed .model i{background:var(--primary);opacity:.6}
+.feed .check.ok i,.feed .merge i{background:var(--ok)}.feed .check.bad i,.feed .rejected i,.feed .tool.bad i{background:var(--danger)}.feed .backtrack i{background:var(--found)}
+.feed .stage b{font-weight:600}
+.feed .say{display:block;margin-top:2px;color:var(--ink-2);border-left:2px solid var(--line-strong);padding-left:8px;white-space:pre-wrap}
+.feed .why{display:block;color:var(--danger);font-size:var(--t-xs)}
+.liveline{display:flex;align-items:center;gap:8px;margin-top:10px;padding:8px 10px;border-radius:8px;background:var(--primary-soft);color:var(--ink);font-size:var(--t-sm)}
+.liveline .spin{width:12px;height:12px;border-radius:50%;border:2px solid var(--primary);border-right-color:transparent;animation:spin .8s linear infinite;flex:none}
+.liveline .num{margin-left:auto;color:var(--muted);font-weight:400}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* quick start */
+#qs-dialog{margin:auto;width:min(640px,94vw);max-height:90dvh;padding:22px 24px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:12px;overflow:auto}
+#qs-dialog::backdrop{background:#0009}
+#qs-dialog header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+#qs-form{display:grid;gap:14px}
+#qs-form .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#qs-form label.f{display:grid;gap:6px;font-size:var(--t-sm);color:var(--ink-2)}
+#qs-form select,#qs-form input[type=number],#qs-form textarea{width:100%;padding:8px 10px;background:var(--sunken);color:var(--ink);border:1px solid var(--line);border-radius:6px;font-size:var(--t-md)}
+#qs-form fieldset{border:0;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:8px}
+#qs-form legend{font-size:var(--t-sm);color:var(--ink-2);margin-bottom:6px;padding:0}
+#qs-form .opt{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border:1px solid var(--line);border-radius:999px;font-size:var(--t-sm);cursor:pointer}
+#qs-form .opt:has(input:checked){border-color:var(--primary);background:var(--primary-soft);color:var(--ink)}
+#qs-form .opt input{margin:0;accent-color:var(--primary)}
+#qs-preview{padding:10px 12px;border-radius:8px;background:var(--sunken);font-size:var(--t-sm);line-height:1.7;color:var(--ink)}
+#qs-form .acts{display:flex;justify-content:flex-end;gap:10px;align-items:center}
+#qs-form .go{height:var(--h-md);padding:0 18px;border-radius:8px;background:var(--primary);color:var(--primary-ink);font-weight:600}
+#qs-form .go:disabled{opacity:.5;cursor:not-allowed}
+#qs-err{color:var(--danger);font-size:var(--t-sm)}
+@media(max-width:600px){#qs-form .row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<dialog id="qs-dialog" aria-labelledby="qs-title"><header><h2 id="qs-title">快速开始</h2><button type="button" id="qs-close" class="linkbtn">关闭</button></header>
+<p class="small" style="margin:0 0 14px">选好产品、商圈和要求，直接开始分析；不经过对话。</p>
+<form id="qs-form" autocomplete="off">
+  <div class="row"><label class="f">产品<select id="qs-p"></select></label><label class="f">商圈<select id="qs-a"></select></label></div>
+  <fieldset id="qs-r"><legend>覆盖范围</legend></fieldset>
+  <fieldset id="qs-ch" hidden><legend>重点渠道（可不选，由 Agent 判断）</legend></fieldset>
+  <fieldset id="qs-out"><legend>要交付什么</legend></fieldset>
+  <div class="row"><label class="f">地推人数（可不填，只影响排期）<input id="qs-people" type="number" min="1" max="50" placeholder="例如 2"></label><label class="f">周期（周，可不填）<input id="qs-weeks" type="number" min="1" max="52" placeholder="例如 4"></label></div>
+  <label class="f">补充要求（可不填）<textarea id="qs-extra" rows="2" maxlength="500" placeholder="例如：先看写字楼，避开已有竞品陈列的门店"></textarea></label>
+  <div><span class="small">将提交的任务</span><div id="qs-preview"></div></div>
+  <div class="acts"><span id="qs-err" role="status"></span><button type="submit" class="go" id="qs-go">开始分析</button></div>
+</form></dialog>
+<dialog id="library-dialog"><header><h2 id="library-title">资料库</h2><button type="button" id="library-close" class="linkbtn">关闭</button></header><div id="library-body"></div></dialog>
+<section class="hero" id="hero" aria-label="铺市 Agent" hidden>
+  <canvas id="radar" aria-hidden="true"></canvas>
+  <div class="veil"></div>
+  <div class="wrap">
+    <div class="top reveal"><div class="logo"><i></i>铺市 Agent</div><button class="hist" id="h-hist" type="button">任务记录</button></div>
+    <div class="copy">
+      <span class="kick reveal" style="animation-delay:.05s">FMCG 新品铺市智能体</span>
+      <h1 class="reveal" style="animation-delay:.12s">一句话，<br>把新品<em>铺进商圈</em>。</h1>
+      <p class="lead reveal" style="animation-delay:.2s">告诉 Agent 卖什么、在哪卖。它自己判断该进哪些渠道，门店不够就去高德补采，再排出首访名单和进店话术。</p>
+      <div class="flow reveal" id="h-flow" style="animation-delay:.26s" aria-hidden="true"></div>
+      <form id="h-form" class="reveal" style="animation-delay:.32s" autocomplete="off">
+        <div class="pick" id="h-pick"></div>
+        <div class="field"><input id="h-ask" aria-label="推广目标"><button class="go" type="submit"><span>开始铺市</span><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 9h11M9.5 4.5 14 9l-4.5 4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+        <div class="ex" id="h-ex"></div>
+        <div class="warn" id="h-warn" hidden></div>
+      </form>
+      <div class="actions reveal" style="animation-delay:.4s"><button class="play" id="h-play" type="button" hidden><i><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 1.5v9l7.5-4.5z" fill="currentColor"/></svg></i><span>看 Agent 跑一遍<br><small id="h-play-sub"></small></span></button></div>
+    </div>
+    <div class="stats reveal" id="h-stats" style="animation-delay:.5s"></div>
+  </div>
+  <div class="hud reveal" id="h-hud" style="animation-delay:.7s" hidden><h4><span class="pulse"></span><span id="h-hud-t">AGENT · 找终端</span></h4><ol id="h-log"></ol></div>
+</section>
+<div class="app">
+  <aside class="side" aria-label="任务">
+    <div class="brand"><b>铺市 Agent</b><span class="small">新品进店 · 市场开发策略</span></div>
+    <button class="newbtn" id="newbtn" type="button"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.8" fill="none"/></svg>新建任务</button>
+    <button class="newbtn" id="quickstart" type="button">快速开始</button>
+    <nav class="library-nav" aria-label="资料库"><button type="button" data-library="products">产品库</button><button type="button" data-library="areas">商圈库</button><button type="button" data-library="skills">技能</button></nav>
+    <span class="small list-h">任务记录</span>
+    <ul class="tasks" id="tasks"></ul>
+  </aside>
+
+  <main class="main">
+    <div class="head"><h1 id="title"></h1><div class="meta" id="meta"></div></div>
+    <ol class="rail" id="rail" aria-label="关卡进度"></ol>
+    <div class="mobtabs" aria-label="切换工作区"><button type="button" data-pane="chat" aria-pressed="true">对话</button><button type="button" data-pane="art" aria-pressed="false">产物</button></div>
+    <div class="panes">
+      <section class="card" aria-labelledby="chat-h">
+        <div class="card-h"><h2 id="chat-h">对话</h2><button class="linkbtn" id="replay" type="button" hidden>回看执行过程</button></div>
+        <div class="livebar" id="livebar" hidden></div>
+        <div class="thread" id="thread" aria-live="polite"></div>
+        <form class="composer" id="composer" autocomplete="off">
+          <div class="toolbox" id="toolbox" hidden role="listbox" aria-label="百宝箱"></div>
+          <div class="pickers" id="pickers" hidden></div>
+          <div class="quick" id="quick"></div>
+          <div class="box">
+            <textarea id="ask" rows="1" aria-label="给 Agent 的指令"></textarea>
+            <button class="ibtn" id="tb" type="button" aria-expanded="false" aria-controls="toolbox" title="百宝箱（输入 / 也能打开）"><svg viewBox="0 0 18 18" aria-hidden="true"><rect x="2.5" y="5" width="13" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M6.5 5V3.8c0-.7.5-1.3 1.2-1.3h2.6c.7 0 1.2.6 1.2 1.3V5M2.5 9.5h13" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></button>
+            <button class="ibtn send" id="send" type="submit" title="发送"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 9h11M9.5 4.5 14 9l-4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          </div>
+          <span class="hint" id="hint"></span>
+        </form>
+      </section>
+      <section class="card art" aria-labelledby="art-h">
+        <div class="card-h"><h2 id="art-h">产物</h2>
+          <div class="seg" role="tablist" id="seg">
+            <button type="button" role="tab" data-tab="document">任务文档</button><button type="button" role="tab" data-tab="brief">Brief</button>
+            <button type="button" role="tab" data-tab="map">地图</button>
+            <button type="button" role="tab" data-tab="dec">决策</button>
+            <button type="button" role="tab" data-tab="list">名单</button>
+            <button type="button" role="tab" data-tab="pitch">话术</button>
+          </div>
+        </div>
+        <div class="panel" id="panel"></div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<script>
+const DATA={"tasks":[{"id":"20261025T030224650626+0000-8568e30d","title":"洞庭山·新鲜活泉 · Agent 找终端","created_at":"2026-10-25T03:02:24.932731+00:00","stopped_at":null,"stop_reason":null,"product":"洞庭山·新鲜活泉","area":"江苏省苏州市虎丘区江苏高新区狮山路","request":"苏州高新区狮山商圈周边3公里，推广新鲜活泉，2个地推，做4周","run_id":"20261025T030224650626+0000-8568e30d","status":"completed","mode":"回放","model":"deepseek-v4-flash","radius":3000,"brief":{"radius_m":3000,"delivery_people":2,"weeks":4},"area_id":"shishan","channel_names":{"tea_channel":"茶馆/茶店","office_channel":"办公","gym_channel":"健身"},"targets":["茶馆/茶店","办公","健身"],"cache":{"total":1199,"by_category":{"restaurant":1199}},"counts":{"model_calls":5,"tool_calls":6,"amap_calls":0,"added":134},"decision":"三个目标渠道（茶馆/茶店、办公、健身）在狮山3000米半径内均已找到足够数量的候选商户，无需进一步补采。","channels":[{"id":"tea_channel","name":"茶馆/茶店","after":11},{"id":"office_channel","name":"办公","after":51},{"id":"gym_channel","name":"健身","after":24}],"stages":[{"id":"L0","name":"立项","done":true,"stopped":false,"attempts":1,"summary":"3 km · 2 人 × 4 周","agent":false,"decision":"需求参数检查通过。","judged_by":"规则","checks":[{"layer":"结构","status":"passed"},{"layer":"引用","status":"passed"},{"layer":"业务","status":"passed"},{"layer":"判断质量","status":"needs_review"},{"layer":"人工关口","status":"passed"}],"review":1,"approved":null},{"id":"L1","name":"卖给谁","done":true,"stopped":false,"attempts":1,"summary":"茶馆/茶店 P1 · 办公 P1 · 健身 P1","agent":false,"decision":"按档案场景选择渠道；优先级为待验证的渠道假设。","judged_by":"规则","checks":[{"layer":"结构","status":"passed"},{"layer":"引用","status":"passed"},{"layer":"业务","status":"passed"},{"layer":"判断质量","status":"needs_review"},{"layer":"人工关口","status":"passed"}],"review":4,"approved":null},{"id":"L1D","name":"找终端","done":true,"stopped":false,"attempts":1,"summary":"补采 +134 家","agent":true,"decision":"三个目标渠道（茶馆/茶店、办公、健身）在狮山3000米半径内均已找到足够数量的候选商户，无需进一步补采。","judged_by":"模型","checks":[{"layer":"结构","status":"passed"},{"layer":"引用","status":"passed"},{"layer":"业务","status":"passed"},{"layer":"判断质量","status":"passed"},{"layer":"人工关口","status":"passed"}],"review":0,"approved":null},{"id":"L2","name":"去哪里","done":true,"stopped":false,"attempts":1,"summary":"选中 1 个网格","agent":false,"decision":"按目标业态加权点位数排序，在商圈数上限内选择满足既有A/B终端要求的最长排名前缀；无可行前缀时保留回退检查。","judged_by":"规则","checks":[{"layer":"结构","status":"passed"},{"layer":"引用","status":"passed"},{"layer":"业务","status":"passed"},{"layer":"判断质量","status":"needs_review"},{"layer":"人工关口","status":"passed"}],"review":91,"approved":"auto (demo)"},{"id":"L2C","name":"对手在哪","done":true,"stopped":false,"attempts":1,"summary":"90 个网格已评估竞争","agent":false,"decision":"依据缓存计数提出切入假设，零点位不代表无竞争。","judged_by":"规则","checks":[{"layer":"结构","status":"passed"},{"layer":"引用","status":"passed"},{"layer":"业务","status":"passed"},{"layer":"判断质量","status":"needs_review"},{"layer":"人工关口","status":"passed"}],"review":91,"approved":null},{"id":"L3","name":"进哪家","done":true,"stopped":false,"attempts":1,"summary":"A 3 · B 4 · C 7","agent":false,"decision":"在选中商圈内按渠道、排名、距离和资料完整度确定首访动作。","judged_by":"规则","checks":[{"layer":"结构","status":"passed"},{"layer":"引用","status":"passed"},{"layer":"业务","status":"passed"},{"layer":"判断质量","status":"needs_review"},{"layer":"人工关口","status":"passed"}],"review":15,"approved":"auto (demo)"},{"id":"L3P","name":"谁来供货","done":true,"stopped":false,"attempts":1,"summary":"460 个供货候选","agent":false,"decision":"按名称/类型判断候选伙伴，覆盖和推荐等级由代码重算。","judged_by":"规则","checks":[{"layer":"结构","status":"passed"},{"layer":"引用","status":"passed"},{"layer":"业务","status":"passed"},{"layer":"判断质量","status":"needs_review"},{"layer":"人工关口","status":"passed"}],"review":461,"approved":null},{"id":"L4","name":"怎么说","done":true,"stopped":false,"attempts":1,"summary":"8 条话术 · 合规通过","agent":false,"decision":"按业态准备店主沟通话术与桌牌，不承诺销量或利润。","judged_by":"规则","checks":[{"layer":"结构","status":"passed"},{"layer":"引用","status":"passed"},{"layer":"业务","status":"passed"},{"layer":"判断质量","status":"needs_review"},{"layer":"人工关口","status":"passed"}],"review":9,"approved":null},{"id":"PACK","name":"作战包","done":true,"stopped":false,"attempts":1,"summary":"1 个人日 · 首日 7 家","agent":false,"decision":"铺市清单、合规物料、拜访路线与来源证据已拼装；待验证项随包交付。","judged_by":"规则","checks":[{"layer":"结构","status":"passed"},{"layer":"引用","status":"passed"},{"layer":"业务","status":"passed"},{"layer":"判断质量","status":"needs_review"},{"layer":"人工关口","status":"passed"}],"review":15,"approved":null}],"steps":[{"kind":"model","calls":["盘点现有商户"],"note":""},{"kind":"tool","tool":"area_inventory","label":"盘点现有商户","args":{},"ok":true,"error":null,"returned":null,"new":null,"total":1199,"by_category":{"restaurant":1199},"by_channel":{"gym_channel":0,"office_channel":0,"tea_channel":0},"sample":[],"added_ids":[]},{"kind":"model","calls":["高德补采","高德补采"],"note":""},{"kind":"tool","tool":"search_merchants","label":"高德补采","args":{"keywords":"茶馆|茶楼|茶行|茶庄|茶室","max_pages":3},"ok":true,"error":null,"returned":23,"new":23,"total":null,"by_category":null,"by_channel":{"gym_channel":0,"office_channel":0,"tea_channel":11},"sample":[{"id":"amap:B020017FSH","name":"光福茶庄","typecode":"061200","type":"购物服务;专卖店;专营店","category":"other","channel_id":null,"distance_m":2748},{"id":"amap:B02001C2MJ","name":"溢来茶庄","typecode":"061200","type":"购物服务;专卖店;专营店","category":"other","channel_id":null,"distance_m":1784},{"id":"amap:B0FFI693R5","name":"半闲居茶馆(易生活购物公园店)","typecode":"050600","type":"餐饮服务;茶艺馆;茶艺馆","category":"tea","channel_id":"tea_channel","distance_m":1145},{"id":"amap:B0FFIFEGMW","name":"不二茶庄(淮海街商业街店)","typecode":"061200","type":"购物服务;专卖店;专营店","category":"other","channel_id":null,"distance_m":298},{"id":"amap:B0FFITHW9T","name":"柒茶茶馆(竹园路店)","typecode":"050600","type":"餐饮服务;茶艺馆;茶艺馆","category":"tea","channel_id":"tea_channel","distance_m":2091},{"id":"amap:B0G06XQHW1","name":"俊奕阁棋牌茶室","typecode":"050600","type":"餐饮服务;茶艺馆;茶艺馆","category":"tea","channel_id":"tea_channel","distance_m":1392},{"id":"amap:B0GD7C94ZM","name":"八马茶业·商务茶庄(狮山路店)","typecode":"061200","type":"购物服务;专卖店;专营店","category":"other","channel_id":null,"distance_m":41},{"id":"amap:B0GKRAACBY","name":"南山爷爷茶馆(苏州星韵宝龙广场店)","typecode":"050600","type":"餐饮服务;茶艺馆;茶艺馆","category":"tea","channel_id":"tea_channel","distance_m":2105},{"id":"amap:B0H0DM9PZ1","name":"大益茶(滨河路店)","typecode":"061200","type":"购物服务;专卖店;专营店","category":"other","channel_id":null,"distance_m":1407},{"id":"amap:B0J2ZZF2A4","name":"华祥苑茶业·茶馆茶室(新区店)","typecode":"061200","type":"购物服务;专卖店;专营店","category":"other","channel_id":null,"distance_m":1937}],"added_ids":["amap:B020017FSH","amap:B02001C2MJ","amap:B0FFI693R5","amap:B0FFIFEGMW","amap:B0FFITHW9T","amap:B0G06XQHW1","amap:B0GD7C94ZM","amap:B0GKRAACBY","amap:B0H0DM9PZ1","amap:B0J2ZZF2A4","amap:B0JATROJ9G","amap:B0JBMA03M1","amap:B0JDGCYSGW","amap:B0JK0UT5W0","amap:B0JR2UJR28","amap:B0KG5S5V24","amap:B0KK1UWSLI","amap:B0L1MAGTOJ","amap:B0L2TD35M6","amap:B0LDBACBJ4","amap:B0M647JTDN","amap:B0MBNOUBJT","amap:B0MBP72EUO"]},{"kind":"tool","tool":"search_merchants","label":"高德补采","args":{"types":"0803|0804|0805","keywords":"健身房|健身","max_pages":2},"ok":true,"error":null,"returned":6,"new":6,"total":null,"by_category":null,"by_channel":{"gym_channel":0,"office_channel":0,"tea_channel":11},"sample":[{"id":"amap:B0FFHC2K4R","name":"吴甸园会所","typecode":"080500","type":"体育休闲服务;休闲场所;休闲场所","category":"other","channel_id":null,"distance_m":1379},{"id":"amap:B0H2O5E00B","name":"golfzon室内高尔夫(苏州红唐店)","typecode":"080300","type":"体育休闲服务;娱乐场所;娱乐场所","category":"other","channel_id":null,"distance_m":228},{"id":"amap:B0J03Y2SSW","name":"疯狂格子(龙湖苏州狮山天街·A馆)","typecode":"080300","type":"体育休闲服务;娱乐场所;娱乐场所","category":"other","channel_id":null,"distance_m":781},{"id":"amap:B0KU59R1XE","name":"ninebot九号卡丁车平衡车滑板车(苏州绿宝广场店)","typecode":"080300","type":"体育休闲服务;娱乐场所;娱乐场所","category":"other","channel_id":null,"distance_m":1711},{"id":"amap:B0MAOUJIZX","name":"第二人生FansMusicBar","typecode":"080304","type":"体育休闲服务;娱乐场所;酒吧","category":"other","channel_id":null,"distance_m":1269},{"id":"amap:B0MG9HPR1D","name":"荔枝咖啡简餐·画廊·健身三层(狮山店)","typecode":"080500|050500","type":"体育休闲服务;休闲场所;休闲场所|餐饮服务;咖啡厅;咖啡厅","category":"other","channel_id":null,"distance_m":2962}],"added_ids":["amap:B0FFHC2K4R","amap:B0H2O5E00B","amap:B0J03Y2SSW","amap:B0KU59R1XE","amap:B0MAOUJIZX","amap:B0MG9HPR1D"]},{"kind":"model","calls":["高德补采","高德补采"],"note":""},{"kind":"tool","tool":"search_merchants","label":"高德补采","args":{"keywords":"健身中心|健身会所|运动健身|游泳健身|健身工作室","max_pages":3},"ok":true,"error":null,"returned":48,"new":47,"total":null,"by_category":null,"by_channel":{"gym_channel":24,"office_channel":0,"tea_channel":11},"sample":[{"id":"amap:B0FFHRMJ0U","name":"光圈健身(狮山店)","typecode":"080111","type":"体育休闲服务;运动场馆;健身中心","category":"gym","channel_id":"gym_channel","distance_m":555},{"id":"amap:B0FFJ1PR63","name":"臻爱体育(锦丽商业中心店)","typecode":"080111|060900","type":"体育休闲服务;运动场馆;健身中心|购物服务;体育用品店;体育用品店","category":"gym","channel_id":"gym_channel","distance_m":454},{"id":"amap:B0FFJ2VXNK","name":"名承健身","typecode":"080111","type":"体育休闲服务;运动场馆;健身中心","category":"gym","channel_id":"gym_channel","distance_m":664},{"id":"amap:B0FFKCZSWZ","name":"Shadow健身馆(润捷广场南楼店)","typecode":"080000","type":"体育休闲服务;体育休闲服务场所;体育休闲服务场所","category":"other","channel_id":null,"distance_m":773},{"id":"amap:B0FFLJC7LB","name":"力菲健身(狮山店)","typecode":"080111","type":"体育休闲服务;运动场馆;健身中心","category":"gym","channel_id":"gym_channel","distance_m":729},{"id":"amap:B0H027IPN9","name":"红唐D-PARK篮球馆(红唐购物中心店)","typecode":"080101","type":"体育休闲服务;运动场馆;综合体育馆","category":"other","channel_id":null,"distance_m":293},{"id":"amap:B0H6DY6VHP","name":"乐刻健身(红唐购物中心店)","typecode":"080111","type":"体育休闲服务;运动场馆;健身中心","category":"gym","channel_id":"gym_channel","distance_m":270},{"id":"amap:B0HRTN62SI","name":"健萌健身(狮山龙湖店)","typecode":"080111","type":"体育休闲服务;运动场馆;健身中心","category":"gym","channel_id":"gym_channel","distance_m":772},{"id":"amap:B0HRVASAFT","name":"领道健身俱乐部(润捷广场南楼店)","typecode":"080111","type":"体育休闲服务;运动场馆;健身中心","category":"gym","channel_id":"gym_channel","distance_m":771},{"id":"amap:B0I1VDXCC1","name":"银吉姆体育发展集团英派斯健身","typecode":"080111","type":"体育休闲服务;运动场馆;健身中心","category":"gym","channel_id":"gym_channel","distance_m":455}],"added_ids":["amap:B02001DH9F","amap:B0FFF5LAUQ","amap:B0FFHRMJ0U","amap:B0FFJ1PR63","amap:B0FFJ2VXNK","amap:B0FFKCZSWZ","amap:B0FFLHN5LL","amap:B0FFLJC7LB","amap:B0H027IPN9","amap:B0H6DY6VHP","amap:B0HDDG9YKQ","amap:B0HRTN62SI","amap:B0HRVASAFT","amap:B0I137V79U","amap:B0I1VDXCC1","amap:B0I2GHDNFX","amap:B0IU5HW2ZR","amap:B0IUMZO7R1","amap:B0IUUC0BEI","amap:B0J0UH7IM3","amap:B0J3ZSVBIX","amap:B0J6MRQ0QH","amap:B0JKYMGAM2","amap:B0JUG7KMCV","amap:B0K6B5DCAC","amap:B0K6JLXA15","amap:B0KGRHBUTY","amap:B0KKCCIXRS","amap:B0KRLS61XR","amap:B0L0LUA3NE","amap:B0L0TY9W7C","amap:B0L1KNTBC0","amap:B0L31OWNDC","amap:B0LBLSN86K","amap:B0LDAA2IPH","amap:B0LG9AV4BJ","amap:B0LGRZC0VY","amap:B0LGUUGAOT","amap:B0LURO69IW","amap:B0M69RCUO7","amap:B0M6F90PZU","amap:B0M6YSR4L7","amap:B0MBFS470Z","amap:B0MR1XFVFC","amap:B0MU4CBLKA","amap:B0MUAR4I34","amap:B0MUHRPWLK"]},{"kind":"tool","tool":"search_merchants","label":"高德补采","args":{"keywords":"写字楼|办公楼|商务中心|办公","max_pages":3},"ok":true,"error":null,"returned":58,"new":58,"total":null,"by_category":null,"by_channel":{"gym_channel":24,"office_channel":51,"tea_channel":11},"sample":[{"id":"amap:B020001OKY","name":"金河国际大厦","typecode":"120201","type":"商务住宅;楼宇;商务写字楼","category":"office","channel_id":"office_channel","distance_m":470},{"id":"amap:B020006ATP","name":"新创大厦","typecode":"120201","type":"商务住宅;楼宇;商务写字楼","category":"office","channel_id":"office_channel","distance_m":702},{"id":"amap:B02000IVEO","name":"金狮大厦(滨河路)","typecode":"120201","type":"商务住宅;楼宇;商务写字楼","category":"office","channel_id":"office_channel","distance_m":423},{"id":"amap:B02000IVFW","name":"金辰楼","typecode":"120201","type":"商务住宅;楼宇;商务写字楼","category":"office","channel_id":"office_channel","distance_m":563},{"id":"amap:B02000JPX2","name":"新地中心","typecode":"120201","type":"商务住宅;楼宇;商务写字楼","category":"office","channel_id":"office_channel","distance_m":539},{"id":"amap:B02000K1WP","name":"苏州高新广场","typecode":"120201","type":"商务住宅;楼宇;商务写字楼","category":"office","channel_id":"office_channel","distance_m":489},{"id":"amap:B02000K27S","name":"润捷广场","typecode":"120201","type":"商务住宅;楼宇;商务写字楼","category":"office","channel_id":"office_channel","distance_m":802},{"id":"amap:B0FFF91Q4S","name":"润捷广场南楼","typecode":"120201","type":"商务住宅;楼宇;商务写字楼","category":"office","channel_id":"office_channel","distance_m":773},{"id":"amap:B0FFF9NZV8","name":"润捷广场-北楼","typecode":"120201","type":"商务住宅;楼宇;商务写字楼","category":"office","channel_id":"office_channel","distance_m":828},{"id":"amap:B0FFF9T1HQ","name":"阳光大厦A","typecode":"120201","type":"商务住宅;楼宇;商务写字楼","category":"office","channel_id":"office_channel","distance_m":577}],"added_ids":["amap:B020001OKY","amap:B020006ATP","amap:B02000IVEO","amap:B02000IVFW","amap:B02000JO1B","amap:B02000JPX2","amap:B02000K1WP","amap:B02000K27S","amap:B02001B4U7","amap:B02001IJHE","amap:B0FFF91Q4S","amap:B0FFF9NZV8","amap:B0FFF9T1HQ","amap:B0FFG27L05","amap:B0FFGA1YHP","amap:B0FFGFB900","amap:B0FFGFB9OY","amap:B0FFGZ03GA","amap:B0FFHB8RFV","amap:B0FFHC4SJE","amap:B0FFHPO5TX","amap:B0FFI2FYGD","amap:B0FFI96895","amap:B0FFJ8E1M1","amap:B0FFKHFL8Q","amap:B0FFMD2CA1","amap:B0G0RN9TXL","amap:B0G1FUP2W2","amap:B0H6YCBLZ1","amap:B0IAJUZFFX","amap:B0IATRWSYA","amap:B0JUTPVNHP","amap:B0K01UTJJL","amap:B0KKRCTU19","amap:B0L0CCZDGI","amap:B0L1ABINN6","amap:B0L1YYDZ11","amap:B0L2LOQ1PG","amap:B0L2XRYR0L","amap:B0L3ASS2H6","amap:B0L3ASS641","amap:B0L3COK80D","amap:B0L3OKX2JT","amap:B0LA2HI0N2","amap:B0LD19MV13","amap:B0M254BO2C","amap:B0M25NBE6C","amap:B0M3ML1KAL","amap:B0M3Y7W073","amap:B0M625W9ZG","amap:B0M65DIGCH","amap:B0M667AOQM","amap:B0MAFLUGFF","amap:B0MRDK8LHT","amap:B0MRFLUWU1","amap:B0MRV9E9SF","amap:B0MUDRJU9S","amap:B0MUURXR8N"]},{"kind":"model","calls":["盘点现有商户"],"note":""},{"kind":"tool","tool":"area_inventory","label":"盘点现有商户","args":{},"ok":true,"error":null,"returned":null,"new":null,"total":1333,"by_category":{"restaurant":1199,"other":48,"tea":11,"gym":24,"office":51},"by_channel":{"gym_channel":24,"office_channel":51,"tea_channel":11},"sample":[],"added_ids":[]},{"kind":"model","calls":[],"note":""}],"map":{"base":[[1717.1,211.4],[-1320.7,1356.0],[2096.5,350.5],[-1386.6,1752.0],[-2127.4,1361.1],[-1124.3,1438.6],[810.2,2810.0],[541.1,1864.7],[-600.0,313.9],[-587.1,1539.4],[2637.8,1139.9],[1500.2,683.6],[2862.6,544.5],[1139.5,2454.0],[298.2,68.1],[1610.6,2451.1],[1125.4,1983.1],[1721.4,224.5],[-543.9,-161.8],[1008.6,-338.1],[944.8,2785.5],[-562.9,1533.4],[-1457.7,881.8],[-266.3,-464.2],[-253.7,-180.1],[-894.9,-1236.7],[-687.3,1501.1],[-1473.1,1817.8],[-1049.9,2536.4],[-2594.8,-1293.3],[-447.1,-639.7],[-1088.8,2106.6],[-1211.7,1421.1],[1174.7,-2181.5],[-1377.9,1384.3],[2412.6,-329.9],[-643.4,304.3],[1635.9,2033.5],[-254.6,-158.5],[-235.5,-77.8],[-1085.6,1444.9],[-2137.5,1360.4],[-881.2,-1251.5],[-1963.2,2103.5],[1176.6,-2179.3],[901.7,2384.4],[-1412.6,848.2],[-658.0,666.6],[-213.1,-424.5],[1028.7,-386.3],[179.8,51.9],[-211.3,-426.0],[1110.8,1118.7],[-214.6,-366.7],[527.9,1819.8],[1355.4,1113.1],[-217.5,-255.7],[-1296.6,851.1],[-2516.1,-1336.3],[-1204.2,1375.0],[-245.5,-177.1],[-991.8,-2633.2],[-298.1,136.8],[-2593.0,-1372.9],[-383.7,335.4],[-283.7,176.8],[1296.5,1113.6],[-2554.5,-1309.4],[-2277.5,1349.9],[2225.0,-421.5],[-265.1,115.5],[874.7,-1288.1],[-246.7,-131.8],[-1565.3,-2029.9],[302.5,117.5],[-1291.6,1361.8],[1186.2,-2177.4],[-253.7,-89.4],[-215.8,-374.9],[64.7,803.7],[1100.5,-503.2],[1024.2,2306.3],[1494.0,1577.5],[-230.4,-98.3],[-232.0,-110.0],[-224.2,-569.3],[-926.2,-1192.0],[2521.8,602.0],[1255.2,-2165.3],[-1448.1,-1131.9],[-487.7,692.5],[-250.8,-161.7],[-68.3,105.4],[1793.6,1078.0],[-1464.7,-1156.3],[2215.2,-2020.2],[-2245.5,1768.7],[-232.7,-382.4],[-1463.6,922.9],[-70.4,-574.2],[-1437.3,-1145.0],[1072.4,1266.8],[-984.5,-2747.3],[-1465.7,-1170.7],[-451.1,-795.9],[-1302.6,1404.6],[-1589.2,1105.1],[1080.0,1235.7],[554.7,1921.2],[-2585.3,-1255.9],[1753.9,1070.4],[-992.9,-2700.3],[-1356.0,1396.1],[1105.5,1144.0],[468.1,-111.8],[-190.8,399.4],[1335.0,1186.2],[1753.9,1070.4],[2502.4,608.0],[2432.4,-1637.7],[1143.4,2457.0],[1545.8,1669.3],[1006.3,2618.6],[1144.4,1986.4],[1153.4,1987.3],[734.8,-1236.2],[-535.1,-162.5],[1106.5,1144.1],[-211.5,-395.2],[-293.6,155.6],[-483.7,693.3],[-896.6,-1216.0],[-1760.3,1333.9],[1364.2,1113.4],[-245.3,-269.9],[2501.2,603.9],[-1083.7,2506.9],[1098.4,2414.7],[-930.8,-1104.5],[-925.9,-839.2],[653.3,2389.5],[-2314.9,1352.6],[-548.6,-150.7],[-1652.3,1223.7],[1619.7,1581.6],[-217.2,-264.0],[111.8,827.7],[-919.1,-1272.3],[-968.2,-2686.6],[1499.7,-2137.7],[-1671.9,2157.2],[-228.9,-477.1],[-2377.6,-1176.2],[-217.8,-311.0],[758.7,-26.0],[1341.7,1160.5],[-2249.1,1790.1],[-331.2,705.4],[2726.8,1022.3],[369.9,1887.2],[1410.8,-243.1],[1803.1,1066.9],[-1474.7,-1151.6],[-1477.7,963.6],[-902.3,-1158.7],[-1462.0,1019.1],[-940.3,-1118.7],[-987.7,-2656.6],[696.1,-1073.6],[-338.1,-2622.8],[873.5,-1263.4],[858.9,-1276.9],[-1109.7,1394.2],[-229.4,-502.9],[-153.4,721.0],[1072.4,1274.4],[1086.0,1249.8],[1449.3,-2144.7],[1355.4,1132.4],[-252.9,-102.0],[1495.5,-245.5],[-934.7,-1153.2],[-260.2,115.4],[-1601.2,1789.5],[1347.7,1158.0],[2437.9,-1665.1],[-1565.5,-2019.0],[935.9,2811.6],[2077.6,-284.0],[-1472.0,943.4],[-1469.5,922.0],[-687.4,-107.0],[1051.0,-2196.9],[919.4,-1307.1],[1204.4,-2402.4],[1347.0,1144.8],[897.9,-1285.4],[-1451.4,811.1],[-277.2,154.2],[-1483.1,-1306.7],[-254.9,34.4],[-1965.4,2123.2],[1554.4,-2129.3],[849.5,1189.7],[995.1,2499.9],[-233.8,-418.0],[2077.0,-302.1],[1088.2,1206.6],[-1549.1,1800.9],[1261.5,1989.8],[-224.3,-538.3],[-2355.7,-1598.5],[-665.2,447.9],[1395.8,-192.3],[1131.9,1982.5],[916.1,-1303.0],[-964.1,-2649.4],[665.4,-410.6],[-1384.3,125.1],[1253.1,-2165.6],[868.8,-358.9],[1479.8,-2140.8],[-797.7,758.1],[-834.1,727.2],[-2365.7,-1375.6],[-644.4,342.8],[-823.0,721.1],[-1224.7,-6.2],[-1471.0,-1211.8],[-1280.2,-4.4],[-1315.3,-53.6],[1359.9,-2211.9],[634.8,1895.8],[-205.4,-517.4],[-1406.3,848.5],[2486.2,-310.7],[-230.3,-111.9],[1394.1,-264.5],[-1605.7,1788.5],[-2239.1,-1816.7],[-662.8,425.5],[1443.0,1535.4],[1038.9,2447.3],[-983.1,-2746.3],[-1469.8,-1220.6],[527.2,357.0],[1351.2,1131.1],[-539.9,730.9],[-2367.2,1346.2],[-1352.5,895.5],[-1655.6,1228.1],[1650.3,356.3],[-231.9,-404.8],[-1495.0,-1156.7],[447.4,78.7],[465.7,105.1],[1458.9,1532.5],[-1492.5,-1172.6],[-1433.8,-1149.0],[-2506.3,-1344.8],[-712.4,136.0],[593.4,336.8],[-729.0,92.1],[-1637.6,1966.5],[1312.0,1353.6],[2178.4,371.9],[-965.1,-2774.0],[-120.3,-558.5],[-947.7,-2682.4],[-1883.1,1385.0],[-234.1,-411.6],[-1330.3,-26.9],[1063.1,1162.4],[1403.0,-220.3],[525.1,1834.2],[909.3,-1316.7],[1279.0,2460.2],[-715.5,136.2],[2780.3,-205.3],[-2354.0,-1145.9],[-900.2,-1162.5],[1218.6,1104.5],[-267.4,77.8],[983.7,-1282.1],[677.3,2384.7],[-2459.6,1673.0],[-975.6,-673.7],[1247.9,1954.9],[-1001.8,2550.9],[-986.8,-2736.0],[-988.2,-2603.5],[416.8,-77.4],[-2352.5,-1145.8],[6.6,-607.0],[-1088.9,2495.2],[1482.0,1732.3],[474.4,204.5],[-1092.6,1568.5],[-897.7,-1232.2],[1405.6,-215.1],[1266.1,-2159.0],[-954.1,710.8],[-196.1,399.0],[840.7,2399.4],[856.7,1480.2],[-1002.3,706.6],[768.2,1922.6],[-2461.2,-1334.7],[613.7,1891.8],[-574.4,1600.3],[-256.1,-65.7],[-778.9,73.1],[631.0,-899.8],[-1476.8,963.6],[-982.8,-2657.2],[-254.3,-81.3],[-2200.9,1772.4],[1066.8,-403.7],[991.9,-331.7],[1230.5,-2169.3],[-2371.3,-1242.7],[-2213.7,1772.6],[-1326.1,1305.7],[762.4,-378.0],[1360.2,-2220.9],[1309.1,1111.3],[-939.4,-1099.8],[-1487.1,-1157.9],[-1287.4,918.7],[-1294.5,867.8],[-749.0,125.5],[-245.2,-177.2],[-287.5,100.2],[-1267.8,820.2],[-752.9,32.8],[-231.2,-427.5],[553.6,1795.2],[-987.2,-2700.8],[-894.4,-1258.7],[2195.2,371.2],[885.5,1186.1],[-721.4,129.5],[-1332.1,894.3],[-2486.0,-1335.1],[-224.9,-555.5],[924.1,-1284.9],[1546.5,1661.8],[1342.2,-2191.1],[-267.2,148.7],[-1458.6,-1104.2],[-223.9,-549.7],[-717.1,3.6],[-1567.8,-2022.7],[-2286.1,1790.1],[-1636.2,-2048.3],[-1426.5,1777.8],[621.5,2389.1],[-565.4,1564.0],[-222.7,-198.0],[2515.6,1163.7],[954.4,-1903.5],[-215.5,-299.0],[-204.1,-454.3],[-2499.7,-1336.8],[1494.3,1577.6],[1521.6,1802.9],[-236.2,-305.1],[1111.6,1122.7],[-1661.8,1977.8],[-231.5,-417.8],[920.8,-1284.1],[-1137.1,1436.6],[884.9,2394.0],[1343.5,-2217.5],[-803.2,-899.9],[-1648.1,1984.9],[857.0,-1259.4],[1344.5,-2219.9],[1528.4,1702.1],[-39.1,110.0],[-1657.9,2047.1],[2406.5,1038.3],[2077.7,-282.1],[-248.4,-140.8],[1628.3,1579.2],[-1171.0,1430.5],[569.4,377.0],[927.1,-1824.0],[282.5,-167.9],[-1006.6,23.7],[357.8,-228.1],[-943.4,-1065.0],[-243.0,-196.0],[-413.7,-836.5],[1035.6,-337.7],[-237.5,-313.8],[-1033.7,2523.6],[358.8,-214.7],[-1096.1,1481.1],[-232.4,-425.3],[294.6,766.1],[-357.9,233.6],[-1665.3,2054.3],[630.8,2401.1],[-224.0,-549.1],[580.0,359.3],[-2459.8,1674.6],[-1473.7,-1157.8],[-234.7,-356.0],[1435.3,1775.5],[-2160.4,1779.2],[941.4,-1904.8],[-1073.2,700.3],[304.9,1830.3],[1124.3,-554.9],[970.4,-1812.6],[-1022.2,2515.8],[2599.4,-269.3],[879.0,2392.6],[-336.9,219.1],[1387.3,-270.1],[960.3,-1903.9],[945.6,-1900.4],[2461.2,-848.2],[-1128.2,1445.0],[-1035.6,-1.8],[-1212.3,1364.1],[-2561.1,-1308.9],[-2339.7,-1257.1],[419.1,1895.8],[842.9,-363.9],[-1263.1,1758.1],[-988.1,-2706.9],[863.9,-1273.5],[-916.2,-1052.5],[-113.4,2072.8],[-1329.0,863.7],[2526.6,1104.4],[-1323.1,848.4],[-990.6,-2625.8],[-897.1,-1216.0],[1195.5,595.6],[-254.3,40.1],[-78.0,2052.5],[238.3,60.8],[-2142.7,2007.1],[570.6,334.3],[-285.9,193.0],[539.3,-1540.6],[1358.4,374.2],[-253.6,-135.9],[2539.4,-287.3],[-213.4,-366.1],[-536.1,-1368.6],[-1396.1,843.3],[670.1,2410.6],[1395.4,-2130.7],[2729.4,1242.7],[-1034.8,8.3],[-1027.1,11.1],[1113.3,-562.8],[421.4,-53.0],[-1447.7,1019.1],[-1235.2,2.7],[-1419.8,-1291.1],[-777.9,-3.4],[-697.8,29.8],[920.1,-1903.1],[-787.2,74.9],[1296.2,1276.4],[210.8,430.1],[1360.5,-2189.4],[-732.5,138.5],[-1108.9,2502.3],[954.9,-1806.7],[895.5,1202.7],[2501.9,-781.1],[-1291.5,832.4],[768.0,-905.7],[-917.6,720.7],[-1473.8,-1295.8],[-311.8,2822.2],[-236.4,-310.0],[-1346.8,1328.9],[1243.3,-2167.2],[-990.5,-6.1],[-224.0,-547.4],[612.8,-1706.5],[509.0,152.0],[1048.8,-362.9],[-2469.5,-1335.1],[-638.3,222.4],[-1001.7,2509.7],[881.2,2395.9],[-1437.0,937.8],[-252.1,-145.2],[-865.2,37.1],[-1449.9,-1184.6],[-233.4,-363.7],[-746.4,128.5],[933.1,-209.6],[-1388.8,871.0],[614.7,-1704.6],[-2213.6,1771.1],[2451.3,1667.9],[-103.9,-560.0],[-211.9,-418.2],[-1087.2,2528.6],[-39.6,1534.9],[-1380.0,-601.0],[230.0,363.6],[702.7,-1109.1],[-555.8,1679.4],[-1604.9,1979.6],[-1157.1,-1645.2],[-1418.9,974.0],[-402.3,696.2],[1499.0,677.7],[1341.8,1145.1],[-1121.2,1501.7],[-256.1,-65.7],[-721.3,111.6],[-1223.2,1369.3],[1299.5,1761.9],[-1332.2,-1668.9],[758.6,-899.9],[-582.4,1561.2],[-69.1,2039.0],[-295.4,147.3],[-1156.7,-1674.0],[-205.6,-513.3],[530.3,370.4],[-1201.9,1771.1],[-956.9,-2676.1],[-1460.8,-1151.8],[-204.2,-533.0],[-912.0,-1208.8],[1356.5,1113.2],[1372.7,456.7],[973.0,-1282.7],[-556.0,1686.8],[-233.4,-388.8],[-205.0,-520.8],[-1335.5,-7.8],[-232.6,-500.0],[1362.7,1839.4],[-1292.1,874.1],[-1504.8,-1377.8],[-687.7,77.6],[-724.2,-131.9],[1483.4,1534.3],[-814.1,-899.5],[-553.1,1750.2],[900.4,-1068.0],[936.6,-1767.2],[-498.3,-1463.4],[550.4,378.6],[-78.3,2056.6],[742.1,-375.6],[580.4,392.0],[-204.0,-473.7],[-910.0,725.9],[-1130.0,1514.8],[-1341.1,1755.1],[427.6,423.8],[606.1,-1722.3],[1470.6,2024.1],[422.7,82.5],[-2284.7,1348.8],[-730.6,129.0],[-483.3,-660.5],[-353.4,231.1],[-40.5,-187.3],[1746.0,1055.8],[661.2,-994.4],[-70.6,1518.6],[734.2,-1242.2],[691.3,-1236.5],[-720.6,2.9],[-1476.1,946.3],[952.2,-1795.8],[1178.1,-1090.4],[-74.5,1472.7],[-728.8,227.4],[-763.1,29.0],[731.8,-1268.8],[-453.6,-851.2],[-1409.5,1328.8],[-1662.7,2076.0],[-2369.5,-1208.4],[-1395.1,877.3],[-981.0,-2808.2],[-1313.0,936.4],[907.1,-1774.9],[-2437.8,1516.4],[-985.7,-6.1],[-551.2,1730.9],[-579.6,1562.1],[-700.7,66.7],[-2309.8,1763.0],[2677.1,1339.1],[-577.1,-139.5],[-459.1,-640.5],[-1448.8,1807.7],[-272.5,144.3],[587.3,383.5],[2412.7,1641.9],[-1599.6,1101.8],[-1642.0,2129.6],[686.6,-1251.5],[365.4,-207.4],[924.1,-1807.5],[-741.7,113.1],[1548.9,1608.1],[-989.6,-2617.0],[845.9,1247.9],[1488.9,1725.9],[970.7,-1804.5],[-220.1,-287.0],[-78.2,94.5],[-830.6,26.9],[1523.2,1789.9],[553.7,363.9],[-984.3,2505.9],[903.4,-1318.4],[2054.6,-920.9],[614.4,-1706.1],[405.3,-538.9],[1412.3,-258.3],[-1013.5,32.8],[-1027.1,11.1],[560.5,385.6],[533.8,1789.6],[-1593.8,-2096.6],[1361.9,357.8],[-1965.5,2126.8],[-1744.4,1321.0],[890.2,-1086.5],[941.3,-1059.6],[861.9,-1119.3],[1090.2,1201.6],[1486.7,397.1],[-1229.9,1417.6],[1354.3,1815.1],[760.9,-911.2],[560.2,387.1],[751.9,-911.2],[-2222.2,1771.6],[-278.8,189.0],[922.9,2830.0],[-1336.9,-4.0],[-112.5,2048.7],[-2244.8,1788.1],[573.5,384.1],[-639.7,237.0],[-711.2,176.0],[1485.1,1166.0],[1426.9,2020.5],[-1650.1,2004.1],[1118.5,2452.4],[2514.6,607.6],[-1333.4,1258.4],[1009.4,-253.1],[-2571.5,-1309.5],[1065.8,2449.5],[-1607.6,1995.1],[627.7,-1250.7],[-1306.7,1230.3],[-231.4,-421.4],[1297.8,1343.7],[1076.3,1247.6],[1227.2,1977.4],[581.3,306.6],[2652.4,1164.1],[-806.1,4.3],[1219.3,-2170.8],[306.5,766.0],[-552.1,1619.0],[2504.8,-242.9],[-1310.1,1757.7],[902.0,-1900.2],[-1665.1,233.0],[-216.6,-234.6],[-1967.3,2056.1],[-197.9,-568.0],[570.6,316.7],[555.5,379.6],[-1439.8,928.5],[2733.5,1191.0],[2601.2,-268.8],[617.2,-1273.2],[1319.7,-2156.9],[-1458.6,906.7],[-1551.0,-483.1],[-128.7,-555.0],[-900.1,-858.1],[-726.9,144.4],[1349.0,417.8],[1075.3,1111.6],[-1394.3,844.5],[-908.3,700.0],[-1501.0,1332.3],[-1656.7,2127.1],[-219.0,-263.2],[1534.3,1704.8],[-1660.2,2012.2],[-907.2,-1119.1],[1350.5,1830.7],[1820.4,379.1],[-856.3,-15.8],[-1647.2,1192.0],[2743.5,-82.1],[-1424.9,1002.3],[-1066.5,2551.5],[1361.2,1578.4],[895.6,-1790.8],[-1976.2,-804.7],[-453.7,-644.3],[-2273.5,1764.6],[-1173.1,1776.7],[-1565.3,54.0],[-2369.3,-1263.7],[-1358.9,1005.2],[1735.7,2046.9],[-1431.7,923.8],[1446.6,1711.1],[-1190.8,-40.6],[-1204.3,1422.7],[569.0,310.6],[-796.1,95.3],[563.1,383.1],[-1308.9,930.4],[-1914.2,-505.4],[-1331.0,1752.9],[-803.2,151.2],[424.4,74.3],[-1420.6,1022.1],[489.4,189.4],[1046.3,-466.6],[-1257.5,-19.6],[519.8,158.8],[922.7,-1797.7],[-8.5,102.6],[-787.2,74.9],[-857.3,719.8],[554.0,363.9],[852.9,-1084.7],[1358.7,336.7],[337.9,-85.4],[1024.5,-420.5],[1449.8,762.8],[-1033.1,2536.9],[-544.6,1685.7],[-201.6,-519.8],[1032.8,-364.6],[-715.0,77.2],[-223.4,-514.9],[-215.6,-389.5],[987.2,-389.2],[-1487.4,-1146.0],[1123.7,355.3],[-1413.2,882.6],[-930.5,-679.7],[-1053.7,720.9],[352.5,-92.2],[1071.4,1144.8],[-240.5,-260.0],[-745.3,84.0],[-1392.6,852.8],[1357.4,2012.3],[-1411.9,873.4],[-268.2,98.9],[-164.0,-232.4],[567.7,299.6],[1136.5,-1120.3],[-1832.3,-684.1],[-641.4,250.5],[-1855.6,-645.4],[-728.4,67.9],[947.0,-1773.6],[1527.5,1711.8],[1484.8,1745.2],[-1638.8,2102.0],[1615.8,-555.0],[-1620.9,1975.3],[-1228.6,-12.5],[-938.3,-1105.9],[1449.8,1720.1],[-1341.2,1293.1],[-2357.0,-1604.1],[2778.6,-166.1],[1994.1,316.5],[1023.9,-295.2],[-239.6,1513.1],[-706.0,17.0],[-1485.5,-1163.1],[-1460.8,-1262.6],[-563.2,1647.8],[1074.8,1255.2],[-923.9,-1251.4],[-1649.1,1217.7],[781.6,-990.2],[-1133.1,1465.3],[-382.8,2768.8],[-2377.7,-1163.1],[-1297.0,811.8],[580.1,316.5],[-1096.1,1443.2],[1454.7,1763.9],[1360.2,2015.3],[-2311.7,1747.2],[-717.2,742.4],[-1645.6,1940.4],[-571.6,1610.5],[-2368.6,-1224.6],[-2519.4,-1383.2],[-740.3,74.9],[889.2,580.0],[-897.2,-1220.7],[548.3,187.1],[-762.0,-0.2],[-729.8,-75.5],[-251.8,-84.6],[814.9,-1118.1],[2073.2,-244.9],[-1423.2,-1230.5],[-557.6,1667.9],[834.6,-1079.0],[240.0,-72.8],[601.1,333.0],[-795.7,60.6],[228.4,368.2],[-1066.9,1503.4],[808.8,1927.3],[-957.2,-2752.6],[-1066.5,182.1],[-989.4,-2606.5],[-1312.0,830.1],[-2316.0,1811.9],[1544.8,1666.8],[-57.0,-576.1],[-785.0,72.1],[-851.6,-8.9],[-419.0,-805.2],[-1341.8,882.7],[-230.3,-56.2],[-973.7,-2826.8],[553.3,1880.9],[-651.4,367.7],[877.0,-356.6],[-1650.8,1200.4],[1287.9,-2160.5],[1061.9,1166.7],[888.2,-352.2],[100.1,-73.5],[-223.9,-549.7],[-1389.1,1028.4],[-1745.2,1318.8],[-825.8,10.2],[575.0,330.8],[-933.5,-1179.2],[-1478.7,982.6],[-1442.8,951.3],[-2358.7,-1607.3],[900.4,-1796.4],[-225.6,-100.6],[2557.1,-278.3],[-2183.6,1777.5],[-1425.0,840.7],[-959.5,-1.2],[1082.8,2416.7],[-1319.2,1356.6],[2466.9,612.2],[583.6,356.8],[237.5,60.0],[591.6,388.6],[1475.2,1767.4],[370.3,-1297.6],[300.4,436.4],[1114.2,344.1],[-699.9,43.6],[-1751.0,1326.4],[-1280.3,850.1],[-78.3,2034.3],[-2378.6,-1173.9],[-1331.6,866.9],[862.4,-1296.0],[1399.2,1333.8],[-1433.5,1020.9],[-254.5,71.7],[-1420.3,-1200.8],[716.3,-1235.0],[-1293.3,16.7],[585.7,1514.7],[-2205.8,1785.1],[-1330.9,1273.3],[-1646.1,1962.0],[-697.3,83.5],[880.3,2394.8],[-1659.0,2008.4],[-1398.3,824.7],[-1146.4,1428.4],[1859.4,1999.3],[-555.9,1585.2],[-1391.6,972.4],[-784.8,71.7],[-1302.8,1232.3],[1297.6,1106.6],[-1241.9,-12.9],[-747.7,90.7],[219.5,64.4],[1258.0,1111.5],[-543.6,1632.0],[-1620.1,2141.2],[-1335.9,873.4],[-1059.4,2520.8],[-95.5,729.2],[-1189.9,1422.6],[-2489.5,1642.5],[-1393.7,856.2],[-1296.7,841.3],[-727.7,185.7],[-1747.1,1313.9],[-262.1,56.8],[497.8,275.5],[875.1,-1067.4],[-1603.9,58.9],[-118.7,-232.0],[-978.0,-2690.9],[-1442.2,-1230.0],[-1416.2,971.0],[-1308.8,1244.8],[865.1,1939.2],[2435.6,-1638.0],[-1109.2,182.9],[-1386.6,957.9],[-2365.6,1775.7],[-410.9,477.6],[-1503.6,1811.9],[-1667.9,2066.7],[432.3,78.9],[-1297.9,893.8],[-1315.5,925.3],[1371.2,2016.0],[-216.0,-193.7],[-297.4,132.1],[-497.3,679.1],[2728.5,1154.8],[-724.4,71.7],[-833.2,695.7],[-700.0,82.7],[1529.0,1735.1],[-785.2,746.9],[939.8,-1098.4],[446.1,-160.7],[1858.4,2049.5],[1482.5,-196.6],[349.3,-72.8],[-1328.1,1277.6],[-1169.3,1431.3],[947.9,-1768.6],[1226.6,1955.9],[-543.6,1657.7],[344.5,-222.9],[1161.3,863.5],[1676.2,-2318.8],[1261.5,1928.7],[-755.4,7.8],[558.3,321.9],[885.3,-1335.8],[577.3,316.4],[-692.0,22.1],[228.3,59.2],[1689.0,177.4],[1864.2,2040.3],[1845.8,2329.0],[39.0,-545.4],[-1375.8,1746.1],[-1101.2,1525.3],[435.3,-555.5],[-719.7,144.0],[-790.1,64.7],[1233.6,1957.4],[-2367.8,-1585.4],[2508.5,1310.7],[-727.4,116.9],[-1285.0,16.1],[-730.7,66.5],[1230.2,1961.6],[1200.1,-2174.6],[514.6,152.2],[-2197.7,1791.0],[-1228.0,-790.0],[1574.8,886.8],[-1095.0,-17.2],[-926.6,-1114.1],[380.8,-500.6],[462.0,128.4],[2603.2,-267.8],[1039.8,-462.0],[-1778.8,1330.1],[-236.9,-308.5],[905.1,-1079.1],[1859.8,2032.8],[-733.9,778.6],[-111.6,-195.1],[-238.1,-296.8],[1291.4,1375.9],[862.1,1186.9],[1296.4,-2159.9],[-1310.7,829.7],[1734.1,1096.6],[-276.0,165.3],[592.1,388.6],[-215.1,-519.4],[-277.7,153.3],[-1432.8,-1164.4],[2554.1,-283.3],[344.5,-106.2],[-206.6,-506.5],[1560.6,-2116.9],[-981.4,-2800.3],[-1332.5,1267.1],[-1399.3,960.3],[1207.0,-2154.1],[-1033.2,2540.3],[1019.1,-404.4],[938.4,-1357.1],[-237.5,-470.2],[-1394.3,877.9],[263.8,-1184.8],[2392.2,-339.7],[464.4,100.5],[-2291.5,1746.0],[-824.2,-895.7],[1874.6,1002.8],[-1115.0,-1652.4],[-1992.9,1311.5],[-1432.3,883.4],[-1290.5,-7.7],[-534.4,-111.8],[-1135.4,1779.7],[-277.8,188.5],[-1612.8,-2063.2],[-362.2,2779.4],[-264.7,97.2],[344.5,-222.9],[-737.2,107.2],[-1095.7,-1645.7],[-1100.8,1444.0],[349.3,-89.5],[1679.5,-2341.2],[-929.4,727.1],[344.2,-85.0],[-97.3,2023.2],[-2350.3,-1204.0],[-1223.5,15.2],[857.4,-1287.9],[-1285.0,1217.0],[-708.5,114.6],[11.8,-552.1],[-724.4,144.0],[-244.6,-462.0],[-1019.0,10.6],[1304.2,1750.8],[1629.7,2454.1],[1629.7,2454.1],[-781.4,27.2],[-1617.0,1990.9],[1227.5,244.6],[-828.9,43.9],[541.5,1865.3],[1266.2,1895.3],[352.6,-222.6],[2553.7,-284.1],[-2172.6,1796.9],[890.9,-1351.6],[1527.5,1617.3],[-794.4,-4.7],[719.9,233.0],[384.5,-570.5],[-616.5,347.0],[-1053.2,58.2],[-2415.7,-1362.7],[-239.3,-133.5],[566.4,1911.6],[-1059.6,1451.9],[-1289.8,1267.1],[871.9,-350.8],[-1451.3,-1134.7],[-983.3,-2654.2],[590.5,328.5],[-1458.1,-1212.4],[-44.8,1537.4],[-1276.6,1272.6],[-1346.8,1344.9],[-1443.0,867.8],[-943.0,722.2],[-560.8,-658.1],[914.6,-1073.6],[947.9,-1902.0],[1836.3,2323.4],[-966.0,-2772.9],[835.0,-1086.8],[1617.5,-2480.5],[-1243.6,1765.1],[677.1,-1240.4],[-1370.5,1389.4],[-1399.9,844.4],[1000.2,-208.2],[-1320.2,1759.3],[-1460.8,-1223.7],[-898.0,-1182.7],[1603.5,-2524.7],[577.3,316.4],[464.4,108.5],[-1351.3,2540.7],[-2358.7,-1145.9],[-2577.3,-1351.6],[-2368.2,-1207.0],[-1340.5,1756.7],[-1437.1,-1162.3],[1309.3,-2159.0],[555.8,302.5],[-1477.7,-1217.6],[388.0,-307.8],[2477.5,1047.8],[917.9,-1903.8],[354.3,-97.7],[1282.5,-2161.0],[1484.8,1739.6],[-1085.5,2529.1],[349.3,-50.6],[-639.4,234.3],[1448.5,2022.3],[-1218.5,-6.1],[592.1,388.6],[615.3,-117.3],[-282.6,188.5],[-1327.8,1267.1],[577.3,321.9],[-1353.2,813.8],[-721.0,5.6],[-270.7,680.5],[1052.4,-484.9],[-857.4,-17.2],[591.6,388.6],[-472.6,-1435.0],[-2144.0,1299.9],[1309.0,1300.4],[-206.4,-496.2],[1540.8,1704.0],[563.1,221.8],[-1346.8,1344.9],[563.1,310.8],[1484.8,1699.7],[-2368.2,-1245.9],[-265.2,145.2],[-567.6,-662.2],[461.4,116.8],[-1090.2,2501.3],[1408.1,1572.9],[1026.7,-1439.2],[591.6,388.6],[-1320.9,924.8],[508.4,151.4],[891.8,-1087.3],[-1616.7,1142.3],[1494.3,1578.4],[1374.3,1826.8],[-900.2,-1251.5],[-83.0,2084.4],[771.5,-6.8],[1188.3,1875.7],[-1434.0,901.1],[-1276.6,1277.9],[-1422.0,869.9],[867.1,1205.9],[-401.4,2768.2],[2077.2,-911.0],[-1042.7,38.4],[-712.9,42.1],[382.5,-467.6],[1167.3,-1874.2],[1551.3,110.6],[-27.9,-405.2],[-1961.8,2050.4],[591.6,388.6],[673.4,-1267.2],[937.7,-1902.8],[-924.0,-1201.5],[-985.6,-2715.7],[1171.7,1955.8],[1467.0,-2142.7],[1244.9,1887.8],[-1019.2,-4.4],[-1440.5,983.1],[-1411.3,989.2],[575.8,381.1]],"found":[{"id":"amap:B020001OKY","name":"金河国际大厦","x":468.0,"y":-40.8,"channel":"办公"},{"id":"amap:B020006ATP","name":"新创大厦","x":687.5,"y":144.3,"channel":"办公"},{"id":"amap:B02000IVEO","name":"金狮大厦(滨河路)","x":405.8,"y":119.5,"channel":"办公"},{"id":"amap:B02000IVFW","name":"金辰楼","x":-83.6,"y":-557.1,"channel":"办公"},{"id":"amap:B02000JO1B","name":"钻石广场","x":-431.5,"y":-824.4,"channel":"办公"},{"id":"amap:B02000JPX2","name":"新地中心","x":-517.9,"y":-149.2,"channel":"办公"},{"id":"amap:B02000K1WP","name":"苏州高新广场","x":462.7,"y":158.0,"channel":"办公"},{"id":"amap:B02000K27S","name":"润捷广场","x":311.6,"y":739.0,"channel":"办公"},{"id":"amap:B020017FSH","name":"光福茶庄","x":1624.0,"y":-2216.5,"channel":null},{"id":"amap:B02001B4U7","name":"和印·爱欧图文(新区店)·会议物料-画册印刷-展厅广告","x":-562.7,"y":728.1,"channel":null},{"id":"amap:B02001C2MJ","name":"溢来茶庄","x":1343.6,"y":1174.2,"channel":null},{"id":"amap:B02001DH9F","name":"名人名城羽毛球俱乐部(名城花园店)","x":-705.1,"y":-512.6,"channel":null},{"id":"amap:B02001IJHE","name":"永新大厦","x":-846.5,"y":628.0,"channel":"办公"},{"id":"amap:B0FFF5LAUQ","name":"开元乒乓俱乐部","x":190.8,"y":-609.9,"channel":null},{"id":"amap:B0FFF91Q4S","name":"润捷广场南楼","x":315.3,"y":705.5,"channel":"办公"},{"id":"amap:B0FFF9NZV8","name":"润捷广场-北楼","x":342.4,"y":754.0,"channel":"办公"},{"id":"amap:B0FFF9T1HQ","name":"阳光大厦A","x":-411.4,"y":404.4,"channel":"办公"},{"id":"amap:B0FFG27L05","name":"钻石广场-南楼","x":-431.6,"y":-860.5,"channel":"办公"},{"id":"amap:B0FFGA1YHP","name":"中国建设银行中国银行新区商务楼","x":-10.8,"y":-93.5,"channel":"办公"},{"id":"amap:B0FFGFB900","name":"金诚集团苏南总部大楼","x":733.7,"y":-121.1,"channel":"办公"},{"id":"amap:B0FFGFB9OY","name":"金运商务大厦办公室","x":576.6,"y":1410.5,"channel":"办公"},{"id":"amap:B0FFGZ03GA","name":"铂金大厦","x":1121.6,"y":355.2,"channel":"办公"},{"id":"amap:B0FFHB8RFV","name":"绿宝商务楼","x":-1290.6,"y":719.5,"channel":"办公"},{"id":"amap:B0FFHC2K4R","name":"吴甸园会所","x":-1163.6,"y":-740.3,"channel":null},{"id":"amap:B0FFHC4SJE","name":"金河国际中心","x":104.4,"y":86.1,"channel":"办公"},{"id":"amap:B0FFHPO5TX","name":"中广核苏州科技大厦","x":1170.8,"y":547.5,"channel":"办公"},{"id":"amap:B0FFHRMJ0U","name":"光圈健身(狮山店)","x":453.0,"y":319.9,"channel":"健身"},{"id":"amap:B0FFI2FYGD","name":"金诚之星","x":718.1,"y":-91.5,"channel":"办公"},{"id":"amap:B0FFI693R5","name":"半闲居茶馆(易生活购物公园店)","x":-856.8,"y":760.4,"channel":"茶馆/茶店"},{"id":"amap:B0FFI96895","name":"科技楼A","x":-1083.4,"y":315.1,"channel":"办公"},{"id":"amap:B0FFIFEGMW","name":"不二茶庄(淮海街商业街店)","x":-247.3,"y":-165.5,"channel":null},{"id":"amap:B0FFITHW9T","name":"柒茶茶馆(竹园路店)","x":-1401.5,"y":-1551.7,"channel":"茶馆/茶店"},{"id":"amap:B0FFJ1PR63","name":"臻爱体育(锦丽商业中心店)","x":226.9,"y":393.6,"channel":"健身"},{"id":"amap:B0FFJ2VXNK","name":"名承健身","x":-656.1,"y":-100.6,"channel":"健身"},{"id":"amap:B0FFJ8E1M1","name":"华为授权服务中心(狮山路)","x":-949.8,"y":-41.6,"channel":null},{"id":"amap:B0FFKCZSWZ","name":"Shadow健身馆(润捷广场南楼店)","x":315.1,"y":705.9,"channel":null},{"id":"amap:B0FFKHFL8Q","name":"苏州体彩大厦","x":640.7,"y":244.4,"channel":"办公"},{"id":"amap:B0FFLHN5LL","name":"舜星少儿足球俱乐部(新区校区)","x":401.6,"y":623.5,"channel":null},{"id":"amap:B0FFLJC7LB","name":"力菲健身(狮山店)","x":444.3,"y":577.7,"channel":"健身"},{"id":"amap:B0FFMD2CA1","name":"柯利达装饰股份有限公司研发中心大楼","x":379.2,"y":900.0,"channel":"办公"},{"id":"amap:B0G06XQHW1","name":"俊奕阁棋牌茶室","x":-63.2,"y":1390.5,"channel":"茶馆/茶店"},{"id":"amap:B0G0RN9TXL","name":"狮山金融创新中心","x":840.1,"y":-1040.5,"channel":null},{"id":"amap:B0G1FUP2W2","name":"金艳中心","x":-1122.2,"y":15.6,"channel":"办公"},{"id":"amap:B0GD7C94ZM","name":"八马茶业·商务茶庄(狮山路店)","x":-9.3,"y":40.0,"channel":null},{"id":"amap:B0GKRAACBY","name":"南山爷爷茶馆(苏州星韵宝龙广场店)","x":991.6,"y":-1857.1,"channel":"茶馆/茶店"},{"id":"amap:B0H027IPN9","name":"红唐D-PARK篮球馆(红唐购物中心店)","x":173.0,"y":-236.2,"channel":null},{"id":"amap:B0H0DM9PZ1","name":"大益茶(滨河路店)","x":-101.5,"y":1403.5,"channel":null},{"id":"amap:B0H2O5E00B","name":"golfzon室内高尔夫(苏州红唐店)","x":7.8,"y":-227.4,"channel":null},{"id":"amap:B0H6DY6VHP","name":"乐刻健身(红唐购物中心店)","x":-133.1,"y":-235.2,"channel":"健身"},{"id":"amap:B0H6YCBLZ1","name":"龙湖中心","x":-739.3,"y":243.7,"channel":"办公"},{"id":"amap:B0HDDG9YKQ","name":"苏州V时代球馆(玉山路店)","x":369.7,"y":-406.0,"channel":null},{"id":"amap:B0HRTN62SI","name":"健萌健身(狮山龙湖店)","x":-767.6,"y":84.3,"channel":"健身"},{"id":"amap:B0HRVASAFT","name":"领道健身俱乐部(润捷广场南楼店)","x":308.1,"y":706.6,"channel":"健身"},{"id":"amap:B0I137V79U","name":"AND ONE篮球馆(高新店)","x":349.0,"y":-423.7,"channel":null},{"id":"amap:B0I1VDXCC1","name":"银吉姆体育发展集团英派斯健身","x":222.0,"y":397.6,"channel":"健身"},{"id":"amap:B0I2GHDNFX","name":"ZM台球俱乐部(红唐购物中心店)","x":-140.1,"y":-223.8,"channel":null},{"id":"amap:B0IAJUZFFX","name":"荣耀官方授权服务中心(苏州金鹰广场店)","x":-1040.6,"y":61.2,"channel":null},{"id":"amap:B0IATRWSYA","name":"香缇商务广场(公寓)1幢","x":604.8,"y":-1261.4,"channel":"办公"},{"id":"amap:B0IU5HW2ZR","name":"乐刻运动健身(高新广场店)","x":455.4,"y":124.3,"channel":"健身"},{"id":"amap:B0IUMZO7R1","name":"FEELINGME·乐刻私教馆(新地中心店)","x":-534.3,"y":-302.7,"channel":"健身"},{"id":"amap:B0IUUC0BEI","name":"易网球俱乐部(香格里拉网球场店)","x":-572.4,"y":-189.6,"channel":null},{"id":"amap:B0J03Y2SSW","name":"疯狂格子(龙湖苏州狮山天街·A馆)","x":-779.7,"y":36.0,"channel":null},{"id":"amap:B0J0UH7IM3","name":"键萌(龙湖苏州狮山天街B馆)","x":-745.1,"y":199.2,"channel":"健身"},{"id":"amap:B0J2ZZF2A4","name":"华祥苑茶业·茶馆茶室(新区店)","x":-615.5,"y":1836.8,"channel":null},{"id":"amap:B0J3ZSVBIX","name":"Pilates Calls唤提普拉提私人订制(新区一店)","x":-472.6,"y":-295.2,"channel":"健身"},{"id":"amap:B0J6MRQ0QH","name":"西朗健身工作室(华福大厦店)","x":146.8,"y":67.4,"channel":"健身"},{"id":"amap:B0JATROJ9G","name":"茶小趣·智能茶室(新区龙湖店)","x":-981.2,"y":5.3,"channel":"茶馆/茶店"},{"id":"amap:B0JBMA03M1","name":"鑫茂盛茶馆(苏州星韵宝龙广场店)","x":982.4,"y":-1837.4,"channel":"茶馆/茶店"},{"id":"amap:B0JDGCYSGW","name":"八马茶业(金融创新店)","x":819.6,"y":-1040.2,"channel":null},{"id":"amap:B0JK0UT5W0","name":"大益茶馆(新城花园酒店店)","x":610.4,"y":12.1,"channel":null},{"id":"amap:B0JKYMGAM2","name":"一乐健身工作室","x":352.5,"y":-102.7,"channel":"健身"},{"id":"amap:B0JR2UJR28","name":"春鸣茶馆","x":1040.9,"y":1409.2,"channel":"茶馆/茶店"},{"id":"amap:B0JUG7KMCV","name":"苏州康力足球俱乐部","x":421.0,"y":354.7,"channel":null},{"id":"amap:B0JUTPVNHP","name":"行政楼","x":61.9,"y":-1372.7,"channel":"办公"},{"id":"amap:B0K01UTJJL","name":"苏州国际路演中心","x":533.4,"y":742.9,"channel":null},{"id":"amap:B0K6B5DCAC","name":"天奥苏体健身","x":142.0,"y":271.9,"channel":"健身"},{"id":"amap:B0K6JLXA15","name":"丰业体育羽毛球馆","x":412.3,"y":353.6,"channel":null},{"id":"amap:B0KG5S5V24","name":"西叁汇茶行","x":781.3,"y":1928.5,"channel":null},{"id":"amap:B0KGRHBUTY","name":"旋转黑八台球(锦华商业中心C区店)","x":-65.9,"y":138.4,"channel":null},{"id":"amap:B0KK1UWSLI","name":"云古里茶馆(精顺产业园店)","x":-502.5,"y":-996.0,"channel":"茶馆/茶店"},{"id":"amap:B0KKCCIXRS","name":"鼎星台球俱乐部(锦华商业中心C区店)","x":-83.5,"y":143.7,"channel":null},{"id":"amap:B0KKRCTU19","name":"江苏联建检测科技有限公司-办公楼","x":-1200.6,"y":801.8,"channel":null},{"id":"amap:B0KRLS61XR","name":"高尔夫尊·GOLFZON PARK(新区店)","x":-32.9,"y":112.2,"channel":null},{"id":"amap:B0KU59R1XE","name":"ninebot九号卡丁车平衡车滑板车(苏州绿宝广场店)","x":-1371.7,"y":1022.7,"channel":null},{"id":"amap:B0L0CCZDGI","name":"工业大厦东楼","x":624.8,"y":-906.8,"channel":"办公"},{"id":"amap:B0L0LUA3NE","name":"米兔米伽·24H健身普拉提","x":586.6,"y":362.9,"channel":"健身"},{"id":"amap:B0L0TY9W7C","name":"能量盒子医学运动工作室","x":567.8,"y":110.6,"channel":"健身"},{"id":"amap:B0L1ABINN6","name":"新创8号工业大厦-南楼","x":591.6,"y":-917.9,"channel":"办公"},{"id":"amap:B0L1KNTBC0","name":"U·me Pilates普拉提工作室","x":-517.7,"y":-277.2,"channel":"健身"},{"id":"amap:B0L1MAGTOJ","name":"八马茶业(绿宝广场店)","x":-1472.6,"y":929.3,"channel":null},{"id":"amap:B0L1YYDZ11","name":"华硕科技研发大楼1号楼","x":-1245.2,"y":588.1,"channel":"办公"},{"id":"amap:B0L2LOQ1PG","name":"如优大厦2幢","x":471.5,"y":285.5,"channel":"办公"},{"id":"amap:B0L2TD35M6","name":"椿田熟成茶行(苏州狮山龙湖店)","x":-788.6,"y":102.6,"channel":null},{"id":"amap:B0L2XRYR0L","name":"精顺产业园北楼","x":-529.6,"y":-990.2,"channel":"办公"},{"id":"amap:B0L31OWNDC","name":"速点冰轮·轮滑运动中心(狮山校区)","x":-114.0,"y":-230.5,"channel":null},{"id":"amap:B0L3ASS2H6","name":"永和综合楼A座","x":876.6,"y":-345.3,"channel":"办公"},{"id":"amap:B0L3ASS641","name":"狮山金融创新中心3号","x":979.4,"y":-1080.3,"channel":"办公"},{"id":"amap:B0L3COK80D","name":"精顺产业园南楼","x":-529.6,"y":-995.8,"channel":"办公"},{"id":"amap:B0L3OKX2JT","name":"星辉1976产业园2号楼2栋","x":1413.5,"y":410.9,"channel":null},{"id":"amap:B0LA2HI0N2","name":"国懋·捷晟商务楼","x":-504.6,"y":-1198.3,"channel":"办公"},{"id":"amap:B0LBLSN86K","name":"攀喆少儿足球训练基地(新区训练点)","x":415.8,"y":572.1,"channel":null},{"id":"amap:B0LD19MV13","name":"新地中心北","x":-500.0,"y":-54.3,"channel":"办公"},{"id":"amap:B0LDAA2IPH","name":"DB SUPER GYM(狮山店)","x":633.1,"y":-473.8,"channel":"健身"},{"id":"amap:B0LDBACBJ4","name":"隐市茶楼","x":487.1,"y":260.8,"channel":"茶馆/茶店"},{"id":"amap:B0LG9AV4BJ","name":"泳闯游泳俱乐部(狮山天街校区)","x":-499.4,"y":-141.1,"channel":null},{"id":"amap:B0LGRZC0VY","name":"小卓健身(苏州高新广场店)","x":251.4,"y":60.5,"channel":"健身"},{"id":"amap:B0LGUUGAOT","name":"Minibox健身工作室(人保大厦店)","x":566.5,"y":119.2,"channel":"健身"},{"id":"amap:B0LURO69IW","name":"大臂美式健身","x":620.8,"y":-475.5,"channel":"健身"},{"id":"amap:B0M254BO2C","name":"百合花公寓-写字楼","x":-762.9,"y":-112.0,"channel":"办公"},{"id":"amap:B0M25NBE6C","name":"苏州龙湖中心大楼79号楼","x":-776.7,"y":260.8,"channel":"办公"},{"id":"amap:B0M3ML1KAL","name":"中国联通苏州市分公司办公楼","x":273.5,"y":413.9,"channel":"办公"},{"id":"amap:B0M3Y7W073","name":"龙湖写字楼","x":-1110.6,"y":196.4,"channel":"办公"},{"id":"amap:B0M625W9ZG","name":"瀚华金控签约中心","x":102.2,"y":88.4,"channel":"办公"},{"id":"amap:B0M647JTDN","name":"佛缘茶楼(寒山寺店)","x":340.6,"y":1764.8,"channel":"茶馆/茶店"},{"id":"amap:B0M65DIGCH","name":"苏州高新区淮海路5号楼B座","x":-216.1,"y":-267.4,"channel":"办公"},{"id":"amap:B0M667AOQM","name":"华达工商园综合办公楼","x":-30.8,"y":-562.1,"channel":"办公"},{"id":"amap:B0M69RCUO7","name":"苏州U乒青少年乒乓球训练中心","x":486.2,"y":353.0,"channel":null},{"id":"amap:B0M6F90PZU","name":"HGA网球俱乐部(新区狮山店)","x":753.1,"y":-33.9,"channel":null},{"id":"amap:B0M6YSR4L7","name":"滑启轮滑(金鹰店)","x":-78.0,"y":72.7,"channel":null},{"id":"amap:B0MAFLUGFF","name":"永新大厦北楼","x":-833.7,"y":649.9,"channel":"办公"},{"id":"amap:B0MAOUJIZX","name":"第二人生FansMusicBar","x":-1249.8,"y":-221.6,"channel":null},{"id":"amap:B0MBFS470Z","name":"四方体育网球羽毛球运动中心","x":586.8,"y":-484.3,"channel":null},{"id":"amap:B0MBNOUBJT","name":"朗庭茶庄","x":792.4,"y":-1693.6,"channel":null},{"id":"amap:B0MBP72EUO","name":"即见茶堂","x":140.2,"y":2796.0,"channel":"茶馆/茶店"},{"id":"amap:B0MG9HPR1D","name":"荔枝咖啡简餐·画廊·健身三层(狮山店)","x":1616.4,"y":-2482.0,"channel":null},{"id":"amap:B0MR1XFVFC","name":"燃律健身私教连锁(狮山龙湖店)","x":-500.0,"y":-113.9,"channel":"健身"},{"id":"amap:B0MRDK8LHT","name":"苏州捷嘉电子有限公司-1栋商务楼","x":401.5,"y":777.8,"channel":"办公"},{"id":"amap:B0MRFLUWU1","name":"时代100商务楼7幢","x":-993.2,"y":15.2,"channel":"办公"},{"id":"amap:B0MRV9E9SF","name":"金鹰国际购物中心A01号楼","x":-1289.8,"y":-6.1,"channel":"办公"},{"id":"amap:B0MU4CBLKA","name":"爱力德24h自助运动馆","x":351.9,"y":-83.3,"channel":"健身"},{"id":"amap:B0MUAR4I34","name":"苏州众健健身器材有限公司","x":292.3,"y":566.5,"channel":null},{"id":"amap:B0MUDRJU9S","name":"中建国际狮山国际中心","x":-719.7,"y":527.6,"channel":"办公"},{"id":"amap:B0MUHRPWLK","name":"启航游泳培训","x":620.1,"y":394.2,"channel":null},{"id":"amap:B0MUURXR8N","name":"华硕科技研发大楼2号楼","x":-1323.0,"y":605.5,"channel":"办公"}],"zones":[{"id":"0:0","rank":1}]},"terminals":[{"id":"amap:B0M625W9ZG","name":"瀚华金控签约中心","grade":"A","channel":"办公","zone":"0:0","x":102.2,"y":88.4,"distance":135,"reason":"办公，属P1业态；位于商圈1（社区级混合），距参考中心135米。","action":"首访-带样品和桌牌","score":0.98922248,"found":true},{"id":"amap:B0FFHC4SJE","name":"金河国际中心","grade":"A","channel":"办公","zone":"0:0","x":104.4,"y":86.1,"distance":135,"reason":"办公，属P1业态；位于商圈1（社区级混合），距参考中心135米。","action":"首访-带样品和桌牌","score":0.98921,"found":true},{"id":"amap:B0J6MRQ0QH","name":"西朗健身工作室(华福大厦店)","grade":"A","channel":"健身","zone":"0:0","x":146.8,"y":67.4,"distance":162,"reason":"健身，属P1业态；位于商圈1（社区级混合），距参考中心162米。","action":"首访-带样品和桌牌","score":0.98722701,"found":true},{"id":"amap:B0LGRZC0VY","name":"小卓健身(苏州高新广场店)","grade":"B","channel":"健身","zone":"0:0","x":251.4,"y":60.5,"distance":259,"reason":"健身，属P1业态；位于商圈1（社区级混合），距参考中心259米。","action":"首访-了解需求","score":0.98016081,"found":true},{"id":"amap:B0K6B5DCAC","name":"天奥苏体健身","grade":"B","channel":"健身","zone":"0:0","x":142.0,"y":271.9,"distance":307,"reason":"健身，属P1业态；位于商圈1（社区级混合），距参考中心307米。","action":"首访-了解需求","score":0.97681215,"found":true},{"id":"amap:B02000IVEO","name":"金狮大厦(滨河路)","grade":"B","channel":"办公","zone":"0:0","x":405.8,"y":119.5,"distance":423,"reason":"办公，属P1业态；位于商圈1（社区级混合），距参考中心423米。","action":"首访-了解需求","score":0.96910235,"found":true},{"id":"amap:B0FFJ1PR63","name":"臻爱体育(锦丽商业中心店)","grade":"B","channel":"健身","zone":"0:0","x":226.9,"y":393.6,"distance":454,"reason":"健身，属P1业态；位于商圈1（社区级混合），距参考中心454米。","action":"首访-了解需求","score":0.96711796,"found":true},{"id":"amap:B0I1VDXCC1","name":"银吉姆体育发展集团英派斯健身","grade":"C","channel":"健身","zone":"0:0","x":222.0,"y":397.6,"distance":455,"reason":"健身，属P1业态；位于商圈1（社区级混合），距参考中心455米。","action":"暂缓","score":0.96705236,"found":true},{"id":"amap:B0IU5HW2ZR","name":"乐刻运动健身(高新广场店)","grade":"C","channel":"健身","zone":"0:0","x":455.4,"y":124.3,"distance":472,"reason":"健身，属P1业态；位于商圈1（社区级混合），距参考中心472米。","action":"暂缓","score":0.9660088,"found":true},{"id":"amap:B02000K1WP","name":"苏州高新广场","grade":"C","channel":"办公","zone":"0:0","x":462.7,"y":158.0,"distance":489,"reason":"办公，属P1业态；位于商圈1（社区级混合），距参考中心489米。","action":"暂缓","score":0.96496331,"found":true},{"id":"amap:B0M3ML1KAL","name":"中国联通苏州市分公司办公楼","grade":"C","channel":"办公","zone":"0:0","x":273.5,"y":413.9,"distance":496,"reason":"办公，属P1业态；位于商圈1（社区级混合），距参考中心496米。","action":"暂缓","score":0.96452786,"found":true},{"id":"amap:B0L2LOQ1PG","name":"如优大厦2幢","grade":"C","channel":"办公","zone":"0:0","x":471.5,"y":285.5,"distance":551,"reason":"办公，属P1业态；位于商圈1（社区级混合），距参考中心551米。","action":"暂缓","score":0.96119604,"found":true},{"id":"amap:B0LDBACBJ4","name":"隐市茶楼","grade":"C","channel":"茶馆/茶店","zone":"0:0","x":487.1,"y":260.8,"distance":552,"reason":"茶馆/茶店，属P1业态；位于商圈1（社区级混合），距参考中心552米。","action":"暂缓","score":0.96112113,"found":true},{"id":"amap:B0FFHRMJ0U","name":"光圈健身(狮山店)","grade":"C","channel":"健身","zone":"0:0","x":453.0,"y":319.9,"distance":555,"reason":"健身，属P1业态；位于商圈1（社区级混合），距参考中心555米。","action":"暂缓","score":0.96099859,"found":true}],"pitches":[{"channel":"办公","pitch":"老板您好，针对待客/日常养成场景，可把洞庭山·新鲜活泉作为顾客用水的一个选择。资料原文：源自碧螺春核心产区大山地下180米深泉；源头工厂直接灌装；新鲜活泉，喝水讲究新鲜的，新鲜活泉新鲜饮。；28年专注、长三角桶装水销量领先（沙利文认证）、绿色食品认证、众多赛事指定用水。建议先询问客人的用水需求，再介绍产品；是否增加点单需要试陈列验证。您可以核对进货成本与售价后再评估毛利，价格带、首单政策由品牌方和您确认，不承诺利润或销量。先了解尚未满足的用水需求，讨论补充陈列。","card":"洞庭山·新鲜活泉，日常饮水常备。","passed":true},{"channel":"健身","pitch":"老板您好，针对直饮场景，可把洞庭山·新鲜活泉作为顾客用水的一个选择。资料原文：源自碧螺春核心产区大山地下180米深泉；源头工厂直接灌装；新鲜活泉，喝水讲究新鲜的，新鲜活泉新鲜饮。；28年专注、长三角桶装水销量领先（沙利文认证）、绿色食品认证、众多赛事指定用水。建议先询问客人的用水需求，再介绍产品；是否增加点单需要试陈列验证。您可以核对进货成本与售价后再评估毛利，价格带、首单政策由品牌方和您确认，不承诺利润或销量。先了解尚未满足的用水需求，讨论补充陈列。","card":"洞庭山·新鲜活泉，日常饮水常备。","passed":true},{"channel":"茶馆/茶店","pitch":"老板您好，针对泡茶场景，可把洞庭山·新鲜活泉作为顾客用水的一个选择。资料原文：源自碧螺春核心产区大山地下180米深泉；源头工厂直接灌装；新鲜活泉，喝水讲究新鲜的，新鲜活泉新鲜饮。；28年专注、长三角桶装水销量领先（沙利文认证）、绿色食品认证、众多赛事指定用水。建议先询问客人的用水需求，再介绍产品；是否增加点单需要试陈列验证。您可以核对进货成本与售价后再评估毛利，价格带、首单政策由品牌方和您确认，不承诺利润或销量。先了解尚未满足的用水需求，讨论补充陈列。","card":"洞庭山·新鲜活泉，日常饮水常备。","passed":true}],"route":{"days":1,"first":["瀚华金控签约中心","金河国际中心","西朗健身工作室(华福大厦店)","小卓健身(苏州高新广场店)","金狮大厦(滨河路)","天奥苏体健身","臻爱体育(锦丽商业中心店)"]},"boundary":["只有「找终端」这一步由模型决策；选区、打分、分级、路线由代码计算。","补采商户来自高德 POI 基础字段，不代表实际经营情况或进货意愿，需走访确认。","价格、毛利、首单政策未知，话术中不做承诺。"]},{"id":"20261025T030224147892+0000-2068dc62","title":"洞庭山·新鲜活泉 · 规则版","created_at":"2026-10-25T03:02:24.389880+00:00","stopped_at":"L2","stop_reason":"无可选商圈或超出上限","product":"洞庭山·新鲜活泉","area":"江苏省苏州市虎丘区江苏高新区狮山路","request":"苏州高新区狮山商圈周边3公里，推广新鲜活泉，2个地推，做4周","run_id":"20261025T030224147892+0000-2068dc62","status":"blocked","mode":"规则","model":null,"radius":3000,"brief":{"radius_m":3000,"delivery_people":2,"weeks":4},"area_id":"shishan","channel_names":{"tea_channel":"茶馆/茶店","office_channel":"办公","gym_channel":"健身"},"targets":["茶馆/茶店","办公","健身"],"cache":{"total":1199,"by_category":{}},"counts":{"model_calls":null,"tool_calls":null,"amap_calls":null,"added":0},"decision":"规则模式：盘点缓存中的目标渠道候选，未补采。","channels":[{"id":"gym_channel","name":"健身","after":0},{"id":"office_channel","name":"办公","after":0},{"id":"tea_channel","name":"茶馆/茶店","after":0}],"stages":[{"id":"L0","name":"立项","done":true,"stopped":false,"attempts":1,"summary":"3 km · 2 人 × 4 周","agent":false,"decision":"需求参数检查通过。","judged_by":"规则","checks":[{"layer":"结构","status":"passed"},{"layer":"引用","status":"passed"},{"layer":"业务","status":"passed"},{"layer":"判断质量","status":"needs_review"},{"layer":"人工关口","status":"passed"}],"review":1,"approved":null},{"id":"L1","name":"卖给谁","done":true,"stopped":false,"attempts":1,"summary":"茶馆/茶店 P1 · 办公 P1 · 健身 P1","agent":false,"decision":"按档案场景选择渠道；优先级为待验证的渠道假设。","judged_by":"规则","checks":[{"layer":"结构","status":"passed"},{"layer":"引用","status":"passed"},{"layer":"业务","status":"passed"},{"layer":"判断质量","status":"needs_review"},{"layer":"人工关口","status":"passed"}],"review":4,"approved":null},{"id":"L1D","name":"找终端","done":true,"stopped":false,"attempts":1,"summary":"规则：只盘点缓存","agent":false,"decision":"规则模式：盘点缓存中的目标渠道候选，未补采。","judged_by":"规则","checks":[{"layer":"结构","status":"passed"},{"layer":"引用","status":"passed"},{"layer":"业务","status":"passed"},{"layer":"判断质量","status":"needs_review"},{"layer":"人工关口","status":"passed"}],"review":4,"approved":null},{"id":"L2","name":"去哪里","done":false,"stopped":true,"attempts":3,"summary":"—","agent":false,"decision":null,"judged_by":null,"checks":[{"layer":"结构","status":"passed"},{"layer":"引用","status":"passed"},{"layer":"业务","status":"failed"},{"layer":"判断质量","status":"needs_review"},{"layer":"人工关口","status":"passed"}],"review":90,"approved":"auto (demo)"},{"id":"L2C","name":"对手在哪","done":false,"stopped":false,"attempts":0,"summary":"—","agent":false,"decision":null,"judged_by":null,"checks":[],"review":0,"approved":null},{"id":"L3","name":"进哪家","done":false,"stopped":false,"attempts":0,"summary":"—","agent":false,"decision":null,"judged_by":null,"checks":[],"review":0,"approved":null},{"id":"L3P","name":"谁来供货","done":false,"stopped":false,"attempts":0,"summary":"0 个供货候选","agent":false,"decision":null,"judged_by":null,"checks":[],"review":0,"approved":null},{"id":"L4","name":"怎么说","done":false,"stopped":false,"attempts":0,"summary":"0 条话术 · 合规—","agent":false,"decision":null,"judged_by":null,"checks":[],"review":0,"approved":null},{"id":"PACK","name":"作战包","done":false,"stopped":false,"attempts":0,"summary":"—","agent":false,"decision":null,"judged_by":null,"checks":[],"review":0,"approved":null}],"steps":[],"map":{"base":[[1717.1,211.4],[-1320.7,1356.0],[2096.5,350.5],[-1386.6,1752.0],[-2127.4,1361.1],[-1124.3,1438.6],[810.2,2810.0],[541.1,1864.7],[-600.0,313.9],[-587.1,1539.4],[2637.8,1139.9],[1500.2,683.6],[2862.6,544.5],[1139.5,2454.0],[298.2,68.1],[1610.6,2451.1],[1125.4,1983.1],[1721.4,224.5],[-543.9,-161.8],[1008.6,-338.1],[944.8,2785.5],[-562.9,1533.4],[-1457.7,881.8],[-266.3,-464.2],[-253.7,-180.1],[-894.9,-1236.7],[-687.3,1501.1],[-1473.1,1817.8],[-1049.9,2536.4],[-2594.8,-1293.3],[-447.1,-639.7],[-1088.8,2106.6],[-1211.7,1421.1],[1174.7,-2181.5],[-1377.9,1384.3],[2412.6,-329.9],[-643.4,304.3],[1635.9,2033.5],[-254.6,-158.5],[-235.5,-77.8],[-1085.6,1444.9],[-2137.5,1360.4],[-881.2,-1251.5],[-1963.2,2103.5],[1176.6,-2179.3],[901.7,2384.4],[-1412.6,848.2],[-658.0,666.6],[-213.1,-424.5],[1028.7,-386.3],[179.8,51.9],[-211.3,-426.0],[1110.8,1118.7],[-214.6,-366.7],[527.9,1819.8],[1355.4,1113.1],[-217.5,-255.7],[-1296.6,851.1],[-2516.1,-1336.3],[-1204.2,1375.0],[-245.5,-177.1],[-991.8,-2633.2],[-298.1,136.8],[-2593.0,-1372.9],[-383.7,335.4],[-283.7,176.8],[1296.5,1113.6],[-2554.5,-1309.4],[-2277.5,1349.9],[2225.0,-421.5],[-265.1,115.5],[874.7,-1288.1],[-246.7,-131.8],[-1565.3,-2029.9],[302.5,117.5],[-1291.6,1361.8],[1186.2,-2177.4],[-253.7,-89.4],[-215.8,-374.9],[64.7,803.7],[1100.5,-503.2],[1024.2,2306.3],[1494.0,1577.5],[-230.4,-98.3],[-232.0,-110.0],[-224.2,-569.3],[-926.2,-1192.0],[2521.8,602.0],[1255.2,-2165.3],[-1448.1,-1131.9],[-487.7,692.5],[-250.8,-161.7],[-68.3,105.4],[1793.6,1078.0],[-1464.7,-1156.3],[2215.2,-2020.2],[-2245.5,1768.7],[-232.7,-382.4],[-1463.6,922.9],[-70.4,-574.2],[-1437.3,-1145.0],[1072.4,1266.8],[-984.5,-2747.3],[-1465.7,-1170.7],[-451.1,-795.9],[-1302.6,1404.6],[-1589.2,1105.1],[1080.0,1235.7],[554.7,1921.2],[-2585.3,-1255.9],[1753.9,1070.4],[-992.9,-2700.3],[-1356.0,1396.1],[1105.5,1144.0],[468.1,-111.8],[-190.8,399.4],[1335.0,1186.2],[1753.9,1070.4],[2502.4,608.0],[2432.4,-1637.7],[1143.4,2457.0],[1545.8,1669.3],[1006.3,2618.6],[1144.4,1986.4],[1153.4,1987.3],[734.8,-1236.2],[-535.1,-162.5],[1106.5,1144.1],[-211.5,-395.2],[-293.6,155.6],[-483.7,693.3],[-896.6,-1216.0],[-1760.3,1333.9],[1364.2,1113.4],[-245.3,-269.9],[2501.2,603.9],[-1083.7,2506.9],[1098.4,2414.7],[-930.8,-1104.5],[-925.9,-839.2],[653.3,2389.5],[-2314.9,1352.6],[-548.6,-150.7],[-1652.3,1223.7],[1619.7,1581.6],[-217.2,-264.0],[111.8,827.7],[-919.1,-1272.3],[-968.2,-2686.6],[1499.7,-2137.7],[-1671.9,2157.2],[-228.9,-477.1],[-2377.6,-1176.2],[-217.8,-311.0],[758.7,-26.0],[1341.7,1160.5],[-2249.1,1790.1],[-331.2,705.4],[2726.8,1022.3],[369.9,1887.2],[1410.8,-243.1],[1803.1,1066.9],[-1474.7,-1151.6],[-1477.7,963.6],[-902.3,-1158.7],[-1462.0,1019.1],[-940.3,-1118.7],[-987.7,-2656.6],[696.1,-1073.6],[-338.1,-2622.8],[873.5,-1263.4],[858.9,-1276.9],[-1109.7,1394.2],[-229.4,-502.9],[-153.4,721.0],[1072.4,1274.4],[1086.0,1249.8],[1449.3,-2144.7],[1355.4,1132.4],[-252.9,-102.0],[1495.5,-245.5],[-934.7,-1153.2],[-260.2,115.4],[-1601.2,1789.5],[1347.7,1158.0],[2437.9,-1665.1],[-1565.5,-2019.0],[935.9,2811.6],[2077.6,-284.0],[-1472.0,943.4],[-1469.5,922.0],[-687.4,-107.0],[1051.0,-2196.9],[919.4,-1307.1],[1204.4,-2402.4],[1347.0,1144.8],[897.9,-1285.4],[-1451.4,811.1],[-277.2,154.2],[-1483.1,-1306.7],[-254.9,34.4],[-1965.4,2123.2],[1554.4,-2129.3],[849.5,1189.7],[995.1,2499.9],[-233.8,-418.0],[2077.0,-302.1],[1088.2,1206.6],[-1549.1,1800.9],[1261.5,1989.8],[-224.3,-538.3],[-2355.7,-1598.5],[-665.2,447.9],[1395.8,-192.3],[1131.9,1982.5],[916.1,-1303.0],[-964.1,-2649.4],[665.4,-410.6],[-1384.3,125.1],[1253.1,-2165.6],[868.8,-358.9],[1479.8,-2140.8],[-797.7,758.1],[-834.1,727.2],[-2365.7,-1375.6],[-644.4,342.8],[-823.0,721.1],[-1224.7,-6.2],[-1471.0,-1211.8],[-1280.2,-4.4],[-1315.3,-53.6],[1359.9,-2211.9],[634.8,1895.8],[-205.4,-517.4],[-1406.3,848.5],[2486.2,-310.7],[-230.3,-111.9],[1394.1,-264.5],[-1605.7,1788.5],[-2239.1,-1816.7],[-662.8,425.5],[1443.0,1535.4],[1038.9,2447.3],[-983.1,-2746.3],[-1469.8,-1220.6],[527.2,357.0],[1351.2,1131.1],[-539.9,730.9],[-2367.2,1346.2],[-1352.5,895.5],[-1655.6,1228.1],[1650.3,356.3],[-231.9,-404.8],[-1495.0,-1156.7],[447.4,78.7],[465.7,105.1],[1458.9,1532.5],[-1492.5,-1172.6],[-1433.8,-1149.0],[-2506.3,-1344.8],[-712.4,136.0],[593.4,336.8],[-729.0,92.1],[-1637.6,1966.5],[1312.0,1353.6],[2178.4,371.9],[-965.1,-2774.0],[-120.3,-558.5],[-947.7,-2682.4],[-1883.1,1385.0],[-234.1,-411.6],[-1330.3,-26.9],[1063.1,1162.4],[1403.0,-220.3],[525.1,1834.2],[909.3,-1316.7],[1279.0,2460.2],[-715.5,136.2],[2780.3,-205.3],[-2354.0,-1145.9],[-900.2,-1162.5],[1218.6,1104.5],[-267.4,77.8],[983.7,-1282.1],[677.3,2384.7],[-2459.6,1673.0],[-975.6,-673.7],[1247.9,1954.9],[-1001.8,2550.9],[-986.8,-2736.0],[-988.2,-2603.5],[416.8,-77.4],[-2352.5,-1145.8],[6.6,-607.0],[-1088.9,2495.2],[1482.0,1732.3],[474.4,204.5],[-1092.6,1568.5],[-897.7,-1232.2],[1405.6,-215.1],[1266.1,-2159.0],[-954.1,710.8],[-196.1,399.0],[840.7,2399.4],[856.7,1480.2],[-1002.3,706.6],[768.2,1922.6],[-2461.2,-1334.7],[613.7,1891.8],[-574.4,1600.3],[-256.1,-65.7],[-778.9,73.1],[631.0,-899.8],[-1476.8,963.6],[-982.8,-2657.2],[-254.3,-81.3],[-2200.9,1772.4],[1066.8,-403.7],[991.9,-331.7],[1230.5,-2169.3],[-2371.3,-1242.7],[-2213.7,1772.6],[-1326.1,1305.7],[762.4,-378.0],[1360.2,-2220.9],[1309.1,1111.3],[-939.4,-1099.8],[-1487.1,-1157.9],[-1287.4,918.7],[-1294.5,867.8],[-749.0,125.5],[-245.2,-177.2],[-287.5,100.2],[-1267.8,820.2],[-752.9,32.8],[-231.2,-427.5],[553.6,1795.2],[-987.2,-2700.8],[-894.4,-1258.7],[2195.2,371.2],[885.5,1186.1],[-721.4,129.5],[-1332.1,894.3],[-2486.0,-1335.1],[-224.9,-555.5],[924.1,-1284.9],[1546.5,1661.8],[1342.2,-2191.1],[-267.2,148.7],[-1458.6,-1104.2],[-223.9,-549.7],[-717.1,3.6],[-1567.8,-2022.7],[-2286.1,1790.1],[-1636.2,-2048.3],[-1426.5,1777.8],[621.5,2389.1],[-565.4,1564.0],[-222.7,-198.0],[2515.6,1163.7],[954.4,-1903.5],[-215.5,-299.0],[-204.1,-454.3],[-2499.7,-1336.8],[1494.3,1577.6],[1521.6,1802.9],[-236.2,-305.1],[1111.6,1122.7],[-1661.8,1977.8],[-231.5,-417.8],[920.8,-1284.1],[-1137.1,1436.6],[884.9,2394.0],[1343.5,-2217.5],[-803.2,-899.9],[-1648.1,1984.9],[857.0,-1259.4],[1344.5,-2219.9],[1528.4,1702.1],[-39.1,110.0],[-1657.9,2047.1],[2406.5,1038.3],[2077.7,-282.1],[-248.4,-140.8],[1628.3,1579.2],[-1171.0,1430.5],[569.4,377.0],[927.1,-1824.0],[282.5,-167.9],[-1006.6,23.7],[357.8,-228.1],[-943.4,-1065.0],[-243.0,-196.0],[-413.7,-836.5],[1035.6,-337.7],[-237.5,-313.8],[-1033.7,2523.6],[358.8,-214.7],[-1096.1,1481.1],[-232.4,-425.3],[294.6,766.1],[-357.9,233.6],[-1665.3,2054.3],[630.8,2401.1],[-224.0,-549.1],[580.0,359.3],[-2459.8,1674.6],[-1473.7,-1157.8],[-234.7,-356.0],[1435.3,1775.5],[-2160.4,1779.2],[941.4,-1904.8],[-1073.2,700.3],[304.9,1830.3],[1124.3,-554.9],[970.4,-1812.6],[-1022.2,2515.8],[2599.4,-269.3],[879.0,2392.6],[-336.9,219.1],[1387.3,-270.1],[960.3,-1903.9],[945.6,-1900.4],[2461.2,-848.2],[-1128.2,1445.0],[-1035.6,-1.8],[-1212.3,1364.1],[-2561.1,-1308.9],[-2339.7,-1257.1],[419.1,1895.8],[842.9,-363.9],[-1263.1,1758.1],[-988.1,-2706.9],[863.9,-1273.5],[-916.2,-1052.5],[-113.4,2072.8],[-1329.0,863.7],[2526.6,1104.4],[-1323.1,848.4],[-990.6,-2625.8],[-897.1,-1216.0],[1195.5,595.6],[-254.3,40.1],[-78.0,2052.5],[238.3,60.8],[-2142.7,2007.1],[570.6,334.3],[-285.9,193.0],[539.3,-1540.6],[1358.4,374.2],[-253.6,-135.9],[2539.4,-287.3],[-213.4,-366.1],[-536.1,-1368.6],[-1396.1,843.3],[670.1,2410.6],[1395.4,-2130.7],[2729.4,1242.7],[-1034.8,8.3],[-1027.1,11.1],[1113.3,-562.8],[421.4,-53.0],[-1447.7,1019.1],[-1235.2,2.7],[-1419.8,-1291.1],[-777.9,-3.4],[-697.8,29.8],[920.1,-1903.1],[-787.2,74.9],[1296.2,1276.4],[210.8,430.1],[1360.5,-2189.4],[-732.5,138.5],[-1108.9,2502.3],[954.9,-1806.7],[895.5,1202.7],[2501.9,-781.1],[-1291.5,832.4],[768.0,-905.7],[-917.6,720.7],[-1473.8,-1295.8],[-311.8,2822.2],[-236.4,-310.0],[-1346.8,1328.9],[1243.3,-2167.2],[-990.5,-6.1],[-224.0,-547.4],[612.8,-1706.5],[509.0,152.0],[1048.8,-362.9],[-2469.5,-1335.1],[-638.3,222.4],[-1001.7,2509.7],[881.2,2395.9],[-1437.0,937.8],[-252.1,-145.2],[-865.2,37.1],[-1449.9,-1184.6],[-233.4,-363.7],[-746.4,128.5],[933.1,-209.6],[-1388.8,871.0],[614.7,-1704.6],[-2213.6,1771.1],[2451.3,1667.9],[-103.9,-560.0],[-211.9,-418.2],[-1087.2,2528.6],[-39.6,1534.9],[-1380.0,-601.0],[230.0,363.6],[702.7,-1109.1],[-555.8,1679.4],[-1604.9,1979.6],[-1157.1,-1645.2],[-1418.9,974.0],[-402.3,696.2],[1499.0,677.7],[1341.8,1145.1],[-1121.2,1501.7],[-256.1,-65.7],[-721.3,111.6],[-1223.2,1369.3],[1299.5,1761.9],[-1332.2,-1668.9],[758.6,-899.9],[-582.4,1561.2],[-69.1,2039.0],[-295.4,147.3],[-1156.7,-1674.0],[-205.6,-513.3],[530.3,370.4],[-1201.9,1771.1],[-956.9,-2676.1],[-1460.8,-1151.8],[-204.2,-533.0],[-912.0,-1208.8],[1356.5,1113.2],[1372.7,456.7],[973.0,-1282.7],[-556.0,1686.8],[-233.4,-388.8],[-205.0,-520.8],[-1335.5,-7.8],[-232.6,-500.0],[1362.7,1839.4],[-1292.1,874.1],[-1504.8,-1377.8],[-687.7,77.6],[-724.2,-131.9],[1483.4,1534.3],[-814.1,-899.5],[-553.1,1750.2],[900.4,-1068.0],[936.6,-1767.2],[-498.3,-1463.4],[550.4,378.6],[-78.3,2056.6],[742.1,-375.6],[580.4,392.0],[-204.0,-473.7],[-910.0,725.9],[-1130.0,1514.8],[-1341.1,1755.1],[427.6,423.8],[606.1,-1722.3],[1470.6,2024.1],[422.7,82.5],[-2284.7,1348.8],[-730.6,129.0],[-483.3,-660.5],[-353.4,231.1],[-40.5,-187.3],[1746.0,1055.8],[661.2,-994.4],[-70.6,1518.6],[734.2,-1242.2],[691.3,-1236.5],[-720.6,2.9],[-1476.1,946.3],[952.2,-1795.8],[1178.1,-1090.4],[-74.5,1472.7],[-728.8,227.4],[-763.1,29.0],[731.8,-1268.8],[-453.6,-851.2],[-1409.5,1328.8],[-1662.7,2076.0],[-2369.5,-1208.4],[-1395.1,877.3],[-981.0,-2808.2],[-1313.0,936.4],[907.1,-1774.9],[-2437.8,1516.4],[-985.7,-6.1],[-551.2,1730.9],[-579.6,1562.1],[-700.7,66.7],[-2309.8,1763.0],[2677.1,1339.1],[-577.1,-139.5],[-459.1,-640.5],[-1448.8,1807.7],[-272.5,144.3],[587.3,383.5],[2412.7,1641.9],[-1599.6,1101.8],[-1642.0,2129.6],[686.6,-1251.5],[365.4,-207.4],[924.1,-1807.5],[-741.7,113.1],[1548.9,1608.1],[-989.6,-2617.0],[845.9,1247.9],[1488.9,1725.9],[970.7,-1804.5],[-220.1,-287.0],[-78.2,94.5],[-830.6,26.9],[1523.2,1789.9],[553.7,363.9],[-984.3,2505.9],[903.4,-1318.4],[2054.6,-920.9],[614.4,-1706.1],[405.3,-538.9],[1412.3,-258.3],[-1013.5,32.8],[-1027.1,11.1],[560.5,385.6],[533.8,1789.6],[-1593.8,-2096.6],[1361.9,357.8],[-1965.5,2126.8],[-1744.4,1321.0],[890.2,-1086.5],[941.3,-1059.6],[861.9,-1119.3],[1090.2,1201.6],[1486.7,397.1],[-1229.9,1417.6],[1354.3,1815.1],[760.9,-911.2],[560.2,387.1],[751.9,-911.2],[-2222.2,1771.6],[-278.8,189.0],[922.9,2830.0],[-1336.9,-4.0],[-112.5,2048.7],[-2244.8,1788.1],[573.5,384.1],[-639.7,237.0],[-711.2,176.0],[1485.1,1166.0],[1426.9,2020.5],[-1650.1,2004.1],[1118.5,2452.4],[2514.6,607.6],[-1333.4,1258.4],[1009.4,-253.1],[-2571.5,-1309.5],[1065.8,2449.5],[-1607.6,1995.1],[627.7,-1250.7],[-1306.7,1230.3],[-231.4,-421.4],[1297.8,1343.7],[1076.3,1247.6],[1227.2,1977.4],[581.3,306.6],[2652.4,1164.1],[-806.1,4.3],[1219.3,-2170.8],[306.5,766.0],[-552.1,1619.0],[2504.8,-242.9],[-1310.1,1757.7],[902.0,-1900.2],[-1665.1,233.0],[-216.6,-234.6],[-1967.3,2056.1],[-197.9,-568.0],[570.6,316.7],[555.5,379.6],[-1439.8,928.5],[2733.5,1191.0],[2601.2,-268.8],[617.2,-1273.2],[1319.7,-2156.9],[-1458.6,906.7],[-1551.0,-483.1],[-128.7,-555.0],[-900.1,-858.1],[-726.9,144.4],[1349.0,417.8],[1075.3,1111.6],[-1394.3,844.5],[-908.3,700.0],[-1501.0,1332.3],[-1656.7,2127.1],[-219.0,-263.2],[1534.3,1704.8],[-1660.2,2012.2],[-907.2,-1119.1],[1350.5,1830.7],[1820.4,379.1],[-856.3,-15.8],[-1647.2,1192.0],[2743.5,-82.1],[-1424.9,1002.3],[-1066.5,2551.5],[1361.2,1578.4],[895.6,-1790.8],[-1976.2,-804.7],[-453.7,-644.3],[-2273.5,1764.6],[-1173.1,1776.7],[-1565.3,54.0],[-2369.3,-1263.7],[-1358.9,1005.2],[1735.7,2046.9],[-1431.7,923.8],[1446.6,1711.1],[-1190.8,-40.6],[-1204.3,1422.7],[569.0,310.6],[-796.1,95.3],[563.1,383.1],[-1308.9,930.4],[-1914.2,-505.4],[-1331.0,1752.9],[-803.2,151.2],[424.4,74.3],[-1420.6,1022.1],[489.4,189.4],[1046.3,-466.6],[-1257.5,-19.6],[519.8,158.8],[922.7,-1797.7],[-8.5,102.6],[-787.2,74.9],[-857.3,719.8],[554.0,363.9],[852.9,-1084.7],[1358.7,336.7],[337.9,-85.4],[1024.5,-420.5],[1449.8,762.8],[-1033.1,2536.9],[-544.6,1685.7],[-201.6,-519.8],[1032.8,-364.6],[-715.0,77.2],[-223.4,-514.9],[-215.6,-389.5],[987.2,-389.2],[-1487.4,-1146.0],[1123.7,355.3],[-1413.2,882.6],[-930.5,-679.7],[-1053.7,720.9],[352.5,-92.2],[1071.4,1144.8],[-240.5,-260.0],[-745.3,84.0],[-1392.6,852.8],[1357.4,2012.3],[-1411.9,873.4],[-268.2,98.9],[-164.0,-232.4],[567.7,299.6],[1136.5,-1120.3],[-1832.3,-684.1],[-641.4,250.5],[-1855.6,-645.4],[-728.4,67.9],[947.0,-1773.6],[1527.5,1711.8],[1484.8,1745.2],[-1638.8,2102.0],[1615.8,-555.0],[-1620.9,1975.3],[-1228.6,-12.5],[-938.3,-1105.9],[1449.8,1720.1],[-1341.2,1293.1],[-2357.0,-1604.1],[2778.6,-166.1],[1994.1,316.5],[1023.9,-295.2],[-239.6,1513.1],[-706.0,17.0],[-1485.5,-1163.1],[-1460.8,-1262.6],[-563.2,1647.8],[1074.8,1255.2],[-923.9,-1251.4],[-1649.1,1217.7],[781.6,-990.2],[-1133.1,1465.3],[-382.8,2768.8],[-2377.7,-1163.1],[-1297.0,811.8],[580.1,316.5],[-1096.1,1443.2],[1454.7,1763.9],[1360.2,2015.3],[-2311.7,1747.2],[-717.2,742.4],[-1645.6,1940.4],[-571.6,1610.5],[-2368.6,-1224.6],[-2519.4,-1383.2],[-740.3,74.9],[889.2,580.0],[-897.2,-1220.7],[548.3,187.1],[-762.0,-0.2],[-729.8,-75.5],[-251.8,-84.6],[814.9,-1118.1],[2073.2,-244.9],[-1423.2,-1230.5],[-557.6,1667.9],[834.6,-1079.0],[240.0,-72.8],[601.1,333.0],[-795.7,60.6],[228.4,368.2],[-1066.9,1503.4],[808.8,1927.3],[-957.2,-2752.6],[-1066.5,182.1],[-989.4,-2606.5],[-1312.0,830.1],[-2316.0,1811.9],[1544.8,1666.8],[-57.0,-576.1],[-785.0,72.1],[-851.6,-8.9],[-419.0,-805.2],[-1341.8,882.7],[-230.3,-56.2],[-973.7,-2826.8],[553.3,1880.9],[-651.4,367.7],[877.0,-356.6],[-1650.8,1200.4],[1287.9,-2160.5],[1061.9,1166.7],[888.2,-352.2],[100.1,-73.5],[-223.9,-549.7],[-1389.1,1028.4],[-1745.2,1318.8],[-825.8,10.2],[575.0,330.8],[-933.5,-1179.2],[-1478.7,982.6],[-1442.8,951.3],[-2358.7,-1607.3],[900.4,-1796.4],[-225.6,-100.6],[2557.1,-278.3],[-2183.6,1777.5],[-1425.0,840.7],[-959.5,-1.2],[1082.8,2416.7],[-1319.2,1356.6],[2466.9,612.2],[583.6,356.8],[237.5,60.0],[591.6,388.6],[1475.2,1767.4],[370.3,-1297.6],[300.4,436.4],[1114.2,344.1],[-699.9,43.6],[-1751.0,1326.4],[-1280.3,850.1],[-78.3,2034.3],[-2378.6,-1173.9],[-1331.6,866.9],[862.4,-1296.0],[1399.2,1333.8],[-1433.5,1020.9],[-254.5,71.7],[-1420.3,-1200.8],[716.3,-1235.0],[-1293.3,16.7],[585.7,1514.7],[-2205.8,1785.1],[-1330.9,1273.3],[-1646.1,1962.0],[-697.3,83.5],[880.3,2394.8],[-1659.0,2008.4],[-1398.3,824.7],[-1146.4,1428.4],[1859.4,1999.3],[-555.9,1585.2],[-1391.6,972.4],[-784.8,71.7],[-1302.8,1232.3],[1297.6,1106.6],[-1241.9,-12.9],[-747.7,90.7],[219.5,64.4],[1258.0,1111.5],[-543.6,1632.0],[-1620.1,2141.2],[-1335.9,873.4],[-1059.4,2520.8],[-95.5,729.2],[-1189.9,1422.6],[-2489.5,1642.5],[-1393.7,856.2],[-1296.7,841.3],[-727.7,185.7],[-1747.1,1313.9],[-262.1,56.8],[497.8,275.5],[875.1,-1067.4],[-1603.9,58.9],[-118.7,-232.0],[-978.0,-2690.9],[-1442.2,-1230.0],[-1416.2,971.0],[-1308.8,1244.8],[865.1,1939.2],[2435.6,-1638.0],[-1109.2,182.9],[-1386.6,957.9],[-2365.6,1775.7],[-410.9,477.6],[-1503.6,1811.9],[-1667.9,2066.7],[432.3,78.9],[-1297.9,893.8],[-1315.5,925.3],[1371.2,2016.0],[-216.0,-193.7],[-297.4,132.1],[-497.3,679.1],[2728.5,1154.8],[-724.4,71.7],[-833.2,695.7],[-700.0,82.7],[1529.0,1735.1],[-785.2,746.9],[939.8,-1098.4],[446.1,-160.7],[1858.4,2049.5],[1482.5,-196.6],[349.3,-72.8],[-1328.1,1277.6],[-1169.3,1431.3],[947.9,-1768.6],[1226.6,1955.9],[-543.6,1657.7],[344.5,-222.9],[1161.3,863.5],[1676.2,-2318.8],[1261.5,1928.7],[-755.4,7.8],[558.3,321.9],[885.3,-1335.8],[577.3,316.4],[-692.0,22.1],[228.3,59.2],[1689.0,177.4],[1864.2,2040.3],[1845.8,2329.0],[39.0,-545.4],[-1375.8,1746.1],[-1101.2,1525.3],[435.3,-555.5],[-719.7,144.0],[-790.1,64.7],[1233.6,1957.4],[-2367.8,-1585.4],[2508.5,1310.7],[-727.4,116.9],[-1285.0,16.1],[-730.7,66.5],[1230.2,1961.6],[1200.1,-2174.6],[514.6,152.2],[-2197.7,1791.0],[-1228.0,-790.0],[1574.8,886.8],[-1095.0,-17.2],[-926.6,-1114.1],[380.8,-500.6],[462.0,128.4],[2603.2,-267.8],[1039.8,-462.0],[-1778.8,1330.1],[-236.9,-308.5],[905.1,-1079.1],[1859.8,2032.8],[-733.9,778.6],[-111.6,-195.1],[-238.1,-296.8],[1291.4,1375.9],[862.1,1186.9],[1296.4,-2159.9],[-1310.7,829.7],[1734.1,1096.6],[-276.0,165.3],[592.1,388.6],[-215.1,-519.4],[-277.7,153.3],[-1432.8,-1164.4],[2554.1,-283.3],[344.5,-106.2],[-206.6,-506.5],[1560.6,-2116.9],[-981.4,-2800.3],[-1332.5,1267.1],[-1399.3,960.3],[1207.0,-2154.1],[-1033.2,2540.3],[1019.1,-404.4],[938.4,-1357.1],[-237.5,-470.2],[-1394.3,877.9],[263.8,-1184.8],[2392.2,-339.7],[464.4,100.5],[-2291.5,1746.0],[-824.2,-895.7],[1874.6,1002.8],[-1115.0,-1652.4],[-1992.9,1311.5],[-1432.3,883.4],[-1290.5,-7.7],[-534.4,-111.8],[-1135.4,1779.7],[-277.8,188.5],[-1612.8,-2063.2],[-362.2,2779.4],[-264.7,97.2],[344.5,-222.9],[-737.2,107.2],[-1095.7,-1645.7],[-1100.8,1444.0],[349.3,-89.5],[1679.5,-2341.2],[-929.4,727.1],[344.2,-85.0],[-97.3,2023.2],[-2350.3,-1204.0],[-1223.5,15.2],[857.4,-1287.9],[-1285.0,1217.0],[-708.5,114.6],[11.8,-552.1],[-724.4,144.0],[-244.6,-462.0],[-1019.0,10.6],[1304.2,1750.8],[1629.7,2454.1],[1629.7,2454.1],[-781.4,27.2],[-1617.0,1990.9],[1227.5,244.6],[-828.9,43.9],[541.5,1865.3],[1266.2,1895.3],[352.6,-222.6],[2553.7,-284.1],[-2172.6,1796.9],[890.9,-1351.6],[1527.5,1617.3],[-794.4,-4.7],[719.9,233.0],[384.5,-570.5],[-616.5,347.0],[-1053.2,58.2],[-2415.7,-1362.7],[-239.3,-133.5],[566.4,1911.6],[-1059.6,1451.9],[-1289.8,1267.1],[871.9,-350.8],[-1451.3,-1134.7],[-983.3,-2654.2],[590.5,328.5],[-1458.1,-1212.4],[-44.8,1537.4],[-1276.6,1272.6],[-1346.8,1344.9],[-1443.0,867.8],[-943.0,722.2],[-560.8,-658.1],[914.6,-1073.6],[947.9,-1902.0],[1836.3,2323.4],[-966.0,-2772.9],[835.0,-1086.8],[1617.5,-2480.5],[-1243.6,1765.1],[677.1,-1240.4],[-1370.5,1389.4],[-1399.9,844.4],[1000.2,-208.2],[-1320.2,1759.3],[-1460.8,-1223.7],[-898.0,-1182.7],[1603.5,-2524.7],[577.3,316.4],[464.4,108.5],[-1351.3,2540.7],[-2358.7,-1145.9],[-2577.3,-1351.6],[-2368.2,-1207.0],[-1340.5,1756.7],[-1437.1,-1162.3],[1309.3,-2159.0],[555.8,302.5],[-1477.7,-1217.6],[388.0,-307.8],[2477.5,1047.8],[917.9,-1903.8],[354.3,-97.7],[1282.5,-2161.0],[1484.8,1739.6],[-1085.5,2529.1],[349.3,-50.6],[-639.4,234.3],[1448.5,2022.3],[-1218.5,-6.1],[592.1,388.6],[615.3,-117.3],[-282.6,188.5],[-1327.8,1267.1],[577.3,321.9],[-1353.2,813.8],[-721.0,5.6],[-270.7,680.5],[1052.4,-484.9],[-857.4,-17.2],[591.6,388.6],[-472.6,-1435.0],[-2144.0,1299.9],[1309.0,1300.4],[-206.4,-496.2],[1540.8,1704.0],[563.1,221.8],[-1346.8,1344.9],[563.1,310.8],[1484.8,1699.7],[-2368.2,-1245.9],[-265.2,145.2],[-567.6,-662.2],[461.4,116.8],[-1090.2,2501.3],[1408.1,1572.9],[1026.7,-1439.2],[591.6,388.6],[-1320.9,924.8],[508.4,151.4],[891.8,-1087.3],[-1616.7,1142.3],[1494.3,1578.4],[1374.3,1826.8],[-900.2,-1251.5],[-83.0,2084.4],[771.5,-6.8],[1188.3,1875.7],[-1434.0,901.1],[-1276.6,1277.9],[-1422.0,869.9],[867.1,1205.9],[-401.4,2768.2],[2077.2,-911.0],[-1042.7,38.4],[-712.9,42.1],[382.5,-467.6],[1167.3,-1874.2],[1551.3,110.6],[-27.9,-405.2],[-1961.8,2050.4],[591.6,388.6],[673.4,-1267.2],[937.7,-1902.8],[-924.0,-1201.5],[-985.6,-2715.7],[1171.7,1955.8],[1467.0,-2142.7],[1244.9,1887.8],[-1019.2,-4.4],[-1440.5,983.1],[-1411.3,989.2],[575.8,381.1]],"found":[],"zones":[]},"terminals":[],"pitches":[],"route":{"days":0,"first":[]},"boundary":["只有「找终端」这一步由模型决策；选区、打分、分级、路线由代码计算。","补采商户来自高德 POI 基础字段，不代表实际经营情况或进货意愿，需走访确认。","价格、毛利、首单政策未知，话术中不做承诺。"]}]};
+/* pure:start — no DOM access; covered by tests/workbench-conversation.test.cjs */
+function groupTaskRecords(rows){
+  const by=new Map(rows.map(r=>[r.run_id,r])),out=new Map();
+  for(const r of rows){let root=r;const seen=new Set([r.run_id]);
+    while(root.task?.parent_id&&by.has(root.task.parent_id)&&!seen.has(root.task.parent_id)){root=by.get(root.task.parent_id);seen.add(root.run_id);}
+    if(!out.has(root.run_id))out.set(root.run_id,{root,rows:[]});out.get(root.run_id).rows.push(r);}
+  return [...out.values()].map(({root,rows})=>{rows.sort((a,b)=>a.task.created_at.localeCompare(b.task.created_at));return {root,latest:rows.at(-1),ids:rows.map(r=>r.run_id)};})
+    .sort((a,b)=>b.latest.task.created_at.localeCompare(a.latest.task.created_at));
+}
+function taskRequestBody({conv,view,text,profile,area}){
+  if(!conv||conv.draft)return {area,profile,input:text,mode:'live'};
+  return {area:conv.area_id||view?.area_id,profile:conv.profile||view?.task?.profile,input:text,mode:'live',parent_id:conv.turns.at(-1)};
+}
+
+function markdown(text){
+ const escape=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const inline=text=>{const codes=[];let s=escape(text).replace(/`([^`]+)`/g,(_,x)=>{codes.push('<code>'+x+'</code>');return '\u0000'+(codes.length-1)+'\u0000';});
+  s=s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,'<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/__(.+?)__/g,'<strong>$1</strong>').replace(/(?<!\*)\*([^*]+)\*(?!\*)/g,'<em>$1</em>').replace(/~~(.+?)~~/g,'<del>$1</del>');
+  return s.replace(/\u0000(\d+)\u0000/g,(_,n)=>codes[+n]);};
+ const lines=String(text||'').replaceAll('<｜end▁of▁sentence｜>','').replace(/\r\n/g,'\n').split('\n'),out=[];let i=0;
+ const cells=line=>line.trim().replace(/^\||\|$/g,'').split('|').map(x=>x.trim());
+ while(i<lines.length){const l=lines[i];if(!l.trim()){i++;continue;}
+  if(/^\s*```/.test(l)){const code=[];i++;while(i<lines.length&&!/^\s*```/.test(lines[i]))code.push(lines[i++]);i++;out.push('<pre><code>'+escape(code.join('\n'))+'</code></pre>');continue;}
+  const h=l.match(/^(#{1,6})\s+(.+)$/);if(h){out.push('<h'+h[1].length+'>'+inline(h[2])+'</h'+h[1].length+'>');i++;continue;}
+  if(/^\s*(?:---+|\*\*\*+|___+)\s*$/.test(l)){out.push('<hr>');i++;continue;}
+  if(i+1<lines.length&&l.includes('|')&&/^\s*\|?\s*:?-{3,}/.test(lines[i+1])){const head=cells(l);i+=2;const rows=[];while(i<lines.length&&lines[i].includes('|'))rows.push(cells(lines[i++]));out.push('<div class="md-table"><table><thead><tr>'+head.map(x=>'<th>'+inline(x)+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(x=>'<td>'+inline(x)+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>');continue;}
+  if(/^\s*>/.test(l)){const q=[];while(i<lines.length&&/^\s*>/.test(lines[i]))q.push(lines[i++].replace(/^\s*>\s?/,''));out.push('<blockquote>'+markdown(q.join('\n'))+'</blockquote>');continue;}
+  const list=l.match(/^(\s*)([-+*]|\d+[.)])\s+(.+)$/);
+  if(list){const indent=list[1].length,tag=/\d/.test(list[2])?'ol':'ul',items=[];
+   while(i<lines.length){const m=lines[i].match(/^(\s*)([-+*]|\d+[.)])\s+(.+)$/);if(!m||m[1].length!==indent||(/\d/.test(m[2])?'ol':'ul')!==tag)break;
+    let body=inline(m[3]);i++;const nested=[];while(i<lines.length&&lines[i].trim()&&/^\s+/.test(lines[i])&&lines[i].match(/^\s*/)[0].length>indent)nested.push(lines[i++].slice(indent+2));if(nested.length)body+=markdown(nested.join('\n'));items.push('<li>'+body+'</li>');}
+   out.push('<'+tag+'>'+items.join('')+'</'+tag+'>');continue;}
+  const p=[l];i++;while(i<lines.length&&lines[i].trim()&&!/^(?:#{1,6}\s|\s*```|\s*>|\s*[-+*]\s|\s*\d+[.)]\s)/.test(lines[i])){if(i+1<lines.length&&lines[i].includes('|')&&/^\s*\|?\s*:?-{3,}/.test(lines[i+1]))break;p.push(lines[i++]);}out.push('<p>'+p.map(inline).join('<br>')+'</p>');
+ }return out.join('');
+}
+
+/* pure:end */
+(()=>{
+/* ================= constants ================= */
+const STAGES=[['L0','立项'],['L1','卖给谁'],['L1D','找终端'],['L2','去哪里'],['L2C','对手'],['L3','进哪家'],['L3P','供货'],['L4','怎么说'],['PACK','作战包']];
+const SNAME=Object.fromEntries(STAGES);
+const AREA={shishan:'狮山',guanqian:'观前街',ligongdi:'李公堤'};
+const CAT={restaurant:'餐馆',tea:'茶馆',office:'写字楼',gym:'健身',other:'其他'};
+const ARG={target:'目标',keywords:'关键词',types:'类型码',max_pages:'页数',channel_id:'渠道',category:'类别',type_prefix:'类型前缀',page:'页'};
+const FOLLOW={
+  L0:['把半径改成 2 公里，3 个地推，做 6 周','这个产品还缺哪些资料？'],
+  L1:['解释为什么这几个渠道是 P1','加一个渠道：社区便利店'],
+  L1D:['写字楼候选再补采一些，最多 2 页','茶馆只找到少量候选，换些关键词再找找','列出补采到但没进首访名单的健身房'],
+  L2:['为什么只选了这几个网格？','放宽到前 2 个网格，A/B 门店还够吗'],
+  L2C:['选中网格里有哪些竞品点位？'],
+  L3:['列出 A 级首访门店和理由','把 C 级里 300 米以内的门店列出来'],
+  L3P:['推荐 3 公里内的供货方'],
+  L4:['为写字楼重写话术：对象是物业和企业行政','为健身房写一段 30 秒开场白'],
+  PACK:['导出第一周首访路线','汇总成一页给区域经理的简报']};
+const TEMPLATES=p=>[`${p.area}商圈周边 ${p.radius||3} 公里推广${p.product}，先分析客户和拓客策略`,`${p.area}周边 2 公里推广${p.product}，3 个地推，做 6 周，先找写字楼和健身房`];
+const DONE=s=>['completed','blocked','failed'].includes(s);
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const fmtTime=s=>{if(!s)return '';const d=new Date(s);return isNaN(d)?'':d.toLocaleString('zh-CN',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});};
+const ICON={info:'<svg viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="5.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M7 6.2v3.6M7 4.2v.1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+  empty:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M4 10h16" stroke="currentColor" stroke-width="1.5"/></svg>'};
+
+/* ================= state ================= */
+let CHAT={};try{CHAT=JSON.parse(localStorage.getItem('way2agi-conversations-v1')||'{}');}catch{}
+const saveChats=()=>{try{localStorage.setItem('way2agi-conversations-v1',JSON.stringify(CHAT));}catch{}};
+const chatFor=c=>c?Object.values(CHAT).find(x=>x.root===c.id):null;
+const S={outbox:{},online:false,config:null,profiles:[],areas:[],convs:[],cur:null,views:{},tab:'map',stage:null,toolbox:false,tbIndex:-1,sending:false,error:'',replay:null,timer:null,notices:{}};
+
+/* ================= data: offline ================= */
+function offlineConvs(){
+  return (DATA?.tasks||[]).map((t,i)=>{const id='offline-'+i;S.views[id]=t;
+    return {id,turns:[id],title:t.request||t.title,product:t.product,area:AREA[t.area_id]||t.area||'',status:t.status,stopped_at:t.stopped_at,created_at:t.created_at,mode:t.mode,offline:true};});
+}
+
+/* ================= data: online ================= */
+async function api(path,body){
+  const r=await fetch('/api/'+path,body?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}:undefined);
+  let data=null;try{data=await r.json();}catch{}
+  if(!r.ok){const e=new Error(typeof data?.detail==='string'?data.detail:'服务没有响应');e.status=r.status;throw e;}
+  return data;
+}
+function group(rows){
+  return groupTaskRecords(rows).map(({root,latest:last,ids})=>({id:root.run_id,turns:ids,title:root.task.message,product:root.task.product,area:AREA[root.task.area]||root.task.area,
+      area_id:root.task.area,profile:root.task.profile,status:last.status,stopped_at:last.stopped_at,current_stage:last.current_stage,created_at:root.task.created_at,updated_at:last.task.created_at,mode:root.task.mode==='replay'?'回放':'实况'}));
+}
+async function refreshList(){
+  const rows=await api('tasks'),keep=S.convs.filter(c=>c.draft),own=group(rows);
+  const example=S.config?.public_demo?offlineConvs().filter(c=>S.views[c.turns[0]]?.steps?.length).slice(0,1).map(c=>({...c,title:'公共示例 · 真实 Agent 回放'})):[];
+  S.convs=[...keep,...example,...own];
+  if(S.config?.public_demo){
+    try{const cached=JSON.parse(localStorage.getItem('way2agi-public-history-v2')||'{}');
+      const allowed=new Set(own.flatMap(c=>c.turns));
+      for(const [id,v] of Object.entries(cached.views||{}))if(allowed.has(id)&&DONE(v.status)&&!S.views[id])S.views[id]=v;
+    }catch{}
+  }
+}
+function cachePrivateHistory(){
+  if(!S.config?.public_demo)return;
+  const own=S.convs.filter(c=>!c.offline&&!c.draft),ids=new Set(own.flatMap(c=>c.turns));
+  try{localStorage.setItem('way2agi-public-history-v2',JSON.stringify({convs:own,views:Object.fromEntries(Object.entries(S.views).filter(([id,v])=>ids.has(id)&&DONE(v.status)))}));}catch{}
+}
+async function loadTurn(id,force){
+  const v=S.views[id];if(v&&DONE(v.status)&&!force)return;
+  try{S.views[id]=await api(`tasks/${id}/view`);}catch(e){if(e.status!==409)throw e;S.views[id]={pending:true,status:'queued'};}
+}
+async function poll(){
+  clearTimeout(S.timer);const c=conv();if(!S.online||!c||c.draft||c.offline)return;
+  try{
+    await Promise.all(c.turns.map(id=>loadTurn(id)));
+    const last=S.views[c.turns.at(-1)];
+    if(last&&!last.pending){c.status=last.status;c.current_stage=last.current_stage;c.stopped_at=last.stopped_at;}
+    S.error='';cachePrivateHistory();
+    const chat=chatFor(c);
+    if(chat&&DONE(last?.status)&&(chat.data.reviewed_run!==c.turns.at(-1)||chat.data.review_version!==3)&&!S.sending){
+      S.sending=true;S.reviewing=true;renderComposer();renderThread();
+      try{
+        const fresh=await api('chat/'+chat.data.conversation_id);
+        if(fresh.review_version===3&&fresh.reviewed_run===c.turns.at(-1))chat.data={...fresh,conversation_id:fresh.id};
+        else chat.data=await api('chat',{conversation_id:chat.data.conversation_id,area:chat.area,profile:chat.profile,input:'整理执行结果',review:true});
+        saveChats();S.tab='document';
+      }catch(e){if(e.status===409){S.timer=setTimeout(poll,3000);}else throw e;}
+      finally{S.sending=false;S.reviewing=false;}
+    }
+  }catch(e){S.error=e.message;}
+  render();
+  if(!DONE(conv()?.status))S.timer=setTimeout(poll,1000);
+}
+
+/* ================= helpers ================= */
+const conv=()=>S.convs.find(c=>c.id===S.cur);
+const lastView=()=>{const c=conv();return c&&!c.draft?S.views[c.turns.at(-1)]:null;};
+function statusChip(st,stage,questions){
+  if(st==='draft')return '<span class="chip draft">草稿</span>';
+  if(st==='queued')return '<span class="chip queued">排队中</span>';
+  if(st==='running'||st==='gate_pending')return `<span class="chip running"><span class="pulse"></span>执行中${stage?' · '+esc(SNAME[stage]||stage):''}</span>`;
+  if(st==='completed')return '<span class="chip done">已完成</span>';
+  if(st==='blocked'&&(questions?.length||stage==='L0'))return '<span class="chip ask">等你补充</span>';
+  if(st==='blocked')return `<span class="chip stop">停在${esc(SNAME[stage]||stage||'')}</span>`;
+  if(st==='failed')return '<span class="chip fail">出错</span>';
+  return '';
+}
+function briefText(b){if(!b)return '';const parts=[];
+  if(b.radius_m)parts.push(`${+(b.radius_m/1000).toFixed(1)} 公里`);
+  if(b.delivery_people)parts.push(`${b.delivery_people} 人`);
+  if(b.weeks)parts.push(`${b.weeks} 周`);
+  const miss=['radius_m'].filter(k=>!b[k]).map(()=> '半径');
+  if(!b.delivery_people||!b.weeks)parts.push('人员排期待安排');
+  return parts.join(' · ')+(miss.length?(parts.length?' · ':'')+'待补充'+miss.join('、'):'');}
+function stageSummary(v,s){
+  if(s.id==='L0')return briefText(v.brief);
+  if(!s.done)return '';
+  const t=(s.summary||'').replace(/None/g,'—');
+  return /^—?$|^0 /.test(t)?'':t;
+}
+
+/* ================= render: sidebar ================= */
+function renderList(){
+  $('tasks').innerHTML=S.convs.map(c=>`<li><button class="task" type="button" data-id="${esc(c.id)}" aria-current="${c.id===S.cur}">
+    <span class="t">${esc(c.title||(c.draft?'新任务':''))}</span>
+    <span class="m">${statusChip(c.draft?'draft':c.status,c.status==='running'?c.current_stage:c.stopped_at,null)}<span>${esc([c.area,c.draft?'':fmtTime(c.updated_at||c.created_at)].filter(Boolean).join(' · '))}</span></span></button></li>`).join('')
+    ||'<li class="small" style="padding:8px 10px">还没有任务</li>';
+}
+
+/* ================= render: head + rail ================= */
+function renderHead(){
+  const c=conv(),v=lastView();
+  if(!c||c.draft){$('title').textContent=chatFor(c)?'任务对话':'新任务';$('meta').innerHTML=chatFor(c)?'<span>持续沟通 · 右侧维护任务文档</span>':'<span>从资料库选择产品和商圈，描述推广目标</span>';return;}
+  const prod=v?.product||c.product||'',area=AREA[v?.area_id]||c.area||'';
+  $('title').innerHTML=`${esc(prod)}<span class="sep">×</span>${esc(area)}`;
+  const st=v&&!v.pending?v.status:c.status, stage=st==='running'?(v?.current_stage||c.current_stage):(v?.stopped_at||c.stopped_at);
+  const bits=[statusChip(st,stage,v?.questions),`<span>${esc(fmtTime(v?.created_at||c.created_at))}</span>`];
+  if(v?.mode==='回放'||c.mode==='回放')bits.push('<span>回放真实录制</span>');
+  if(v?.model)bits.push(`<span>模型 ${esc(v.model)}</span>`);
+  $('meta').innerHTML=bits.join('');
+}
+function renderRail(){
+  const v=lastView(),st=v&&!v.pending?v.status:conv()?.status;
+  const stages=v?.stages||STAGES.map(([id,name])=>({id,name}));
+  $('rail').innerHTML=stages.map((s,i)=>{
+    let cls='';
+    if(s.done)cls='done';
+    else if(st==='running'&&v?.current_stage===s.id)cls='run';
+    else if(s.stopped||(st==='blocked'&&v?.stopped_at===s.id))cls=(s.id==='L0'&&v?.questions?.length)?'ask':'stop';
+    const prevDone=i>0&&stages[i-1].done;
+    return `<li class="node ${cls}${prevDone&&(s.done||cls)?' passed':''}${s.id==='L1D'?' agent':''}${S.stage===s.id?' sel':''}" data-stage="${s.id}" tabindex="0" role="button" aria-label="${esc(SNAME[s.id])}">
+      <span class="dotn"></span><span class="nm">${esc(SNAME[s.id])}</span></li>`;}).join('');
+}
+
+/* ================= render: conversation ================= */
+function msg(kind,who,meta,inner){
+  const av={u:'<span class="av u">你</span>',a:'<span class="av a">A</span>',s:`<span class="av s">${ICON.info}</span>`}[kind];
+  return `<div class="msg">${av}<div class="mb"><div class="who"><b>${who}</b>${meta?`<span>${meta}</span>`:''}</div>${inner}</div></div>`;
+}
+function stepHTML(s,v){
+  if(s.kind==='model')return `<li class="m"><span class="h">${s.calls?.length?'决定调用：'+esc(s.calls.join('、')):'整理结论'}</span>${s.note?`<span class="note" title="点击展开">${esc(s.note)}</span>`:''}</li>`;
+  if(s.kind==='rejected')return `<li class="r"><span class="h">结论没通过代码复核，打回重写</span><span class="res err">${esc((s.problems||[]).join('；'))}</span></li>`;
+  const a=Object.entries(s.args||{}).map(([k,val])=>`<span class="arg"><i>${esc(ARG[k]||k)}</i>${esc(val)}</span>`).join('');
+  let r='';
+  if(!s.ok)r=`<span class="res err">${esc(s.error||'调用失败')}</span>`;
+  else if(s.tool==='search_merchants')r=`<span class="res">返回 <span class="num">${s.returned??0}</span> 条，新增 <span class="num">${s.new??0}</span> 家</span>`;
+  else if(s.by_channel){const ch=(v.channels?.length?v.channels:Object.keys(s.by_channel).map(id=>({id,name:v.channel_names?.[id]||id})));
+    r=`<span class="res">${s.by_category?Object.entries(s.by_category).map(([k,n])=>`${esc(CAT[k]||k)} ${n}`).join('、')+'；':''}目标渠道 ${ch.map(c=>`${esc(c.name)} <span class="num">${s.by_channel[c.id]??0}</span>`).join('、')}</span>`;}
+  else if(s.tool==='check_pitch')r=s.passed?'<span class="res">通过</span>':`<span class="res err">未通过：${esc((s.problems||[]).join('；'))}</span>`;
+  else if(s.tool==='list_targets')r=`<span class="res">共 <span class="num">${s.total??0}</span> 个目标</span>`;
+  else if(s.total!=null)r=`<span class="res">共 <span class="num">${s.total}</span> 条</span>`;
+  return `<li class="t"><span class="h">${esc(s.label||s.tool)}</span>${a?`<div class="args">${a}</div>`:''}${r}</li>`;
+}
+const hhmmss=t=>{const d=new Date(t);return isNaN(d)?'':d.toLocaleTimeString('zh-CN',{hour12:false});};
+function tick(){document.querySelectorAll('[data-since]').forEach(e=>{const t=Date.parse(e.dataset.since);if(!isNaN(t)){const n=Math.max(0,Math.round((Date.now()-t)/1000));e.textContent=(e.closest('#livebar')?'· ':'')+(n<60?`${n} 秒`:`${Math.floor(n/60)} 分 ${n%60} 秒`);}});}
+setInterval(tick,1000);
+function feedHTML(v){
+  return `<ol class="feed">${(v.activity||[]).map(r=>{const cls=r.kind+(r.kind==='check'||r.kind==='tool'?(r.ok===false?' bad':' ok'):'');
+    const txt=r.kind==='stage'?`<b>${esc(r.text)}</b>`:esc(r.text);
+    return `<li class="${cls}"><time>${hhmmss(r.t)}</time><i></i><span>${txt}${r.note?`<span class="say">说明：${esc(r.note)}</span>`:''}${(r.problems||[]).length?`<span class="why">${esc(r.problems.join('；'))}</span>`:''}</span></li>`;}).join('')}</ol>`;
+}
+function activityHTML(v,running){
+  if(!(v.activity||[]).length)return '';
+  if(running)return msg('a','Agent','执行动态',`${feedHTML(v)}${v.live?`<div class="liveline"><span class="spin"></span><span>${esc(v.live.text)}</span><span class="num" data-since="${esc(v.live.since||'')}"></span></div>`:''}`);
+  return msg('s','执行动态',`${v.activity.length} 条`,`<details class="run"><summary>查看完整执行动态</summary>${feedHTML(v)}</details>`);
+}
+function turnHTML(id,idx,isLast,hideUser=false){
+  const c=conv(),v=S.views[id]||{pending:true},out=[];
+  const message=v.task?.message||(idx===0?c.title:'')||v.request;
+  if(!hideUser)out.push(msg('u','你',idx?'补充要求':'',`<div class="bubble">${esc(message)}</div>`));
+  if(v.pending||v.status==='queued'){if(isLast)out.push(msg('a','Agent','准备中','<div class="typing"><i></i><i></i><i></i></div>'));return out.join('');}
+  const running=v.status==='running'||v.status==='gate_pending';
+  if(running&&(v.activity||[]).length){out.push(activityHTML(v,true));return out.join('');}
+  let steps=v.steps||[];
+  if(S.replay&&S.replay.id===id)steps=steps.slice(0,S.replay.k);
+  if(steps.length||(running&&v.current_stage==='L1D')){
+    const cat=v.cache?.by_category||{};
+    const intro=steps.length?`<p>缓存里有 <span class="num">${v.cache?.total??0}</span> 家（${Object.entries(cat).map(([k,n])=>`${esc(CAT[k]||k)} ${n}`).join('、')||'—'}），先看看目标渠道够不够。</p>`:'';
+    const live=running&&v.current_stage==='L1D';
+    out.push(msg('a','Agent',esc(v.model?'找终端 · '+v.model:'找终端'),`<div class="prose">${intro}<details class="run" ${live||!DONE(v.status)||S.replay?.id===id||!v.decision?'open':''}><summary>${steps.length?`执行过程 · ${steps.length} 步`:'开始执行…'}</summary><ol class="tl">${steps.map(s=>stepHTML(s,v)).join('')}${live||(S.replay?.id===id&&S.replay.k<v.steps.length)?'<li><div class="typing"><i></i><i></i><i></i></div></li>':''}</ol></details></div>`));
+  }
+  const replaying=S.replay?.id===id&&S.replay.k<(v.steps||[]).length;
+  const agentRan=(v.steps||[]).length>0||v.stages?.find(s=>s.id==='L1D')?.judged_by==='模型';
+  if(agentRan&&v.decision&&!replaying&&(DONE(v.status)||v.stages?.find(s=>s.id==='L1D')?.done)){
+    out.push(msg('a','Agent','结论',`<div class="prose"><p>${esc(v.decision)}</p>${v.channels?.length?`<p class="small">补采后：${v.channels.map(c=>`${esc(c.name)} ${c.after} 家`).join('，')}</p>`:''}</div>`));
+  }
+  const pa=v.pitch_agent;
+  if(pa?.steps?.length&&!replaying){
+    const pc=pa.steps.filter(s=>s.tool==='check_pitch'),ok=pc.filter(s=>s.passed).length,n=pa.steps.find(s=>s.tool==='list_targets')?.total,back=pa.steps.filter(s=>s.kind==='rejected').length;
+    out.push(msg('a','Agent',esc('怎么说'+(pa.model?' · '+pa.model:'')),`<div class="prose"><p>${n?`为 <span class="num">${n}</span> 个目标写进店话术，`:''}用本关的正式检查自查 <span class="num">${pc.length}</span> 次（通过 ${ok} 次）${back?`，交稿被打回 ${back} 次`:''}，全部达标后才交稿。</p><details class="run"><summary>执行过程 · ${pa.steps.length} 步</summary><ol class="tl">${pa.steps.map(s=>stepHTML(s,v)).join('')}</ol></details><div class="links"><button class="linkbtn" data-tab="pitch" type="button">看话术</button></div></div>`));
+  }
+  if(running&&!(v.current_stage==='L1D'))out.push(msg('s','流水线',esc('正在'+(SNAME[v.current_stage]||'')),'<div class="typing"><i></i><i></i><i></i></div>'));
+  if(replaying||running)return out.join('');
+  out.push(activityHTML(v,false));
+  if(v.status==='blocked'&&v.questions?.length){
+    out.push(msg('s','流水线','开始前需要确认',`<div class="callout"><p>还差 ${v.questions.length} 项信息，补充后会在这个对话里继续：</p><ul>${v.questions.map(q=>`<li>${esc(q)}</li>`).join('')}</ul>${isLast?`<div class="answers">${answerChips(v).map(a=>`<button class="pill" type="button" data-fill="${esc(a)}">${esc(a)}</button>`).join('')}</div>`:''}</div>`));
+  }else if(v.status==='blocked'){
+    const why=v.stop_reason||'这一关没有通过检查';
+    const hint=v.stopped_at==='L2'&&!(v.steps||[]).length?'缓存里没有目标渠道的门店。开启 Agent「找终端」可以去高德补采。':'';
+    out.push(msg('s','流水线',`停在${esc(SNAME[v.stopped_at]||v.stopped_at||'')}`,`<div class="callout stop"><p>${esc(why)}</p>${hint?`<p class="small">${esc(hint)}</p>`:''}</div>`));
+  }else if(v.status==='failed'){
+    out.push(msg('s','流水线','出错',`<div class="callout stop"><p>${esc(v.stop_reason||'执行中断，可以重新发送这条要求。')}</p></div>`));
+  }else if(v.status==='completed'){
+    const g={A:0,B:0,C:0};(v.terminals||[]).forEach(t=>g[t.grade]++);const first=(v.route?.first||[]).filter(Boolean);
+    out.push(msg('s','流水线汇总','由代码根据各关产物生成',`<div class="prose"><p>选中 <span class="num">${v.map?.zones?.length||0}</span> 个网格；首访名单 <span class="num">${(v.terminals||[]).length}</span> 家（A ${g.A} · B ${g.B} · C ${g.C}）${(v.terminals||[]).some(t=>t.found)?`，其中 <span class="num">${v.terminals.filter(t=>t.found).length}</span> 家由 Agent 补采`:''}。</p>${v.route?.pending?'<p>策略与客户清单已生成，人员排期待安排。需要具体日程时，再补充人数和周期。</p>':''}${first.length?`<p>第 1 天首访：${esc(first.slice(0,4).join('、'))}${first.length>4?` 等 ${first.length} 家`:''}。</p>`:''}${v.pitches?.length?`<p>已为 ${v.pitches.length} 个渠道准备进店话术，均过合规扫描。</p>`:''}<div class="links"><button class="linkbtn" data-tab="map" type="button">看地图</button><button class="linkbtn" data-tab="list" type="button">看名单</button><button class="linkbtn" data-tab="pitch" type="button">看话术</button><button class="linkbtn" data-tab="dec" type="button">看决策</button></div></div>`));
+  }
+  return out.join('');
+}
+function answerChips(v){
+  const b=v.brief||{},qs=(v.questions||[]).join(' '),miss={radius_m:!b.radius_m,delivery_people:!b.delivery_people&&/人数|几位|几人|delivery_people/.test(qs),weeks:!b.weeks&&/几周|周期|weeks/.test(qs)};
+  const parts=[miss.radius_m&&'3 公里',miss.delivery_people&&'2 个地推',miss.weeks&&'做 4 周'].filter(Boolean);
+  const alt=[miss.radius_m&&'2 公里',miss.delivery_people&&'3 个地推',miss.weeks&&'做 6 周'].filter(Boolean);
+  return [parts.join('，'),alt.join('，')].filter(Boolean);
+}
+function renderThread(){
+  const c=conv(),th=$('thread'),atEnd=th.scrollHeight-th.scrollTop-th.clientHeight<60,pos=th.scrollTop;
+  const v=lastView(),running=v&&(v.status==='running'||v.status==='gate_pending');
+  $('livebar').hidden=!running&&!S.reviewing;
+  if(S.reviewing)$('livebar').innerHTML='<span class="pulse"></span><b>执行已结束 · 正在更新任务文档</b>';
+  if(running){const tools=(v.activity||[]).filter(s=>s.kind==='tool').length;$('livebar').innerHTML=`<span class="pulse"></span><b>${v.live?esc(v.live.text):'正在：'+esc(SNAME[v.current_stage]||'准备')}</b>${v.live?.since?`<span data-since="${esc(v.live.since)}"></span>`:''}${tools?`<span>· 已调用工具 ${tools} 次</span>`:''}`;}
+  $('replay').hidden=!c||c.draft||!v||!DONE(v.status)||!(v.steps||[]).length;
+  $('replay').textContent=S.replay?'停止回看':'回看执行过程';
+  if((!c||c.draft)&&!chatFor(c)&&!S.outbox[c?.id]){th.innerHTML=newTaskHTML();th.dataset.conv='';return;}
+  const chat=chatFor(c);let html='';const shown=new Set();
+  if(chat){for(const m of chat.data.messages){html+=msg(m.role==='user'?'u':'a',m.role==='user'?'你':'Agent','',m.role==='user'?`<div class="bubble">${esc(m.content)}</div>`:`<div class="prose markdown">${markdown(m.content)}</div>`);if(m.run_id&&(c.turns||[]).includes(m.run_id)){html+=turnHTML(m.run_id,0,m.run_id===c.turns.at(-1),true);shown.add(m.run_id);}}}
+  html+=(c.turns||[]).filter(id=>!shown.has(id)).map((id,i)=>turnHTML(id,i,id===c.turns.at(-1),!!chat)).join('');
+  (S.notices[c.id]||[]).forEach(n=>html+=msg('u','你','',`<div class="bubble">${esc(n.text)}</div>`)+msg('s','系统','未执行',`<div class="callout stop"><p>${esc(n.reason)}</p></div>`));
+  const outgoing=S.outbox[c?.id];
+  if(outgoing)html+=msg('u','你',outgoing.status==='failed'?'未收到发送确认':'发送中',`<div class="bubble">${esc(outgoing.text)}</div>${outgoing.status==='failed'?`<p class="small">${esc(outgoing.error)} · 请检查是否已执行，再重试。</p><button class="linkbtn" type="button" data-fill="${esc(outgoing.text)}">重新编辑</button>`:''}`);
+  if((outgoing?.status==='sending')||S.reviewing)html+=msg('a','Agent','正在回应',`<div class="liveline"><span class="spin"></span><span>${S.reviewing?'把执行结果整理进任务文档':'理解你的要求，更新任务文档，判断是否开始执行'}</span>${outgoing?.started?`<span class="num" data-since="${new Date(outgoing.started).toISOString()}"></span>`:''}</div>`);
+  if(S.error)html+=msg('s','系统','连接问题',`<div class="callout stop"><p>${esc(S.error)}</p></div>`);
+  const same=th.dataset.conv===String(c.id),nm=same?th.querySelectorAll('.msg').length:0,nt=same?th.querySelectorAll('.tl li:not(:has(.typing))').length:0,nf=same?th.querySelectorAll('.feed li').length:0;
+  th.innerHTML=html;th.dataset.conv=c.id;
+  if(same){[...th.querySelectorAll('.msg')].slice(0,nm).forEach(e=>e.classList.add('still'));[...th.querySelectorAll('.tl li')].slice(0,nt).forEach(e=>e.classList.add('still'));[...th.querySelectorAll('.feed li')].slice(0,nf).forEach(e=>e.classList.add('still'));}
+  tick();
+  th.scrollTop=(atEnd||S._jump)?th.scrollHeight:pos;S._jump=false;
+}
+function newTaskHTML(){
+  const p=picked();
+  return `<div class="welcome"><h3>发起一个铺市任务</h3><p class="muted">选好产品和商圈，说清楚覆盖范围。人数和周期可以稍后补充，不影响先分析客户和策略。Agent 会判断目标渠道在商圈里有没有足够的门店，不够就自己去高德补采，再交给流水线排出首访名单和话术。</p>
+  <div class="examples">${TEMPLATES(p).map(t=>`<button class="example" type="button" data-fill="${esc(t)}">${esc(t)}</button>`).join('')}</div>
+  ${S.online?'':'<p class="small">这是离线页面：可以查看历史任务，新任务需要连接本地服务后发送。</p>'}</div>`;
+}
+
+/* ================= render: composer ================= */
+function picked(){const ps=$('p-sel'),as=$('a-sel');const prof=productChoices().find(x=>x.id===(ps?.value||'xinxian-huoquan'));
+  return {product:prof?.name||'洞庭山·新鲜活泉',radius:(areaChoices().find(x=>x.id===as?.value)?.radius_m||3000)/1000,area:areaChoices().find(x=>x.id===as?.value)?.name||AREA[as?.value||'shishan']||'狮山'};}
+function renderComposer(){
+  const c=conv(),v=lastView(),running=v&&!DONE(v.status);
+  $('quickstart').disabled=S.sending;
+  const draft=!c||c.draft;
+  $('pickers').hidden=!(draft&&S.online&&!chatFor(c));
+  if(draft&&S.online&&!$('p-sel')){
+    $('pickers').innerHTML=`<label>产品 <select id="p-sel">${productChoices().map(p=>`<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('')}</select></label><label>商圈 <select id="a-sel">${areaChoices().map(a=>`<option value="${esc(a.id)}">${esc(a.name||AREA[a.id]||a.id)}</option>`).join('')}</select></label>`;
+    $('p-sel').value=S.profiles.some(p=>p.id==='xinxian-huoquan')?'xinxian-huoquan':S.profiles[0]?.id;$('a-sel').value='shishan';
+    $('pickers').addEventListener('change',()=>renderThread());
+  }
+  let label='',items=[];
+  if(draft){label='';items=[];}
+  else if(running){label='';items=[];}
+  else if(v?.status==='blocked'&&v.questions?.length){label='快速回答';items=answerChips(v);}
+  else{const st=S.stage||'L1D';label=SNAME[st];items=FOLLOW[st]||[];}
+  $('quick').hidden=!items.length;
+  $('quick').innerHTML=items.length?`<span class="lab">${esc(label)}</span>`+items.map(q=>`<button class="pill" type="button" data-fill="${esc(q)}">${esc(q)}</button>`).join(''):'';
+  $('ask').placeholder=draft?'例如：狮山商圈周边 3 公里推广新鲜活泉，先分析客户和策略':running?'执行中，结束后可以补充要求':'补充要求，或输入 / 打开百宝箱';
+  $('ask').disabled=!!running;$('send').disabled=!!running||S.sending;$('tb').disabled=!!running;
+  $('hint').textContent=!S.online?'离线页面：可以编辑和查看，发送需要连接本地服务':
+    !S.config?.live_ready?`本地服务已连接，但实况配置缺少：${(S.config?.missing||[]).join('、')||'—'}`:
+    c?.offline?'公共回放示例。可点「快速开始」直接开始一次分析':draft?'发送后直接开始分析':running?'执行中…':'发送后在这个对话里继续执行';
+  renderToolbox();
+}
+function toolboxItems(){
+  const c=conv();
+  if(!c||c.draft)return [['新任务模板',TEMPLATES(picked())]];
+  return STAGES.filter(([id])=>FOLLOW[id]).map(([id,name])=>[name,FOLLOW[id]]);
+}
+function renderToolbox(){
+  $('toolbox').hidden=!S.toolbox;$('tb').setAttribute('aria-expanded',S.toolbox);
+  if(!S.toolbox)return;
+  const f=$('ask').value.startsWith('/')?$('ask').value.slice(1).trim():'';let n=0;
+  $('toolbox').innerHTML=toolboxItems().map(([g,list])=>{const items=list.filter(q=>!f||q.includes(f)||g.includes(f));
+    return items.length?`<div class="tb-g"><h3>${esc(g)}</h3>${items.map(q=>`<button class="tb-i${n++===S.tbIndex?' on':''}" type="button" role="option" data-fill="${esc(q)}">${esc(q)}</button>`).join('')}</div>`:'';}).join('')||'<p class="empty">没有匹配的指令</p>';
+}
+
+/* ================= render: artifacts ================= */
+function renderArtifacts(){
+  document.querySelectorAll('#seg button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===S.tab));
+  const v=lastView(),p=$('panel');
+  if(S.tab==='document'){p.innerHTML=documentHTML(chatFor(conv()));return;}
+  if(!v||v.pending){p.innerHTML=`<div class="empty">${ICON.empty}<span>${conv()&&!conv().draft?'任务开始后显示商圈和产物':'任务执行后，这里显示地图、决策、名单和话术'}</span></div>`;return;}
+  p.innerHTML={brief:briefHTML,map:mapHTML,dec:decHTML,list:listHTML,pitch:pitchHTML}[S.tab](v)+`<div class="boundary">${(v.boundary||[]).map(b=>`<span>${esc(b)}</span>`).join('')}</div>`;
+  if(S.tab==='dec'&&S.stage){const el=$('dec-'+S.stage);el?.scrollIntoView({block:'nearest'});}
+}
+function documentHTML(chat){
+ if(!chat)return '<p class="empty">和 Agent 说明目标与背景后，这里会保存任务 Brief、计划和市场判断。</p>';
+ const d=chat.data.document||{},names={brief:'需求与背景',plan:'执行计划',market_judgment:'市场判断'};
+ return `<div class="prose"><h3>任务文档</h3><p class="small">当前工作版本 · Agent 根据对话持续更新。事实、推断与待验证信息应分别标明。</p>${Object.entries(names).map(([k,n])=>`<h4>${n}</h4><div class="markdown">${markdown(d[k]||'尚未形成，继续对话补充。')}</div>`).join('')}<details><summary>修改记录 · ${(chat.data.changes||[]).length} 次</summary>${[...(chat.data.changes||[])].reverse().map(x=>`<p class="small">${esc(fmtTime(x.at))} · ${Object.keys(x.sections).map(k=>names[k]).join('、')}</p>${Object.entries(x.sections).map(([k,v])=>`<details><summary>${names[k]}</summary><p style="white-space:pre-wrap">修改前：${esc(v.before||'空')}\n修改后：${esc(v.after)}</p></details>`).join('')}`).join('')}</details></div>`;
+}
+function briefHTML(v){
+  const b=v.brief||{},request=b.request||v.request||v.task?.message||'';
+  const value=x=>x==null?'未提供':esc(x);
+  return `<div class="prose"><h3>任务 Brief</h3><p class="small">当前轮需求与背景。补充要求请在对话框发送，下一轮会沿用原需求和已采集商户。</p>
+  <h4>用户需求与补充</h4><p style="white-space:pre-wrap">${esc(request||'这条历史录制未包含完整需求')}</p>
+  <h4>产品与范围</h4><p>${esc(v.product||'')} · ${esc(v.area||'')}<br>覆盖半径：${b.radius_m==null?'未提供':esc(b.radius_m/1000)+' 公里'}<br>人员：${value(b.delivery_people)} · 周期：${b.weeks==null?'未提供':esc(b.weeks)+' 周'}</p>
+  ${b.product_background?`<h4>产品资料</h4><pre style="white-space:pre-wrap;overflow-wrap:anywhere">${esc([b.product_background.name,b.product_background.official_slogan,...(b.product_background.specification?.facts||[]),b.product_background.specification?.note].filter(Boolean).join("\n"))}</pre>`:''}
+  ${b.library_selection?.skills?.length?`<h4>启用技能</h4><ul>${b.library_selection.skills.map(s=>`<li>${esc(s.name)} · ${s.stages.map(x=>esc(SNAME[x])).join('、')}<p>${esc(s.instructions)}</p></li>`).join('')}</ul>`:''}
+  ${b.location_note?`<h4>位置来源</h4><p>${esc(b.location_note)}</p>`:''}
+  <h4>假设与来源</h4>${(b.assumptions||[]).length?`<ul>${b.assumptions.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:'<p class="small">该记录未提供假设说明。</p>'}
+  ${(b.questions||v.questions||[]).length?`<h4>待确认</h4><ul>${(b.questions||v.questions).map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}</div>`;
+}
+function mapHTML(v){
+  const R=v.brief?.radius_m||null,Rd=R||v.radius||3000,pad=Rd*1.06,shown=foundShown(v);
+  const steps=S.replay?.id===lastId()?(v.steps||[]).slice(0,S.replay.k):(v.steps||[]);
+  const lastInv=[...steps].reverse().find(s=>s.by_channel)?.by_channel;
+  const ch=v.channels?.length?v.channels:(lastInv?Object.keys(lastInv).map(id=>({id,name:v.channel_names?.[id]||id})):[]);
+  const zonesOn=!S.replay&&v.stages?.find(s=>s.id==='L2')?.done,termsOn=!S.replay&&v.stages?.find(s=>s.id==='L3')?.done;
+  let svg=`<svg viewBox="${-pad} ${-pad} ${pad*2} ${pad*2}" role="img" aria-label="商圈地图"><defs><clipPath id="clip"><circle r="${Rd}"/></clipPath></defs><g clip-path="url(#clip)">`;
+  for(let x=-Math.ceil(Rd/500)*500;x<=Rd;x+=500)svg+=`<line class="m-grid" x1="${x}" y1="${-Rd}" x2="${x}" y2="${Rd}"/><line class="m-grid" x1="${-Rd}" y1="${x}" x2="${Rd}" y2="${x}"/>`;
+  if(zonesOn)for(const z of v.map.zones){const [x,y]=z.id.split(':').map(Number);svg+=`<rect class="m-zone" x="${x*500}" y="${-(y+1)*500}" width="500" height="500"/>`;}
+  for(const [x,y] of v.map.base)svg+=`<circle class="m-base" cx="${x}" cy="${-y}" r="22"/>`;
+  for(const f of v.map.found)if(shown.has(f.id))svg+=`<circle class="m-found" cx="${f.x}" cy="${-f.y}" r="38"><title>${esc(f.name)}（${esc(f.channel||'其他')}）</title></circle>`;
+  if(termsOn)for(const t of v.terminals)if(t.grade!=='C')svg+=`<circle class="m-term ${t.grade}" cx="${t.x}" cy="${-t.y}" r="${t.grade==='A'?110:85}"><title>${t.grade} · ${esc(t.name)}</title></circle>`;
+  svg+=`</g><circle class="m-ring${R?'':' tbd'}" r="${Rd}"/><circle class="m-ctr" r="55"/></svg>`;
+  const counts=ch.length?`<div class="counts">${ch.map(c=>`<span>${esc(c.name)}<span class="num">${(lastInv&&lastInv[c.id]!=null)?lastInv[c.id]:(c.after??0)}</span></span>`).join('')}<span class="found">Agent 补采<span class="num">${shown.size}</span></span></div>`:'';
+  const note=!R?'<div class="mapnote"><span>范围待立项确定，先按 3 公里显示</span></div>':'';
+  return `${counts}<div class="legend"><span><i style="background:var(--dot)"></i>缓存商户 ${v.map.base.length}</span><span><i style="background:var(--found)"></i>Agent 补采</span>${termsOn?'<span><i style="border:2px solid var(--primary)"></i>首访终端</span>':''}${zonesOn?'<span><i style="background:var(--primary-soft);border:1px solid var(--primary);border-radius:2px"></i>选中网格 500 米</span>':''}<span>${R?`半径 ${+(R/1000).toFixed(1)} 公里`:''}</span></div><div class="mapwrap">${svg}${note}</div>`;
+}
+const lastId=()=>conv()?.turns.at(-1);
+function foundShown(v){const steps=S.replay?.id===lastId()?(v.steps||[]).slice(0,S.replay.k):(v.steps||[]);const s=new Set();steps.forEach(x=>(x.added_ids||[]).forEach(i=>s.add(i)));if(!(v.steps||[]).some(x=>x.added_ids))v.map.found.forEach(f=>s.add(f.id));return s;}
+function decHTML(v){
+  const rows=(v.stages||[]).filter(s=>s.done||s.stopped||s.id===v.stopped_at);
+  if(!rows.length)return `<div class="empty">${ICON.empty}<span>关卡完成后逐条列出决策和检查结果</span></div>`;
+  const ST={passed:'通过',needs_review:'待复核',failed:'未通过',blocked:'阻断'};
+  return `<ul class="dec">${rows.map(s=>`<li id="dec-${s.id}" class="${S.stage===s.id?'hl':''}"><div class="top"><span class="id">${s.id}</span><span class="nm">${esc(SNAME[s.id])}</span><span class="src ${s.judged_by==='模型'?'llm':''}">${s.judged_by==='模型'?'模型判断':'规则'}</span>${s.attempts>1?`<span class="src">尝试 ${s.attempts} 次</span>`:''}${s.review?`<span class="src">待复核 ${s.review} 项</span>`:''}</div>
+    ${stageSummary(v,s)?`<p class="small">${esc(stageSummary(v,s))}</p>`:''}${s.decision?`<p>${esc(s.decision)}</p>`:''}${(s.stopped||s.id===v.stopped_at)&&v.stop_reason?`<p style="color:var(--danger)">${esc(v.stop_reason)}</p>`:''}
+    ${s.checks?.length?`<div class="checks">${s.checks.map(c=>`<span class="${c.status}">${esc(c.layer)}${c.status==='passed'?'':' '+(ST[c.status]||c.status)}</span>`).join('')}</div>`:''}</li>`).join('')}</ul>`;
+}
+function listHTML(v){
+  if(!(v.terminals||[]).length)return `<div class="empty">${ICON.empty}<span>${DONE(v.status)?'这次任务没有走到「进哪家」':'执行到「进哪家」后显示首访名单'}</span></div>`;
+  const g={A:0,B:0,C:0};v.terminals.forEach(t=>g[t.grade]++);
+  return `<p class="small">共 ${v.terminals.length} 家 · A ${g.A} · B ${g.B} · C ${g.C}</p><div style="overflow-x:auto"><table><thead><tr><th>等级</th><th>门店</th><th>渠道</th><th>距中心</th><th>动作</th></tr></thead><tbody>${v.terminals.map(t=>`<tr class="${t.grade}"><td><span class="grade ${t.grade}">${t.grade}</span></td><td>${esc(t.name)}${t.found?'<span class="tagf">Agent 补采</span>':''}<div class="small">${esc(t.reason)}</div></td><td class="nowrap">${esc(t.channel)}</td><td class="nowrap num" style="font-weight:400">${t.distance??''} 米</td><td class="nowrap">${esc(t.action)}</td></tr>`).join('')}</tbody></table></div>`;
+}
+function pitchHTML(v){
+  if(!(v.pitches||[]).length)return `<div class="empty">${ICON.empty}<span>${DONE(v.status)?'这次任务没有走到「怎么说」':'执行到「怎么说」后显示进店话术'}</span></div>`;
+  return v.pitches.map(p=>`<div class="pitch"><h3>${esc(p.channel)}<span class="ok">${p.passed?'合规通过':'合规未通过'}</span></h3><p>${esc(p.pitch)}</p></div>`).join('');
+}
+
+/* ================= render all ================= */
+function render(){renderList();renderHead();renderRail();renderThread();renderComposer();renderArtifacts();}
+
+/* ================= actions ================= */
+function select(id){showPane('chat');clearTimeout(S.timer);stopReplay(false);S.cur=id;S.stage=null;S.tab='map';S._jump=true;
+  const c=conv();if(!c?.draft&&S.online){render();poll();}else render();
+  if(!c?.draft){try{history.replaceState(null,'','#'+c.id);}catch{}}}
+function newTask(){let d=S.convs.find(c=>c.draft&&!chatFor(c)&&!S.outbox[c.id]);if(!d){d={id:'draft-'+Date.now(),draft:true};S.convs.unshift(d);}select(d.id);$('ask').focus();}
+async function send(text){
+  text=text.trim();if(!text||text.startsWith('/'))return;
+  if(S.sending)return;
+  if(S.online&&conv()?.offline){newTask();}
+  const c=conv();
+  if(!S.online||!S.config?.live_ready){
+    const reason=!S.online?'这是离线页面，没有连接 Agent 服务，这条指令没有执行。':`本地服务缺少实况配置（${(S.config?.missing||[]).join('、')}），这条指令没有执行。`;
+    if(c&&!c.draft){(S.notices[c.id]=S.notices[c.id]||[]).push({text,reason});}
+    else{alertDraft(reason);}
+    S._jump=true;if(c&&!c.draft)render();return;
+  }
+  const origin=c.id;let accepted=false;
+  S.outbox[origin]={text,status:'sending',started:Date.now()};
+  if(c.draft&&!c.title)c.title=text.slice(0,60);
+  $('ask').value='';autosize();S._jump=true;
+  S.sending=true;S.error='';renderList();renderComposer();renderThread();
+  try{
+    const body=taskRequestBody({conv:c,view:lastView(),text,profile:$('p-sel')?.value,area:$('a-sel')?.value});
+    if(!c||c.draft)Object.assign(body,selectedLibrary());
+    // Every message starts (or continues) a real run directly; no chat-model round trip that may only promise to start.
+    const existing=chatFor(c);
+    const direct={area:body.area||existing?.area,profile:body.profile||existing?.profile,input:text,mode:'live'};
+    if(body.parent_id)direct.parent_id=body.parent_id;
+    if((!c||c.draft)&&(body.library||existing?.library))direct.library=body.library||existing.library;
+    const {run_id}=await api('tasks',direct);
+    accepted=true;delete S.outbox[origin];const viewing=S.cur===origin;
+    if(viewing)S._jump=true;
+    if(!c||c.draft){S.convs=S.convs.filter(x=>x.id!==origin);}
+    await refreshList();
+    const target=S.convs.find(x=>x.turns?.includes(run_id));
+    S.views[run_id]={pending:true,status:'queued',task:{message:text}};
+    if(viewing){select(target?target.id:run_id);S.tab='map';renderArtifacts();}else renderList();
+  }catch(e){if(!accepted)S.outbox[origin]={text,status:'failed',error:e.message};else S.error=e.message;render();}
+  finally{S.sending=false;renderComposer();renderThread();}
+}
+function alertDraft(reason){const th=$('thread');th.insertAdjacentHTML('beforeend',msg('s','系统','未执行',`<div class="callout stop"><p>${esc(reason)}</p></div>`));}
+function fill(t){$('ask').value=t;S.toolbox=false;autosize();renderToolbox();$('ask').focus();}
+function autosize(){const a=$('ask');a.style.height='auto';a.style.height=Math.min(a.scrollHeight,120)+'px';}
+function stopReplay(r=true){if(S.replay){clearTimeout(S.replay.timer);S.replay=null;if(r)render();}}
+function startReplay(){
+  const id=lastId(),v=S.views[id];if(!v?.steps?.length)return;
+  if(S.replay){stopReplay();return;}
+  S.replay={id,k:0};S.tab='map';S._jump=true;render();
+  const tick=()=>{if(!S.replay)return;S.replay.k++;S._jump=true;render();
+    if(S.replay.k<v.steps.length)S.replay.timer=setTimeout(tick,reduced?0:(v.steps[S.replay.k-1]?.kind==='model'?1400:1000));
+    else S.replay.timer=setTimeout(()=>{S.replay=null;render();},reduced?0:900);};
+  S.replay.timer=setTimeout(tick,reduced?0:600);
+}
+
+/* ================= events ================= */
+function showPane(name){document.querySelector('.panes').dataset.show=name;document.querySelectorAll('[data-pane]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.pane===name)));}
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-pane],[data-fill],[data-tab],.task,.node,#newbtn,#quickstart,#replay,#tb,.note');
+  if(!t){if(S.toolbox&&!e.target.closest('#toolbox')){S.toolbox=false;renderToolbox();}return;}
+  if(t.matches('.note')){t.classList.toggle('open');return;}
+  if(t.dataset.fill!=null)return fill(t.dataset.fill);
+  if(t.dataset.pane)return showPane(t.dataset.pane);
+  if(t.dataset.tab){showPane('art');S.tab=t.dataset.tab;renderArtifacts();return;}
+  if(t.matches('.task'))return select(t.dataset.id);
+  if(t.matches('.node')){showPane('art');S.stage=t.dataset.stage;S.tab=S.stage==='L0'?'brief':'dec';renderRail();renderComposer();renderArtifacts();return;}
+  if(t.id==='newbtn')return newTask();
+  if(t.id==='quickstart'){if(S.sending)return;return openQuick();}
+  if(t.id==='replay')return startReplay();
+  if(t.id==='tb'){S.toolbox=!S.toolbox;S.tbIndex=-1;renderToolbox();}
+});
+document.addEventListener('keydown',e=>{if(e.target.matches('.node')&&(e.key==='Enter'||e.key===' ')){e.preventDefault();e.target.click();}});
+$('composer').addEventListener('submit',e=>{e.preventDefault();send($('ask').value);});
+$('ask').addEventListener('input',()=>{autosize();const v=$('ask').value;if(v.startsWith('/')){S.toolbox=true;S.tbIndex=0;}else if(S.toolbox&&!v)S.toolbox=false;renderToolbox();});
+$('ask').addEventListener('keydown',e=>{
+  if(S.toolbox){const items=[...document.querySelectorAll('.tb-i')];
+    if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();S.tbIndex=(S.tbIndex+(e.key==='ArrowDown'?1:-1)+items.length)%Math.max(items.length,1);renderToolbox();return;}
+    if(e.key==='Enter'&&items[S.tbIndex]){e.preventDefault();fill(items[S.tbIndex].dataset.fill);return;}
+    if(e.key==='Escape'){S.toolbox=false;renderToolbox();return;}}
+  if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();$('composer').requestSubmit();}
+});
+
+
+/* ================= quick start: pick product, area and requirements, then run the analysis directly ================= */
+const QS_OUT=[['customers','卖给谁、找哪些渠道的分析'],['stores','首访门店名单和拜访理由'],['pitch','每家店的进店话术，没资料的内容写成到店要问的问题']];
+let QS_CAT=null;
+async function openQuick(){
+  if(!S.online){alertDraft('这是离线页面，没有连接 Agent 服务，不能开始新的分析。');return;}
+  if(QS_CAT===null){try{QS_CAT=await api('library');}catch{QS_CAT={products:[],areas:[]};}}
+  const ps=productChoices(),as=areaChoices();
+  $('qs-p').innerHTML=ps.map(p=>`<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('');
+  $('qs-a').innerHTML=as.map(a=>`<option value="${esc(a.id)}">${esc(a.name||AREA[a.id]||a.id)}</option>`).join('');
+  $('qs-p').value=$('p-sel')?.value||(ps.some(p=>p.id==='xinxian-huoquan')?'xinxian-huoquan':ps[0]?.id);
+  $('qs-a').value=$('a-sel')?.value||(as.some(a=>a.id==='shishan')?'shishan':as[0]?.id);
+  $('qs-out').innerHTML='<legend>要交付什么</legend>'+QS_OUT.map(([k,n])=>`<label class="opt"><input type="checkbox" name="out" value="${k}" checked>${esc(n)}</label>`).join('');
+  $('qs-people').value='';$('qs-weeks').value='';$('qs-extra').value='';$('qs-err').textContent='';
+  quickOptions();
+  if(!$('qs-dialog').open)$('qs-dialog').showModal();
+}
+function quickOptions(){
+  const a=areaChoices().find(x=>x.id===$('qs-a').value),max=a?.radius_m?Math.min(3,a.radius_m/1000):3;
+  const radii=[1,2,3].filter(r=>r<=max);if(!radii.length)radii.push(+max.toFixed(1));
+  const cur=+($('qs-r').querySelector('input:checked')?.value||radii.at(-1));
+  $('qs-r').innerHTML='<legend>覆盖范围</legend>'+radii.map(r=>`<label class="opt"><input type="radio" name="radius" value="${r}" ${r===(radii.includes(cur)?cur:radii.at(-1))?'checked':''}>${r} 公里</label>`).join('');
+  const p=productChoices().find(x=>x.id===$('qs-p').value),base=p?.base||p?.id;
+  const chans=(QS_CAT?.products||[]).find(x=>x.id===base)?.channels||[];
+  $('qs-ch').hidden=!chans.length;
+  $('qs-ch').innerHTML='<legend>重点渠道（可不选，由 Agent 判断）</legend>'+chans.map(n=>`<label class="opt"><input type="checkbox" name="ch" value="${esc(n)}">${esc(n)}</label>`).join('');
+  quickPreview();
+}
+function quickText(){
+  const p=productChoices().find(x=>x.id===$('qs-p').value),a=areaChoices().find(x=>x.id===$('qs-a').value);
+  const r=$('qs-r').querySelector('input:checked')?.value||'3',people=+$('qs-people').value||0,weeks=+$('qs-weeks').value||0;
+  const ch=[...$('qs-ch').querySelectorAll('input:checked')].map(i=>i.value);
+  const out=[...$('qs-out').querySelectorAll('input:checked')].map(i=>QS_OUT.find(o=>o[0]===i.value)[1]);
+  const extra=$('qs-extra').value.trim();
+  let t=`${a?.name||AREA[a?.id]||''}商圈周边 ${r} 公里推广${p?.name||''}`;
+  if(people)t+=`，${people} 个地推`;if(weeks)t+=`，做 ${weeks} 周`;t+='。';
+  if(ch.length)t+=`优先${ch.join('、')}。`;
+  if(out.length)t+=`请给出：${out.join('；')}。`;
+  if(extra)t+=extra.replace(/[。.]?$/,'。');
+  return t;
+}
+function quickPreview(){$('qs-preview').textContent=quickText();$('qs-go').disabled=!$('qs-out').querySelector('input:checked')||S.sending;}
+async function startQuick(){
+  if(S.sending)return;
+  if(!S.config?.live_ready){$('qs-err').textContent=`本地服务缺少实况配置（${(S.config?.missing||[]).join('、')}），不能开始。`;return;}
+  const p=productChoices().find(x=>x.id===$('qs-p').value),a=areaChoices().find(x=>x.id===$('qs-a').value);
+  const input=quickText();
+  const body={profile:p?.base||p?.id,area:a?.base||a?.id,input,mode:'live',
+    library:{product:p?.base?{name:p.name,facts:p.facts,source:p.source}:null,area:a?.base?{name:a.name,radius_m:a.radius_m}:null,
+             skills:LIB.skills.filter(s=>s.enabled).map(({name,instructions,stages})=>({name,instructions,stages}))}};
+  S.sending=true;$('qs-go').disabled=true;$('qs-go').textContent='正在提交…';$('qs-err').textContent='';
+  try{
+    const {run_id}=await api('tasks',body);
+    $('qs-dialog').close();
+    await refreshList();
+    S.views[run_id]={pending:true,status:'queued',task:{message:input}};
+    const target=S.convs.find(x=>x.turns?.includes(run_id));
+    S.sending=false;select(target?target.id:run_id);
+  }catch(e){$('qs-err').textContent=e.message||'提交失败，请重试';}
+  finally{S.sending=false;$('qs-go').textContent='开始分析';quickPreview();renderComposer();}
+}
+$('qs-close').addEventListener('click',()=>$('qs-dialog').close());
+$('qs-form').addEventListener('change',e=>{if(e.target.matches('#qs-p,#qs-a'))quickOptions();else quickPreview();});
+$('qs-form').addEventListener('input',quickPreview);
+$('qs-form').addEventListener('submit',e=>{e.preventDefault();startQuick();});
+
+/* Browser-owned library; task submission freezes the chosen records. */
+let LIB={products:[],areas:[],skills:[]},catalog={products:[],areas:[]},libKind='products',editId=null;
+try{const saved=JSON.parse(localStorage.getItem('way2agi-library-v1')||'{}');for(const k of Object.keys(LIB))if(Array.isArray(saved[k]))LIB[k]=saved[k];}catch{}
+const productChoices=()=>[...S.profiles,...LIB.products];
+const areaChoices=()=>[...S.areas,...LIB.areas];
+function selectedLibrary(){
+ const p=productChoices().find(x=>x.id===$('p-sel')?.value),a=areaChoices().find(x=>x.id===$('a-sel')?.value);
+ return {profile:p?.base||p?.id,area:a?.base||a?.id,library:{product:p?.base?{name:p.name,facts:p.facts,source:p.source}:null,area:a?.base?{name:a.name,radius_m:a.radius_m}:null,skills:LIB.skills.filter(s=>s.enabled).map(({name,instructions,stages})=>({name,instructions,stages}))}};
+}
+async function openLibrary(kind){
+ libKind=kind;editId=null;
+ try{catalog=await api('library');}catch{catalog={products:S.profiles,areas:S.areas};}
+ renderLibrary();if(!$('library-dialog').open)$('library-dialog').showModal();
+}
+function renderLibrary(){
+ const names={products:'产品库',areas:'商圈库',skills:'技能'};
+ $('library-title').textContent=names[libKind];
+ const built=libKind==='products'?catalog.products:libKind==='areas'?catalog.areas:[];
+ $('library-body').innerHTML=`<p class="small">内置资料供大家使用；我的资料仅保存在当前浏览器。任务会保存所选资料的快照，后续编辑不改变历史任务。</p>
+ ${libKind==='skills'?'<p>技能是按环节注入的执行指引。当前模型工具循环可使用“找终端”技能；其他环节仍是规则执行，指引已入上下文但不会替代规则。技能不安装代码或增加新工具。</p>':''}
+ ${libKind==='areas'?'<p>当前支持基于三个已有商圈创建范围方案，中心沿用数据商圈，半径不超过 3 公里。新增其他城市或中心位置需另行接入真实数据。</p>':''}
+ <button type="button" class="newbtn" data-lib-new>新增${names[libKind]}</button>
+ ${built.length?'<h3>内置资料</h3>':''}${built.map(x=>`<article class="lib-card"><h4>${esc(x.name||AREA[x.id]||x.id)}</h4><p>${esc(x.facts||'已有商户 '+(x.total??'未知')+' 家')}</p>${x.channels?`<p class="small">渠道：${x.channels.map(esc).join('、')}</p>`:''}<p class="small">${esc(x.source||x.site?.location_note||'商圈快照')}</p></article>`).join('')}
+ <h3>我的${names[libKind]}</h3>${LIB[libKind].map(x=>`<article class="lib-card"><h4>${esc(x.name)}</h4><p style="white-space:pre-wrap">${esc(x.facts||x.instructions||(AREA[x.base]||x.base)+' · '+x.radius_m/1000+' 公里')}</p>${x.stages?`<p class="small">适用：${x.stages.map(s=>esc(SNAME[s])).join('、')}</p><label><input type="checkbox" data-lib-enable="${esc(x.id)}" ${x.enabled?'checked':''}> 新任务启用</label>`:''}<div><button type="button" class="linkbtn" data-lib-edit="${esc(x.id)}">编辑</button> <button type="button" class="linkbtn" data-lib-delete="${esc(x.id)}">删除</button></div></article>`).join('')||'<p class="small">还没有个人资料。</p>'}<div id="lib-editor"></div><p role="status" id="lib-status"></p>`;
+}
+function editLibrary(id){
+ editId=id;const x=LIB[libKind].find(x=>x.id===id)||{};
+ const bases=libKind==='products'?S.profiles:S.areas;
+ $('lib-editor').innerHTML=`<form id="lib-form"><h3>${id?'编辑':'新增'}</h3><label>名称<input name="name" required maxlength="100" value="${esc(x.name||'')}"></label>
+ ${libKind!=='skills'?`<label>${libKind==='products'?'渠道分析模板（沿用其渠道与适用场景，不沿用产品事实）':'数据基础商圈（沿用中心与商户数据）'}<select name="base">${bases.map(b=>`<option value="${esc(b.id)}" ${x.base===b.id?'selected':''}>${esc(b.name||AREA[b.id]||b.id)}</option>`).join('')}</select></label>`:''}
+ ${libKind==='products'?`<label>产品事实、卖点与背景<textarea name="facts" required maxlength="6000" rows="5">${esc(x.facts||'')}</textarea></label><label>资料来源<input name="source" required maxlength="500" value="${esc(x.source||'用户提供')}"></label>`:''}
+ ${libKind==='areas'?`<label>覆盖半径（米，1–3000）<input name="radius_m" type="number" min="1" max="3000" required value="${x.radius_m||3000}"></label>`:''}
+ ${libKind==='skills'?`<label>执行指引<textarea name="instructions" required maxlength="4000" rows="5">${esc(x.instructions||'')}</textarea></label><fieldset><legend>适用环节</legend>${STAGES.map(([id,n])=>`<label><input type="checkbox" name="stages" value="${id}" ${(x.stages||['L1D']).includes(id)?'checked':''}>${esc(n)}</label>`).join('')}</fieldset><label><input type="checkbox" name="enabled" ${x.enabled?'checked':''}> 新任务默认启用</label>`:''}
+ <button type="submit" class="newbtn">保存到我的资料</button></form>`;
+ $('lib-editor').scrollIntoView({block:'nearest'});
+}
+function saveLibrary(){localStorage.setItem('way2agi-library-v1',JSON.stringify(LIB));$('pickers').innerHTML='';renderComposer();renderThread();}
+$('library-dialog').addEventListener('click',e=>{
+ const t=e.target.closest('button');if(!t)return;
+ if(t.id==='library-close')return $('library-dialog').close();
+ if(t.hasAttribute('data-lib-new'))return editLibrary(null);
+ if(t.dataset.libEdit)return editLibrary(t.dataset.libEdit);
+ if(t.dataset.libDelete){const before=LIB[libKind];LIB[libKind]=before.filter(x=>x.id!==t.dataset.libDelete);try{saveLibrary();renderLibrary();}catch{LIB[libKind]=before;$('lib-status').textContent='浏览器存储空间不足，未保存。';}}
+});
+$('library-dialog').addEventListener('change',e=>{if(e.target.dataset.libEnable){const x=LIB.skills.find(x=>x.id===e.target.dataset.libEnable),old=x.enabled;x.enabled=e.target.checked;try{saveLibrary();}catch{x.enabled=old;e.target.checked=old;$('lib-status').textContent='未能保存设置。';}}});
+$('library-dialog').addEventListener('submit',e=>{
+ e.preventDefault();const f=new FormData(e.target),x={id:editId||'personal-'+crypto.randomUUID(),name:String(f.get('name')).trim()};
+ if(libKind==='products')Object.assign(x,{base:f.get('base'),facts:String(f.get('facts')).trim(),source:String(f.get('source')).trim()});
+ if(libKind==='areas')Object.assign(x,{base:f.get('base'),radius_m:Number(f.get('radius_m'))});
+ if(libKind==='skills'){Object.assign(x,{instructions:String(f.get('instructions')).trim(),stages:f.getAll('stages'),enabled:f.has('enabled')});if(!x.stages.length){$('lib-status').textContent='请选择至少一个适用环节。';return;}}
+ const old=LIB[libKind];LIB[libKind]=[...old.filter(y=>y.id!==x.id),x];try{saveLibrary();renderLibrary();$('lib-status').textContent='已保存。新建任务时可选择。';}catch{LIB[libKind]=old;$('lib-status').textContent='浏览器存储空间不足，未保存。';}
+});
+document.querySelectorAll('[data-library]').forEach(b=>b.addEventListener('click',()=>openLibrary(b.dataset.library)));
+
+/* ================= hero (entry screen) ================= */
+const H={view:null,conv:null,raf:0,t0:0,log:[],logTimer:0,flowTimer:0,pts:null};
+const FLOW=[['L1','卖给谁'],['L1D','找终端'],['L2','去哪里'],['L3','进哪家'],['L4','怎么说'],['PACK','作战包']];
+const heroOk=v=>v?.steps?.length&&v.map?.found?.length&&v.status==='completed';
+async function heroSource(){
+  // Showcase = a real run where the agent actually searched; never invented.
+  if(!S.online){const c=S.convs.find(x=>heroOk(S.views[x.turns.at(-1)]));if(c){H.conv=c;H.view=S.views[c.turns.at(-1)];}return;}
+  const cand=S.convs.filter(x=>x.status==='completed'&&x.turns).sort((a,b)=>(!!S.views[b.turns.at(-1)])-(!!S.views[a.turns.at(-1)])||(b.mode==='回放')-(a.mode==='回放'));
+  for(const x of cand.slice(0,8)){
+    try{await loadTurn(x.turns.at(-1));}catch{}
+    const v=S.views[x.turns.at(-1)];if(heroOk(v)){H.conv=x;H.view=v;return;}
+  }
+}
+function heroPicked(){
+  const prof=productChoices().find(p=>p.id===$('h-p')?.value),ar=areaChoices().find(a=>a.id===$('h-a')?.value);
+  return {profile:$('h-p')?.value,area:$('h-a')?.value,product:prof?.name||'洞庭山·新鲜活泉',areaName:ar?.name||AREA[$('h-a')?.value]||'狮山'};
+}
+function heroRender(){
+  const v=H.view;
+  $('h-flow').innerHTML=FLOW.map(([id,n],i)=>`${i?'<b>→</b>':''}<span data-f="${id}">${n}</span>`).join('');
+  if(S.online&&S.profiles.length&&!$('h-p')){
+    $('h-pick').innerHTML=`<label>产品<select id="h-p">${productChoices().map(p=>`<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('')}</select></label><label>商圈<select id="h-a">${areaChoices().map(a=>`<option value="${esc(a.id)}">${esc(a.name||AREA[a.id]||a.id)}</option>`).join('')}</select></label>`;
+    $('h-p').value=S.profiles.some(p=>p.id==='xinxian-huoquan')?'xinxian-huoquan':S.profiles[0].id;
+    if(areaChoices().some(a=>a.id==='shishan'))$('h-a').value='shishan';
+  }else if(!S.online)$('h-pick').innerHTML=`<span class="fixed">产品 · ${esc(v?.product||'洞庭山·新鲜活泉')}</span><span class="fixed">商圈 · ${esc(AREA[v?.area_id]||'狮山')}</span>`;
+  heroExamples();
+  const n=S.convs.filter(c=>!c.draft).length;
+  const r=H.resume&&S.convs.includes(H.resume)?H.resume:null,rt=r?String(r.title||'上次的任务'):'';
+  $('h-hist').textContent=r?`继续：${rt.length>16?rt.slice(0,16)+'…':rt}`:n?`任务记录 · ${n}`:'进入工作台';
+  $('h-play').hidden=!(H.conv&&v?.steps?.length);
+  $('h-play-sub').textContent=v?`真实录制 · ${v.model||'模型'} · ${v.steps.filter(s=>s.kind==='tool').length} 次工具调用`:'';
+  if(v&&H.statsFor!==v){H.statsFor=v;
+    const found=v.map.found.length,terms=(v.terminals||[]).length;
+    $('h-stats').innerHTML=[['',v.map.base.length,`${esc(AREA[v.area_id]||'')}缓存商户`],['or',found,'Agent 高德补采'],['cy',terms,'首访门店'],['',(v.pitches||[]).length,'渠道话术 · 合规通过']]
+      .map(([c,num,l])=>`<div class="stat ${c}"><b data-to="${num}">0</b><span>${l}</span></div>`).join('')+`<span class="src">数字来自一次真实录制，不是示意</span>`;
+    $('h-hud').hidden=!(v.steps||[]).length;
+    $('h-hud-t').textContent=`AGENT · 找终端 · ${v.model||''}`;
+    countUp();
+  }else if(!v){$('h-stats').innerHTML='';$('h-hud').hidden=true;}
+}
+function heroExamples(){
+  const p=S.online&&$('h-p')?heroPicked():{product:H.view?.product||'洞庭山·新鲜活泉',areaName:AREA[H.view?.area_id]||'狮山'};
+  const ex=TEMPLATES({product:p.product,area:p.areaName});
+  $('h-ask').placeholder=ex[0];
+  $('h-ex').innerHTML=ex.map(t=>`<button type="button" data-hx="${esc(t)}">${esc(t)}</button>`).join('');
+}
+function countUp(){
+  document.querySelectorAll('#h-stats b[data-to]').forEach((b,i)=>{const to=+b.dataset.to,t0=performance.now()+300+i*120,d=1100;
+    const f=now=>{const k=Math.min(1,Math.max(0,(now-t0)/d));b.textContent=Math.round(to*(1-Math.pow(1-k,3)));if(k<1&&H.raf)requestAnimationFrame(f);else b.textContent=to;};
+    reduced?b.textContent=to:requestAnimationFrame(f);});
+}
+function stepLine(s,v){
+  if(s.kind==='model')return s.calls?.length?`<span class="k">思考</span> 决定调用 ${esc(s.calls.join('、'))}`:'<span class="k">思考</span> 整理结论';
+  if(s.kind==='rejected')return '<span class="k">复核</span> 结论被代码打回，重写';
+  if(s.tool==='search_merchants')return `<span class="k">高德</span> ${esc(s.args?.keywords||s.label||'')} → 新增 ${s.new??0} 家`;
+  if(s.by_channel){const ch=Object.entries(s.by_channel).map(([id,n])=>`${esc(v.channel_names?.[id]||id)} ${n}`).join(' · ');return `<span class="k">盘点</span> ${ch}`;}
+  return `<span class="k">工具</span> ${esc(s.label||s.tool)}`;
+}
+function heroLog(){
+  const v=H.view;if(!v?.steps?.length)return;let i=0;const ol=$('h-log');ol.innerHTML='';
+  const tick=()=>{const s=v.steps[i%v.steps.length];
+    if(i&&i%v.steps.length===0)ol.innerHTML='';
+    ol.insertAdjacentHTML('beforeend',`<li>${stepLine(s,v)}</li>`);while(ol.children.length>5)ol.firstElementChild.remove();
+    i++;H.logTimer=setTimeout(tick,reduced?99999:1500);};
+  tick();
+  let k=0;const flow=()=>{document.querySelectorAll('#h-flow span').forEach((e,j)=>e.classList.toggle('on',j===k%FLOW.length));k++;H.flowTimer=setTimeout(flow,1300);};
+  if(!reduced)flow();
+}
+function radarSetup(){
+  const v=H.view,cv=$('radar');if(!cv)return;
+  const R=v?.brief?.radius_m||v?.radius||3000;
+  const base=(v?.map?.base||[]).map(([x,y])=>({x,y,a:Math.atan2(-y,x)}));
+  const found=(v?.map?.found||[]).map((f,i)=>({x:f.x,y:f.y,a:Math.atan2(-f.y,f.x),i}));
+  const terms=(v?.terminals||[]).filter(t=>t.grade!=='C').map(t=>({x:t.x,y:t.y,g:t.grade}));
+  const zones=(v?.map?.zones||[]).map(z=>z.id.split(':').map(Number));
+  H.pts={R,base,found,terms,zones,name:AREA[v?.area_id]||''};
+}
+function radarFrame(now){
+  const cv=$('radar');if(!cv||$('hero').hidden){H.raf=0;return;}
+  const dpr=Math.min(2,devicePixelRatio||1),W=cv.clientWidth,Hh=cv.clientHeight;
+  if(cv.width!==Math.round(W*dpr)||cv.height!==Math.round(Hh*dpr)){cv.width=Math.round(W*dpr);cv.height=Math.round(Hh*dpr);}
+  const g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,W,Hh);
+  const P=H.pts;if(!P)return;
+  const wide=W>900,cx=wide?W*0.68:W*0.5,cy=wide?Hh*0.47:Hh*0.24,rad=wide?Math.min(W*0.3,Hh*0.42):Math.min(W*0.46,Hh*0.22);
+  const sc=rad/P.R,t=reduced?1e9:now-H.t0,sweep=reduced?0:(t*0.00075)%(Math.PI*2);
+  const X=x=>cx+x*sc,Y=y=>cy-y*sc;
+  // rings + cross
+  g.lineWidth=1;
+  for(let k=1;k<=Math.ceil(P.R/1000);k++){const r=Math.min(k*1000,P.R)*sc;g.strokeStyle=k*1000>=P.R?'rgba(79,209,230,.45)':'rgba(110,190,210,.14)';g.beginPath();g.arc(cx,cy,r,0,Math.PI*2);g.stroke();
+    g.fillStyle='rgba(140,180,190,.55)';g.font='11px '+getComputedStyle(document.body).getPropertyValue('--mono');g.fillText(`${Math.min(k,P.R/1000)}KM`,cx+r*0.72+4,cy-r*0.7);}
+  g.strokeStyle='rgba(110,190,210,.10)';g.beginPath();g.moveTo(cx-rad,cy);g.lineTo(cx+rad,cy);g.moveTo(cx,cy-rad);g.lineTo(cx,cy+rad);g.stroke();
+  // sweep wedge
+  if(!reduced){for(let k=0;k<36;k++){const a0=-sweep-k*0.022;g.fillStyle=`rgba(79,209,230,${0.16*(1-k/36)})`;g.beginPath();g.moveTo(cx,cy);g.arc(cx,cy,rad,a0-0.022,a0);g.closePath();g.fill();}
+    g.strokeStyle='rgba(120,230,245,.8)';g.beginPath();g.moveTo(cx,cy);g.lineTo(cx+Math.cos(-sweep)*rad,cy+Math.sin(-sweep)*rad);g.stroke();}
+  const lit=a=>{if(reduced)return .5;let d=(sweep-((a+Math.PI*2)%(Math.PI*2))+Math.PI*4)%(Math.PI*2);return Math.exp(-d*1.6);};
+  // cached merchants
+  for(const p of P.base){const b=lit(p.a);g.fillStyle=`rgba(${150+90*b|0},${200+40*b|0},${215+30*b|0},${0.3+0.65*b})`;g.fillRect(X(p.x)-1.1,Y(p.y)-1.1,2.2,2.2);}
+  // zones appear after the agent finished
+  const tFound=2200,per=Math.max(18,Math.min(60,5200/Math.max(1,P.found.length))),tDone=tFound+P.found.length*per;
+  if(t>tDone){const k=Math.min(1,(t-tDone)/800);for(const [zx,zy] of P.zones){g.fillStyle=`rgba(79,209,230,${0.12*k})`;g.strokeStyle=`rgba(79,209,230,${0.7*k})`;g.fillRect(X(zx*500),Y((zy+1)*500),500*sc,500*sc);g.strokeRect(X(zx*500),Y((zy+1)*500),500*sc,500*sc);}}
+  // agent-found merchants pop in
+  for(const f of P.found){const at=tFound+f.i*per;if(t<at)continue;const age=t-at,b=lit(f.a);
+    if(age<900&&!reduced){g.strokeStyle=`rgba(255,159,67,${1-age/900})`;g.beginPath();g.arc(X(f.x),Y(f.y),2+age/900*14,0,Math.PI*2);g.stroke();}
+    g.fillStyle=`rgba(255,${150+60*b|0},${67+60*b|0},${0.75+0.25*b})`;g.beginPath();g.arc(X(f.x),Y(f.y),2.4+b*1.2,0,Math.PI*2);g.fill();}
+  // first-visit terminals
+  if(t>tDone+600){const k=Math.min(1,(t-tDone-600)/700),pulse=reduced?0:(Math.sin(t/420)+1)/2;
+    for(const m of P.terms){g.strokeStyle=`rgba(79,209,230,${(0.55+0.4*pulse)*k})`;g.lineWidth=m.g==='A'?2:1.3;g.beginPath();g.arc(X(m.x),Y(m.y),(m.g==='A'?7:5)+pulse*2,0,Math.PI*2);g.stroke();}g.lineWidth=1;}
+  // centre
+  g.fillStyle='#e9f4f7';g.beginPath();g.arc(cx,cy,3.5,0,Math.PI*2);g.fill();
+  g.fillStyle='rgba(233,244,247,.85)';g.font='600 12px '+getComputedStyle(document.body).getPropertyValue('--font');g.fillText(P.name,cx+8,cy-8);
+  if(!reduced)H.raf=requestAnimationFrame(radarFrame);
+}
+function showHero(){
+  H.dismissed=false;stopReplay(false);$('hero').hidden=false;$('hero').classList.remove('leaving');
+  H.statsFor=null;heroRender();H.t0=performance.now();radarSetup();clearTimeout(H.logTimer);clearTimeout(H.flowTimer);heroLog();
+  cancelAnimationFrame(H.raf);H.raf=requestAnimationFrame(radarFrame);
+  try{history.replaceState(null,'',location.pathname+location.search);}catch{}
+  if(document.activeElement!==$('h-ask'))setTimeout(()=>$('h-ask').focus({preventScroll:true}),400);
+}
+function leaveHero(then){
+  const h=$('hero');H.dismissed=true;if(h.hidden){then?.();return;}
+  clearTimeout(H.logTimer);clearTimeout(H.flowTimer);
+  h.classList.add('leaving');then?.();
+  const app=document.querySelector('.app');app.classList.remove('enter');void app.offsetWidth;app.classList.add('enter');
+  setTimeout(()=>{h.hidden=true;cancelAnimationFrame(H.raf);H.raf=0;},reduced?0:600);
+}
+function heroWarn(html){$('h-warn').innerHTML=html;$('h-warn').hidden=!html;}
+async function heroSubmit(){
+  const text=$('h-ask').value.trim()||$('h-ask').placeholder;
+  if(H.conn){heroWarn('<span>正在连接 Agent 服务…</span>');await H.conn;}
+  if(!S.online||!S.config?.live_ready){
+    heroWarn(`<span>${!S.online?'这是离线页面，没有连接 Agent 服务，不会执行这条任务。':`本地服务缺少实况配置（${esc((S.config?.missing||[]).join('、'))}），不会执行。`}</span>${H.conv?'<button type="button" data-hplay>看一次真实录制的执行过程</button>':''}`);
+    return;
+  }
+  heroWarn('');const p=heroPicked();
+  leaveHero(()=>newTask());
+  // The composer's pickers are what send() reads; mirror the entry-screen choice into them.
+  if($('p-sel')&&p.profile)$('p-sel').value=p.profile;if($('a-sel')&&p.area)$('a-sel').value=p.area;
+  await send(text);
+}
+async function heroPlay(){if(!H.conv)return;const id=H.conv.turns.at(-1);if(S.online){try{await loadTurn(id);}catch{}}
+  leaveHero(()=>{select(H.conv.id);setTimeout(startReplay,reduced?0:500);});}
+function heroHistory(){leaveHero(()=>{const c=(H.resume&&S.convs.includes(H.resume)?H.resume:null)||S.convs.find(c=>!c.draft);c?select(c.id):newTask();});}
+$('h-form').addEventListener('submit',e=>{e.preventDefault();heroSubmit();});
+$('hero').addEventListener('click',e=>{const t=e.target.closest('[data-hx],[data-hplay],#h-play,#h-hist');if(!t)return;
+  if(t.dataset.hx!=null){$('h-ask').value=t.dataset.hx;$('h-ask').focus();return;}
+  if(t.matches('[data-hplay],#h-play'))return heroPlay();
+  if(t.id==='h-hist')return heroHistory();});
+$('hero').addEventListener('change',e=>{if(e.target.matches('#h-p,#h-a'))heroExamples();});
+document.querySelector('.brand').addEventListener('click',showHero);
+document.querySelector('.brand').setAttribute('title','回到首页');
+
+/* ================= boot ================= */
+async function boot(){
+  // Every load starts on the entry screen; a #task link becomes a 「继续」 button instead of skipping it.
+  const want=decodeURIComponent(location.hash.slice(1)).replace(/^task\//,'');
+  $('hero').hidden=false;H.view=(DATA?.tasks||[]).find(heroOk)||null;showHero();
+  let done;H.conn=new Promise(r=>done=r);
+  if(location.protocol!=='file:'){
+    try{
+      const [config,profiles,areas]=await Promise.all([api('tasks/config'),api('profiles'),api('areas')]);
+      Object.assign(S,{online:true,config,profiles,areas});document.body.classList.toggle("public-demo",!!config.public_demo);document.querySelector(".list-h").textContent=config.public_demo?"我的任务 · 仅当前浏览器":"任务记录";await refreshList();
+    }catch{S.online=false;}
+  }
+  if(S.online){for(const [id,item] of Object.entries(CHAT)){try{const data=await api('chat/'+id);item.data={...data,conversation_id:id};if(!S.convs.some(c=>c.id===item.root)&&!data.latest_run)S.convs.push({id:item.root,draft:true,title:data.messages.find(m=>m.role==='user')?.content.slice(0,60)||'对话'});}catch{delete CHAT[id];}}saveChats();}
+  if(!S.online)S.convs=offlineConvs();
+  done();H.conn=null;
+  const hit=want&&S.convs.find(c=>c.id===want||c.turns?.includes(want));
+  H.resume=hit||null;
+  // Leave the user's own pick alone if they already left the entry screen while we were loading.
+  if(!(H.dismissed&&conv()&&!conv().draft)){if(hit)select(hit.id);else{if(S.convs.length)select(S.convs[0].id);else if(!conv())newTask();
+    // Auto-selected behind the entry screen, not chosen by the user: keep the URL clean.
+    if(!H.dismissed){try{history.replaceState(null,'',location.pathname+location.search);}catch{}}}}
+  if(H.dismissed)return;
+  if($('hero').hidden)showHero();else heroRender();
+  const had=H.view;await heroSource();
+  if(H.dismissed||$('hero').hidden)return;
+  if(had)H.view=had;
+  if(!had&&H.view)showHero();else heroRender();
+}
+boot();
+})();
+</script>
+</body>
+</html>

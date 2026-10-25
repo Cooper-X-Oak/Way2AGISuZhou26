@@ -1,0 +1,96 @@
+{
+  "baseline_commit": "f2dac2109709783e40ab3841881a5b1aacccd49f",
+  "mode": "rules",
+  "approval": "auto (demo)",
+  "test_result": {
+    "passed": 243,
+    "warnings": 1,
+    "seconds": 321.33
+  },
+  "audit": {
+    "assertions": {
+      "completed": true,
+      "all_eight_stages": true,
+      "all_final_checks_pass": true,
+      "nonempty_unique_terminals": true,
+      "terminals_in_input_pois": true,
+      "trace_covers_terminals": true,
+      "csv_matches_terminals": true,
+      "route_no_duplicates": true,
+      "route_and_backlog_partition_ab": true,
+      "daily_first_visit_limit": true,
+      "auto_approval_labelled": true,
+      "rules_label": true,
+      "attempt_files_readable": true
+    },
+    "passed": true,
+    "poi_count": 1199,
+    "terminal_count": 229,
+    "grades": {
+      "C": 157,
+      "A": 46,
+      "B": 26
+    },
+    "selected_zone_count": 4,
+    "scheduled_count": 72,
+    "backlog_count": 0,
+    "trace_count": 229,
+    "review_queue_count": 954,
+    "attempt_count": 8,
+    "failed_attempt_count": 0,
+    "backtracks": 0,
+    "recruitment_gaps": 0,
+    "coverage_truncated": true,
+    "checks": {
+      "L0": true,
+      "L1": true,
+      "L2": true,
+      "L2C": true,
+      "L3": true,
+      "L3P": true,
+      "L4": true,
+      "PACK": true
+    }
+  },
+  "observed": {
+    "material_count": 73,
+    "unique_pitches": 8,
+    "review_by_stage": {
+      "L0": 1,
+      "L1": 8,
+      "L2": 90,
+      "L2C": 90,
+      "L3": 230,
+      "L3P": 461,
+      "L4": 74
+    },
+    "sample_material": {
+      "compliance": {
+        "hits": [],
+        "passed": true
+      },
+      "confidence": 0.65,
+      "evidence": [
+        "L1:canteen",
+        "selling_point:natural-soda",
+        "selling_point:low-sodium"
+      ],
+      "judged_by": "rules",
+      "open": [
+        "来源：档案未提供商业条件；毛利、价格带和首单政策待确认；增量点单是待验证假设。"
+      ],
+      "pitch": "老板您好，针对家庭常备场景，可把江南贡泉·天然苏打矿泉水作为顾客用水的一个选择。资料原文：具有天然苏打水特色的复合型天然矿泉水；pH 8.1±0.5、碳酸氢根≥350mg/L。建议先询问客人的用水需求，再介绍产品；是否增加点单需要试陈列验证。您可以核对进货成本与售价后再评估毛利，价格带、首单政策由品牌方和您确认，不承诺利润或销量。先了解尚未满足的用水需求，讨论补充陈列。",
+      "selling_point_ids": [
+        "natural-soda",
+        "low-sodium"
+      ],
+      "table_card": "江南贡泉·天然苏打矿泉水，餐桌常备一瓶。",
+      "target": "amap:B020017GRE"
+    }
+  },
+  "limitations": [
+    "Local rules execution only, not autonomous Agent acceptance.",
+    "Four-week dispatch and manual review-task aggregation are not phase-one requirements.",
+    "Missing optional competition/supply/price facts must not automatically block strategy."
+  ]
+}

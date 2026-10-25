@@ -90,6 +90,7 @@ class Material(Evidence):
 class Materials(Envelope):
     items: list[Material]
     seeded_for_demo: bool = False
+    agent: dict | None = None
 
 
 class CompetitionRow(Evidence):
@@ -133,3 +134,17 @@ class Pack(Envelope):
     partners: Partners
     supply_assignments: dict
     recruitment_gaps: dict
+
+
+class ChannelCoverage(Evidence):
+    channel_id: str
+    candidate_count: int = Field(ge=0)
+    status: Literal['sufficient', 'acquired', 'insufficient_after_search', 'not_searched_offline']
+    reason: str = Field(min_length=1)
+
+
+class Discovery(Envelope):
+    items: list[ChannelCoverage] = Field(min_length=1)
+    added_poi_ids: list[str]
+    added_pois: list[dict]
+    agent: dict | None

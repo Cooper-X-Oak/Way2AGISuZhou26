@@ -1,0 +1,74 @@
+# 通用 Agent runtime：公开上下文与复现
+
+> **当前提交范围已收敛为黑客松快速 Demo。** 以仓库 `AGENTS.md` 和 #19/#10/#13/#14 的最新正文为准：先跑通一个产品×一个商圈，复用现有数据与页面，展示真实工具调用和市场策略。下面的通用架构、跨品类矩阵与审阅资料保留作历史/后续参考，不是今天提交的前置条件；关闭的issues不自动恢复为依赖。业务输入“4周”不是开发周期，也不要求本轮实现四周执行系统。
+
+## 第一阶段目标（2026-10-24 用户澄清）
+
+给市场拓展经理生成基于现有信息的市场开发策略。三个商圈的已有商户数据是可复用的区域底座，可以用于水、酒、其他饮料、面包等任务；不是只服务卖水，也不是每换产品就必须重采一套区域数据。
+
+通用 runtime 应执行：理解目标 → 读取已有数据 → 判断影响决策的信息缺口 → 自主搜索/读取/计算或调用专业 Skill → 根据证据修订策略 → 检查并交付。缺能力则编排工作流和技能。不要把可由 Agent 完成的研究转成等待用户处理的清单。
+
+竞品、供货信息或价格资料不齐，不应机械阻断策略。Agent 可以搜索补充；搜不到则为空或标未知，仍基于已有信息作有解释的决策。价格、库存等事实不能编造，但缺少这些事实不妨碍写出适合当前阶段的话术、访谈提纲与切入策略。
+
+第一阶段不要求完整四周任务派发、业务员日程、复访管理或人工消化数百条复核任务。它们不是 runtime 通关的前提。用户未声明资金或模型用量不足，不得把“缺少预算”列为阻塞。
+
+## 历史基线的代码差距
+
+基线：`f2dac2109709783e40ab3841881a5b1aacccd49f`（`feat/pipeline`）。外部旧审查基线为 `aae002c`，不能混用测量值。本节描述该历史基线，不是当前能力清单。后续已加入 L1D 模型工具循环、公开产品文本回退、可交互任务与对话入口；当前行为及边界以 [Agent 工作区](../demo/agent-workspace.md) 和 [公开测试说明](../demo/public-trial.md) 为准。
+
+- 该基线的 `pipeline/engine.py` 固定8关顺序，`Judge.decide()` 一次提交JSON请求；当时没有模型工具调用循环、网页研究工具、技能发现/调用与结果回填闭环。
+- `pipeline/l4.py` 包含饮水话术和固定切入角度；`profiles.py` 限制竞品类别为水；`contracts.py` 使用餐饮网格枚举。将文件搬到skills目录但保持这些行为不变，不足以成为通用runtime。
+- `l2c.py` 向模型提供 `allowed_strategies`、`allowed_reasons` 并要求相等；模型不能根据新增证据自主修订策略。检查应验证事实引用与数学，不把代码预设的唯一商业意见当真值。
+- 产品原文依赖被Git忽略的 `.work/handbook/`。本目录公开真实产品文本与复现工具，外部开发无需读取原作者本机。
+- 现有tests包含端到端测试，之前“完全没有端到端测试”的说法不成立；缺口是可移植环境、动态补全、跨品类和实际工具调用的验收。
+
+## 下载与复现现有基线
+
+从包含本目录的公开分支或PR checkout。Python 3.11+、uv。首次安装依赖需要联网；下述rules业务运行只读缓存，不请求高德或模型。
+
+```powershell
+uv sync --locked
+# 先报告数据、来源与当前能力，不写工作资料
+uv run python docs/runtime-review/reproduce.py
+# 显式将公开真实资料放到旧引擎要求的位置，保留既有不同内容不覆盖
+uv run python docs/runtime-review/reproduce.py --prepare-sources
+# 运行当前基线；结果写 .work/reports/public-runtime-repro/
+uv run python docs/runtime-review/reproduce.py --run --area shishan --profile jiangnan-gongquan
+```
+
+`--prepare-sources` 是复现适配，不是最终源码修复；正式实现应把资料来源与运行上下文接线，摆脱隐藏目录依赖。`dongting-brief.md` 保留本地源文件字节和原文，`handbook.md` 仅保留赛道章节，不含现场网络凭据；图片/视频没有在这个文本包中重发，runtime不读取这些媒体。
+
+原始区域快照已在 `data/areas/{shishan,guanqian,ligongdi}/` 版本控制中。脚本打印两份已有档案在三个区域的渠道计数；零计数只说明当前分类映射没有匹配，不证明区域无法用于另一品类，更不证明现实没有商户。数据采样截断和来源以coverage为准。
+
+### 实际独立checkout验证
+
+2026-10-24在独立Git clone中，仅用本目录公开资料执行`--prepare-sources --run`，8关completed，run ID为`20261024T125940102134+0000-616f78e0`，运行状态时间12:59:41–13:00:11 UTC。使用已安装依赖的Python解释器，未重新验证包下载/安装；没有复制原工作区.work或伪造来源。sources的Git换行转换已禁用，使Windows checkout仍保持manifest哈希一致。
+
+## 已观测结果与新的验收
+
+之前本地rules实跑：1199个POI，4网格，229终端（A46/B26/C157），73条材料实际8种文本，954条复核记录。技术检查13项通过，243项测试通过。见 [evidence.json](evidence.json)。这些是旧流水线的结果，不是通用Agent已经实现的证据。
+
+赛百味话术出现“家庭常备”说明模板适配差，应由写作/渠道技能根据目标重写；不能推出“缺少价格所以无法写话术”。供货候选没有资质、竞品信息为空，允许明确未知并继续策略；不能伪造事实，也不必全部收齐才交付。
+
+新的验收以 [scenarios.json](scenarios.json) 的水/酒/饮料/面包跨任务矩阵为基础。它们是测试任务定义，不是真实商户调查结果或虚构产品档案。相同三个区域底座被复用，Agent按产品和任务动态选择候选及相关工具；结果不要求相同或保证成交。若任务确实要求缓存外的数据，应自主获取或解释搜索结果后给出可行替代路径，不以预设渠道零值立即结束。
+
+## 工程参考与结论边界
+
+- [Anthropic: Building effective agents](https://www.anthropic.com/research/building-effective-agents)：区别固定代码路径与模型自主选择过程/工具。用于说明当前实现与目标的差距，不强制采用特定框架。
+- [Anthropic: Effective context engineering](https://www.anthropic.com/research/effective-context-engineering-for-ai-agents)：可用按需检索和上下文管理支撑长任务。模型上下文容量是技术参数，不是用户缺钱；不能把任意40,000字符阈值当作所有模型的限制。
+
+计算和结构验收继续由代码负责；产品事实、领域知识、话术及业务策略放入输入、可配置的专业Skill与证据中。流程要能搜索、调整和重试，失败及工具过程记录可追溯。仅在真正不可执行、权限不足或关键约束冲突时报告明确阻塞，不把普通未知项变成统一关卡失败。
+
+## 公开资料范围
+
+用户授权公开项目复现上下文。品牌原文来源为公开黑客松brief（见sources/manifest.json），权利归原来源，未另行宣称其采用某个开源许可证。本包不发布API key、个人联系方式、现场Wi-Fi凭据、完整活动手册或本机路径；不需要ChatGPT会话和私有.work链接。
+
+## 公开开发入口
+
+- [#19 自主搜索、工具与Skill闭环](https://github.com/Cooper-X-Oak/Way2AGISuZhou26/issues/19)
+- [#5 通用runtime移除领域硬编码](https://github.com/Cooper-X-Oak/Way2AGISuZhou26/issues/5)
+- [#20 独立复现与资料交付](https://github.com/Cooper-X-Oak/Way2AGISuZhou26/issues/20)
+- [#21 跨品类、动态补全验收](https://github.com/Cooper-X-Oak/Way2AGISuZhou26/issues/21)
+- [#7 模型工具网关](https://github.com/Cooper-X-Oak/Way2AGISuZhou26/issues/7)、[#8 时间线](https://github.com/Cooper-X-Oak/Way2AGISuZhou26/issues/8)、[#9 自主补全优先](https://github.com/Cooper-X-Oak/Way2AGISuZhou26/issues/9)、[#10 市场策略交付](https://github.com/Cooper-X-Oak/Way2AGISuZhou26/issues/10)
+- [#11 后续阶段执行端](https://github.com/Cooper-X-Oak/Way2AGISuZhou26/issues/11)，不阻塞第一阶段。
+- [公开资料PR #22](https://github.com/Cooper-X-Oak/Way2AGISuZhou26/pull/22)

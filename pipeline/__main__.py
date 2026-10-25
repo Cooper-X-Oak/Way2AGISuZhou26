@@ -33,12 +33,27 @@ def prepare_data(params=None, area=None):
     return pois, coverage
 
 
+def load_replay(path):
+    """Recorded AMap pages: {"pages": [{"keywords"|"types": ..., "page": n, "payload": {...}}]}."""
+    from pipeline.amap import basic_payload
+    data = read(path)
+    return load_replay_pages(data.get('pages') or data.get('amap_pages') or [])
+
+
+def load_replay_pages(pages):
+    from pipeline.amap import basic_payload
+    return {json.dumps({k: row[k] for k in ('keywords', 'types') if row.get(k)} | {'page': row.get('page', 1)}, sort_keys=True, ensure_ascii=False):
+            basic_payload(row['payload']) for row in pages}
+
+
 def main():
     parser = argparse.ArgumentParser(description='快消新品渠道进入 Agent L0-L4 + PACK')
     sub = parser.add_subparsers(dest='command', required=True)
     export = sub.add_parser('export', help='导出离线网页演示数据')
     export.add_argument('--run', type=Path, required=True)
     export.add_argument('--out', type=Path, required=True)
+    demo = sub.add_parser('demo', help='一条命令的黑客松演示：新鲜活泉 × 狮山，规则对照 + Agent 补采')
+    demo.add_argument('--mode', choices=['auto', 'live', 'replay'], default='auto')
     sub.add_parser('fetch', help='显式刷新OSM缓存')
     market=sub.add_parser('fetch-market',help='三个商圈竞品和渠道伙伴；累计150搜索调用')
     market.add_argument('--amap-calls',type=int,default=150)
@@ -58,9 +73,15 @@ def main():
     run.add_argument('--profile', default='jiangnan-gongquan')
     run.add_argument('--demo-replay', choices=['compliance','backtrack'])
     run.add_argument('--auto-approve', action='store_true')
+    run.add_argument('--agent-l1d', action='store_true', help='L1D 终端发现由 Agent 执行（真实模型+高德补采），其余关卡按 --offline 规则')
+    run.add_argument('--amap-live', action='store_true', help='有录制数据时，未命中的查询仍实时调用高德（需 AMAP_KEY）')
+    run.add_argument('--amap-replay', type=Path, help='高德录制数据 JSON（见 docs/demo），命中则回放、不消耗额度')
     run.add_argument('--no-defaults', '--no-demo-profile', action='store_true', dest='no_defaults')
     run.add_argument('-o', '--output', type=Path, help='写JSON执行摘要')
     args = parser.parse_args()
+    if args.command == 'demo':
+        from pipeline.demo import main as demo_main
+        return demo_main(args.mode)
     try:
         if args.command == 'export':
             from pipeline.export import export_run
@@ -98,7 +119,9 @@ def main():
         from pipeline.market_capture import load_market
         inputs = {'request': args.input, 'site': coverage['site'], 'area_id': args.area, 'pois': pois, 'coverage': coverage,
                   'params': params, 'judge': judge, 'profile': profile,
-                  'demo_replay': args.demo_replay, 'auto_approve': args.auto_approve, 'no_defaults': args.no_defaults}
+                  'demo_replay': args.demo_replay, 'auto_approve': args.auto_approve, 'no_defaults': args.no_defaults,
+                  'agent_l1d': args.agent_l1d, 'agent_echo': args.agent_l1d, 'amap_live': args.amap_live}
+        if args.amap_replay: inputs['amap_replay'] = load_replay(args.amap_replay)
         inputs['market']=load_market(args.area)
         directory, state = execute(inputs)
         result = {'run_directory': str(directory), **state}

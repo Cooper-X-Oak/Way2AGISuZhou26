@@ -8,7 +8,11 @@
 
 ﻿# 快消新品市场进入 Agent v2
 
-面向区域渠道经理，用产品档案回答“卖给谁 → 去哪里 → 进哪家 → 怎么说”，输出可汇报、可执行的铺市作战包。产品差异保存在 `profiles/<id>.yaml`；引擎没有按品牌 id 分支。当前开发分支 `feat/pipeline`，Python 3.11+，uv；只提供数据、Python 与 JSON，不做 UI 或部署。
+面向区域渠道经理，用产品档案回答“卖给谁 → 去哪里 → 进哪家 → 怎么说”，输出可汇报、可执行的铺市作战包。产品差异保存在 `profiles/<id>.yaml`；引擎没有按品牌 id 分支。集成分支为 `feat/pipeline`，Python 3.11+，uv。
+
+当前黑客松入口是可交互 Agent 工作台：输入目标、查看工具过程和中间产物、补充要求继续执行。启动及三分钟操作见 [Agent 任务工作区](docs/demo/agent-workspace.md)，临时公共测试服务见 [公开测试说明](docs/demo/public-trial.md)，无需 key 的真实录制回放见 [Demo](docs/demo/README.md)。对话由模型响应，实况流程的 L1D 使用模型工具循环；其余阶段仍标记为 rules。个人产品库可在页面填写事实及来源，并选用现有渠道模板；模板不代表已验证的渠道效果。
+
+下述命令行与 `/api/runs` 是保留的规则流水线接口；页面任务使用 `/api/chat` 与 `/api/tasks`。后续维护范围见 [技术债跟踪](docs/demo/debt-followups.md)。
 
 ## 独立环境演示
 
