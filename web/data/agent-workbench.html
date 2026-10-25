@@ -368,6 +368,21 @@ tr.C td{color:var(--muted)}
 @media(max-width:860px){body.public-demo .app{grid-template-rows:150px minmax(0,1fr)}body.public-demo .side{grid-template-rows:36px 32px minmax(0,1fr)}.library-nav{grid-column:1/-1;grid-row:2}.library-nav button{padding:4px}.tasks{grid-row:3}}
 
 .markdown h1,.markdown h2,.markdown h3,.markdown h4{margin:16px 0 8px;line-height:1.4}.markdown h1{font-size:1.35em}.markdown h2{font-size:1.2em}.markdown h3,.markdown h4{font-size:1.05em}.markdown ul,.markdown ol{padding-left:24px;margin:8px 0}.markdown li{margin:5px 0}.markdown p{margin:8px 0}.markdown pre{overflow:auto;padding:12px;background:var(--sunken);border-radius:6px;white-space:pre}.markdown code{font-family:monospace;background:var(--sunken);padding:1px 4px}.markdown blockquote{border-left:3px solid var(--primary);padding-left:12px;color:var(--muted)}.markdown hr{border:0;border-top:1px solid var(--line);margin:16px 0}.md-table{overflow:auto}.markdown table{width:100%;border-collapse:collapse}.markdown th,.markdown td{padding:8px;border:1px solid var(--line)}
+/* live activity stream */
+.feed{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:6px;font-size:var(--t-sm)}
+.feed li{display:grid;grid-template-columns:62px 10px minmax(0,1fr);gap:8px;align-items:start;animation:fade .25s ease both}
+.feed li.still{animation:none}
+.feed time{font-family:var(--mono);font-size:var(--t-xs);color:var(--muted);padding-top:1px}
+.feed i{width:8px;height:8px;border-radius:50%;margin-top:6px;background:var(--idle)}
+.feed .stage i{background:var(--primary)}.feed .tool i{background:var(--found)}.feed .model i{background:var(--primary);opacity:.6}
+.feed .check.ok i,.feed .merge i{background:var(--ok)}.feed .check.bad i,.feed .rejected i,.feed .tool.bad i{background:var(--danger)}.feed .backtrack i{background:var(--found)}
+.feed .stage b{font-weight:600}
+.feed .say{display:block;margin-top:2px;color:var(--ink-2);border-left:2px solid var(--line-strong);padding-left:8px;white-space:pre-wrap}
+.feed .why{display:block;color:var(--danger);font-size:var(--t-xs)}
+.liveline{display:flex;align-items:center;gap:8px;margin-top:10px;padding:8px 10px;border-radius:8px;background:var(--primary-soft);color:var(--ink);font-size:var(--t-sm)}
+.liveline .spin{width:12px;height:12px;border-radius:50%;border:2px solid var(--primary);border-right-color:transparent;animation:spin .8s linear infinite;flex:none}
+.liveline .num{margin-left:auto;color:var(--muted);font-weight:400}
+@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
@@ -651,12 +666,26 @@ function stepHTML(s,v){
   else if(s.total!=null)r=`<span class="res">共 <span class="num">${s.total}</span> 条</span>`;
   return `<li class="t"><span class="h">${esc(s.label||s.tool)}</span>${a?`<div class="args">${a}</div>`:''}${r}</li>`;
 }
+const hhmmss=t=>{const d=new Date(t);return isNaN(d)?'':d.toLocaleTimeString('zh-CN',{hour12:false});};
+function tick(){document.querySelectorAll('[data-since]').forEach(e=>{const t=Date.parse(e.dataset.since);if(!isNaN(t)){const n=Math.max(0,Math.round((Date.now()-t)/1000));e.textContent=(e.closest('#livebar')?'· ':'')+(n<60?`${n} 秒`:`${Math.floor(n/60)} 分 ${n%60} 秒`);}});}
+setInterval(tick,1000);
+function feedHTML(v){
+  return `<ol class="feed">${(v.activity||[]).map(r=>{const cls=r.kind+(r.kind==='check'||r.kind==='tool'?(r.ok===false?' bad':' ok'):'');
+    const txt=r.kind==='stage'?`<b>${esc(r.text)}</b>`:esc(r.text);
+    return `<li class="${cls}"><time>${hhmmss(r.t)}</time><i></i><span>${txt}${r.note?`<span class="say">说明：${esc(r.note)}</span>`:''}${(r.problems||[]).length?`<span class="why">${esc(r.problems.join('；'))}</span>`:''}</span></li>`;}).join('')}</ol>`;
+}
+function activityHTML(v,running){
+  if(!(v.activity||[]).length)return '';
+  if(running)return msg('a','Agent','执行动态',`${feedHTML(v)}${v.live?`<div class="liveline"><span class="spin"></span><span>${esc(v.live.text)}</span><span class="num" data-since="${esc(v.live.since||'')}"></span></div>`:''}`);
+  return msg('s','执行动态',`${v.activity.length} 条`,`<details class="run"><summary>查看完整执行动态</summary>${feedHTML(v)}</details>`);
+}
 function turnHTML(id,idx,isLast,hideUser=false){
   const c=conv(),v=S.views[id]||{pending:true},out=[];
   const message=v.task?.message||(idx===0?c.title:'')||v.request;
   if(!hideUser)out.push(msg('u','你',idx?'补充要求':'',`<div class="bubble">${esc(message)}</div>`));
   if(v.pending||v.status==='queued'){if(isLast)out.push(msg('a','Agent','准备中','<div class="typing"><i></i><i></i><i></i></div>'));return out.join('');}
   const running=v.status==='running'||v.status==='gate_pending';
+  if(running&&(v.activity||[]).length){out.push(activityHTML(v,true));return out.join('');}
   let steps=v.steps||[];
   if(S.replay&&S.replay.id===id)steps=steps.slice(0,S.replay.k);
   if(steps.length||(running&&v.current_stage==='L1D')){
@@ -677,6 +706,7 @@ function turnHTML(id,idx,isLast,hideUser=false){
   }
   if(running&&!(v.current_stage==='L1D'))out.push(msg('s','流水线',esc('正在'+(SNAME[v.current_stage]||'')),'<div class="typing"><i></i><i></i><i></i></div>'));
   if(replaying||running)return out.join('');
+  out.push(activityHTML(v,false));
   if(v.status==='blocked'&&v.questions?.length){
     out.push(msg('s','流水线','开始前需要确认',`<div class="callout"><p>还差 ${v.questions.length} 项信息，补充后会在这个对话里继续：</p><ul>${v.questions.map(q=>`<li>${esc(q)}</li>`).join('')}</ul>${isLast?`<div class="answers">${answerChips(v).map(a=>`<button class="pill" type="button" data-fill="${esc(a)}">${esc(a)}</button>`).join('')}</div>`:''}</div>`));
   }else if(v.status==='blocked'){
@@ -702,7 +732,7 @@ function renderThread(){
   const v=lastView(),running=v&&(v.status==='running'||v.status==='gate_pending');
   $('livebar').hidden=!running&&!S.reviewing;
   if(S.reviewing)$('livebar').innerHTML='<span class="pulse"></span><b>执行已结束 · 正在更新任务文档</b>';
-  if(running){const tools=(v.steps||[]).filter(s=>s.kind==='tool').length;$('livebar').innerHTML=`<span class="pulse"></span><b>正在：${esc(SNAME[v.current_stage]||'准备')}</b>${tools?`<span>· 已调用工具 ${tools} 次</span>`:''}`;}
+  if(running){const tools=(v.activity||[]).filter(s=>s.kind==='tool').length;$('livebar').innerHTML=`<span class="pulse"></span><b>${v.live?esc(v.live.text):'正在：'+esc(SNAME[v.current_stage]||'准备')}</b>${v.live?.since?`<span data-since="${esc(v.live.since)}"></span>`:''}${tools?`<span>· 已调用工具 ${tools} 次</span>`:''}`;}
   $('replay').hidden=!c||c.draft||!v||!DONE(v.status)||!(v.steps||[]).length;
   $('replay').textContent=S.replay?'停止回看':'回看执行过程';
   if((!c||c.draft)&&!chatFor(c)&&!S.outbox[c?.id]){th.innerHTML=newTaskHTML();th.dataset.conv='';return;}
@@ -712,11 +742,12 @@ function renderThread(){
   (S.notices[c.id]||[]).forEach(n=>html+=msg('u','你','',`<div class="bubble">${esc(n.text)}</div>`)+msg('s','系统','未执行',`<div class="callout stop"><p>${esc(n.reason)}</p></div>`));
   const outgoing=S.outbox[c?.id];
   if(outgoing)html+=msg('u','你',outgoing.status==='failed'?'未收到发送确认':'发送中',`<div class="bubble">${esc(outgoing.text)}</div>${outgoing.status==='failed'?`<p class="small">${esc(outgoing.error)} · 请检查是否已执行，再重试。</p><button class="linkbtn" type="button" data-fill="${esc(outgoing.text)}">重新编辑</button>`:''}`);
-  if((outgoing?.status==='sending')||S.reviewing)html+=msg('a','Agent','正在回应','<div class="typing"><i></i><i></i><i></i></div>');
+  if((outgoing?.status==='sending')||S.reviewing)html+=msg('a','Agent','正在回应',`<div class="liveline"><span class="spin"></span><span>${S.reviewing?'把执行结果整理进任务文档':'理解你的要求，更新任务文档，判断是否开始执行'}</span>${outgoing?.started?`<span class="num" data-since="${new Date(outgoing.started).toISOString()}"></span>`:''}</div>`);
   if(S.error)html+=msg('s','系统','连接问题',`<div class="callout stop"><p>${esc(S.error)}</p></div>`);
-  const same=th.dataset.conv===String(c.id),nm=same?th.querySelectorAll('.msg').length:0,nt=same?th.querySelectorAll('.tl li:not(:has(.typing))').length:0;
+  const same=th.dataset.conv===String(c.id),nm=same?th.querySelectorAll('.msg').length:0,nt=same?th.querySelectorAll('.tl li:not(:has(.typing))').length:0,nf=same?th.querySelectorAll('.feed li').length:0;
   th.innerHTML=html;th.dataset.conv=c.id;
-  if(same){[...th.querySelectorAll('.msg')].slice(0,nm).forEach(e=>e.classList.add('still'));[...th.querySelectorAll('.tl li')].slice(0,nt).forEach(e=>e.classList.add('still'));}
+  if(same){[...th.querySelectorAll('.msg')].slice(0,nm).forEach(e=>e.classList.add('still'));[...th.querySelectorAll('.tl li')].slice(0,nt).forEach(e=>e.classList.add('still'));[...th.querySelectorAll('.feed li')].slice(0,nf).forEach(e=>e.classList.add('still'));}
+  tick();
   th.scrollTop=(atEnd||S._jump)?th.scrollHeight:pos;S._jump=false;
 }
 function newTaskHTML(){
@@ -849,7 +880,7 @@ async function send(text){
     S._jump=true;if(c&&!c.draft)render();return;
   }
   const origin=c.id;let accepted=false;
-  S.outbox[origin]={text,status:'sending'};
+  S.outbox[origin]={text,status:'sending',started:Date.now()};
   if(c.draft&&!c.title)c.title=text.slice(0,60);
   $('ask').value='';autosize();S._jump=true;
   S.sending=true;S.error='';renderList();renderComposer();renderThread();

@@ -39,6 +39,80 @@ def _ledger(directory):
     return rows
 
 
+# The model's visible message written alongside its tool calls (agent_loop keeps message.content only;
+# provider-side hidden reasoning such as reasoning_content is never stored). Set False to hide it again.
+SHOW_AGENT_NOTES = True
+STAGE_NAME = {'L0': '立项', 'L1': '卖给谁', 'L1D': '找终端', 'L2': '去哪里', 'L2C': '对手', 'L3': '进哪家', 'L3P': '供货', 'L4': '怎么说', 'PACK': '作战包'}
+STEP_LABEL = {'area_inventory': '盘点现有商户', 'search_merchants': '高德补采', 'list_merchants': '查看候选',
+              'list_targets': '读取话术目标', 'check_pitch': '自查话术'}
+
+
+def _activity(ledger, raw_steps, status, poi_names, channel_names=None):
+    """Time-ordered run activity for live display: stage starts, model/tool steps, checks, retries, merges, backtracks.
+    `live` is the step currently in progress (what the run is waiting on, and since when)."""
+    rows = []
+    for e in ledger:
+        t, kind, stage = e.get('timestamp'), e.get('event'), e.get('stage')
+        if kind == 'stage_start':
+            rows.append(dict(t=t, kind='stage', stage=stage, text=f"开始「{STAGE_NAME.get(stage, stage)}」" + (f'（第 {e["revision"]} 轮）' if e.get('revision', 1) > 1 else '')))
+        elif kind is None and e.get('attempt') and e.get('status') in ('passed', 'failed'):
+            ok = e['status'] == 'passed'
+            who = {'llm': '模型判断', 'rules': '规则'}.get(e.get('judged_by'), '')
+            rows.append(dict(t=t, kind='check', stage=stage, ok=ok, attempt=e['attempt'],
+                             text=(f"「{STAGE_NAME.get(stage, stage)}」通过检查" if ok else f"「{STAGE_NAME.get(stage, stage)}」第 {e['attempt']} 次未通过检查，" + ('带着问题重试' if e['attempt'] < 3 else '停止')) + (f' · {who}' if who else '') + f" · {e.get('duration_seconds', 0):.1f}s",
+                             problems=[v.get('message') for v in (e.get('violations') or [])][:3]))
+        elif kind == 'pois_merged':
+            rows.append(dict(t=t, kind='merge', stage='L1D', text=f"补采的 {e.get('added', 0)} 家商户并入本次任务"))
+        elif kind == 'backtrack':
+            b = e.get('backtrack') or {}
+            rows.append(dict(t=t, kind='backtrack', stage=b.get('from'), text=f"{b.get('reason', '回退')}（排除 {'、'.join(b.get('zone_ids') or [])}）" if e.get('status') == 'returning' else '回退次数已到上限'))
+    for s in raw_steps:
+        t, stage = s.get('timestamp'), s.get('stage', 'L1D')
+        if not t or stage not in ('L1D', 'L4'):
+            continue
+        if s['kind'] == 'model':
+            calls = [STEP_LABEL.get(c, c) for c in s.get('tool_calls') or []]
+            note = (s.get('note') or '').strip() if SHOW_AGENT_NOTES else ''
+            rows.append(dict(t=t, kind='model', stage=stage, text=('决定：' + '、'.join(calls)) if calls else '整理结论', note=note[:300] or None))
+        elif s['kind'] == 'tool':
+            r, a = s.get('result') or {}, s.get('args') or {}
+            label = STEP_LABEL.get(s.get('tool'), s.get('tool'))
+            if not s.get('ok', True):
+                detail = r.get('error') or '调用失败'
+            elif s.get('tool') == 'search_merchants':
+                detail = f"{a.get('keywords') or a.get('types') or ''} → 返回 {r.get('returned', 0)} 条，新增 {r.get('new', 0)} 家"
+            elif s.get('tool') == 'area_inventory':
+                detail = '目标渠道 ' + '、'.join(f'{(channel_names or {}).get(k, k)} {v}' for k, v in (r.get('by_channel') or {}).items())
+            elif s.get('tool') == 'check_pitch':
+                who = poi_names.get(a.get('target')) or a.get('target')
+                detail = f"{who}：" + ('通过' if r.get('passed') else '未通过 · ' + '；'.join((r.get('problems') or [])[:2]))
+            elif s.get('tool') == 'list_targets':
+                detail = f"共 {len(r.get('targets') or [])} 个目标"
+            else:
+                detail = f"{r.get('total')} 条" if r.get('total') is not None else ''
+            rows.append(dict(t=t, kind='tool', stage=stage, ok=bool(s.get('ok', True)), text=f'{label}：{detail}'))
+        elif s['kind'] == 'rejected':
+            rows.append(dict(t=t, kind='rejected', stage=stage, text='交稿没通过检查，打回重写', problems=(s.get('problems') or [])[:3]))
+    rows.sort(key=lambda r: r['t'] or '')
+    live = None
+    if status.get('status') in ('running', 'gate_pending'):
+        started = [r for r in rows if r['kind'] == 'stage']
+        if started:
+            cur = started[-1]['stage']
+            last = rows[-1]
+            name = STAGE_NAME.get(cur, cur)
+            if cur in ('L1D', 'L4') and last['kind'] == 'tool':
+                waiting = f'「{name}」等待模型决定下一步'
+            elif cur in ('L1D', 'L4') and last['kind'] == 'model':
+                waiting = f'「{name}」正在执行工具'
+            elif status.get('judged_by') == 'llm' and cur != 'PACK':
+                waiting = f'「{name}」等待模型判断'
+            else:
+                waiting = f'「{name}」计算中'
+            live = dict(stage=cur, text=waiting, since=last['t'])
+    return rows[-80:], live
+
+
 def _mode(model):
     if not model:
         return '规则'
@@ -185,6 +259,7 @@ def build(directory, title=None, created_at=None):
         decision=discovery.get('decision'),
         channels=[dict(id=r['channel_id'], name=names.get(r['channel_id'], r['channel_id']), after=r.get('candidate_count',0)) for r in (discovery.get('items') or l1)],
         stages=stages, steps=steps, pitch_agent=_pitch_agent(materials_doc, pitch_steps, ledger, names, terminals, by_id),
+        **dict(zip(('activity', 'live'), _activity(ledger, raw_steps, status, {k: p.get('name') for k, p in by_id.items()}, names))),
         map=dict(base=base, found=found, zones=[dict(id=z['zone_id'], rank=z.get('rank')) for z in selected]),
         terminals=term_rows, pitches=pitches,
         route=dict(days=len(days), pending=scheduling_pending, planning_note=pack.get('planning_note'), first=[by_id.get(pid, {}).get('name') for pid in (first_day or {}).get('poi_ids', [])]),
