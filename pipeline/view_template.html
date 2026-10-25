@@ -408,7 +408,7 @@ const ICON={info:'<svg viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy=
 let CHAT={};try{CHAT=JSON.parse(localStorage.getItem('way2agi-conversations-v1')||'{}');}catch{}
 const saveChats=()=>{try{localStorage.setItem('way2agi-conversations-v1',JSON.stringify(CHAT));}catch{}};
 const chatFor=c=>c?Object.values(CHAT).find(x=>x.root===c.id):null;
-const S={online:false,config:null,profiles:[],areas:[],convs:[],cur:null,views:{},tab:'map',stage:null,toolbox:false,tbIndex:-1,sending:false,error:'',replay:null,timer:null,notices:{}};
+const S={outbox:{},online:false,config:null,profiles:[],areas:[],convs:[],cur:null,views:{},tab:'map',stage:null,toolbox:false,tbIndex:-1,sending:false,error:'',replay:null,timer:null,notices:{}};
 
 /* ================= data: offline ================= */
 function offlineConvs(){
@@ -596,12 +596,14 @@ function renderThread(){
   if(running){const tools=(v.steps||[]).filter(s=>s.kind==='tool').length;$('livebar').innerHTML=`<span class="pulse"></span><b>正在：${esc(SNAME[v.current_stage]||'准备')}</b>${tools?`<span>· 已调用工具 ${tools} 次</span>`:''}`;}
   $('replay').hidden=!c||c.draft||!v||!DONE(v.status)||!(v.steps||[]).length;
   $('replay').textContent=S.replay?'停止回看':'回看执行过程';
-  if((!c||c.draft)&&!chatFor(c)){th.innerHTML=newTaskHTML();return;}
+  if((!c||c.draft)&&!chatFor(c)&&!S.outbox[c?.id]){th.innerHTML=newTaskHTML();return;}
   const chat=chatFor(c);let html='';const shown=new Set();
   if(chat){for(const m of chat.data.messages){html+=msg(m.role==='user'?'u':'a',m.role==='user'?'你':'Agent','',m.role==='user'?`<div class="bubble">${esc(m.content)}</div>`:`<div class="prose markdown">${markdown(m.content)}</div>`);if(m.run_id&&(c.turns||[]).includes(m.run_id)){html+=turnHTML(m.run_id,0,m.run_id===c.turns.at(-1),true);shown.add(m.run_id);}}}
   html+=(c.turns||[]).filter(id=>!shown.has(id)).map((id,i)=>turnHTML(id,i,id===c.turns.at(-1),!!chat)).join('');
   (S.notices[c.id]||[]).forEach(n=>html+=msg('u','你','',`<div class="bubble">${esc(n.text)}</div>`)+msg('s','系统','未执行',`<div class="callout stop"><p>${esc(n.reason)}</p></div>`));
-  if(S.sending)html+=msg('a','Agent','正在回应','<div class="typing"><i></i><i></i><i></i></div>');
+  const outgoing=S.outbox[c?.id];
+  if(outgoing)html+=msg('u','你',outgoing.status==='failed'?'未收到发送确认':'发送中',`<div class="bubble">${esc(outgoing.text)}</div>${outgoing.status==='failed'?`<p class="small">${esc(outgoing.error)} · 请检查是否已执行，再重试。</p><button class="linkbtn" type="button" data-fill="${esc(outgoing.text)}">重新编辑</button>`:''}`);
+  if((outgoing?.status==='sending')||S.reviewing)html+=msg('a','Agent','正在回应','<div class="typing"><i></i><i></i><i></i></div>');
   if(S.error)html+=msg('s','系统','连接问题',`<div class="callout stop"><p>${esc(S.error)}</p></div>`);
   th.innerHTML=html;
   th.scrollTop=(atEnd||S._jump)?th.scrollHeight:pos;S._jump=false;
@@ -723,7 +725,7 @@ function render(){renderList();renderHead();renderRail();renderThread();renderCo
 function select(id){showPane('chat');clearTimeout(S.timer);stopReplay(false);S.cur=id;S.stage=null;S.tab='map';S._jump=true;
   const c=conv();if(!c?.draft&&S.online){render();poll();}else render();
   if(!c?.draft){try{history.replaceState(null,'','#'+c.id);}catch{}}}
-function newTask(){let d=S.convs.find(c=>c.draft&&!chatFor(c));if(!d){d={id:'draft-'+Date.now(),draft:true};S.convs.unshift(d);}select(d.id);$('ask').focus();}
+function newTask(){let d=S.convs.find(c=>c.draft&&!chatFor(c)&&!S.outbox[c.id]);if(!d){d={id:'draft-'+Date.now(),draft:true};S.convs.unshift(d);}select(d.id);$('ask').focus();}
 async function send(text){
   text=text.trim();if(!text||text.startsWith('/'))return;
   if(S.sending)return;
@@ -733,24 +735,29 @@ async function send(text){
     const reason=!S.online?'这是离线页面，没有连接 Agent 服务，这条指令没有执行。':`本地服务缺少实况配置（${(S.config?.missing||[]).join('、')}），这条指令没有执行。`;
     if(c&&!c.draft){(S.notices[c.id]=S.notices[c.id]||[]).push({text,reason});}
     else{alertDraft(reason);}
-    $('ask').value='';S._jump=true;render();return;
+    if(viewing)S._jump=true;render();return;
   }
-  S.sending=true;S.error='';renderComposer();renderThread();
+  const origin=c.id;let accepted=false;
+  S.outbox[origin]={text,status:'sending'};
+  if(c.draft&&!c.title)c.title=text.slice(0,60);
+  $('ask').value='';autosize();S._jump=true;
+  S.sending=true;S.error='';renderList();renderComposer();renderThread();
   try{
     const body=taskRequestBody({conv:c,view:lastView(),text,profile:$('p-sel')?.value,area:$('a-sel')?.value});
     if(!c||c.draft)Object.assign(body,selectedLibrary());
     const existing=chatFor(c);if(existing){body.conversation_id=existing.data.conversation_id;body.profile=existing.profile;body.area=existing.area;body.library=existing.library;}
     const response=await api('chat',body),run_id=response.run_id;
+    accepted=true;delete S.outbox[origin];const viewing=S.cur===origin;
     const root=run_id?(c?.draft?run_id:c.id):(c?.draft?'chat-'+response.conversation_id:c.id);
     CHAT[response.conversation_id]={root,profile:body.profile,area:body.area,library:body.library,data:response};saveChats();
-    $('ask').value='';S._jump=true;
-    if(!run_id){if(c?.draft){c.id=root;c.title=c.title||text.slice(0,60);S.cur=root;}S.tab='document';render();return;}
-    if(!c||c.draft){S.convs=S.convs.filter(x=>!x.draft);}
+    if(viewing)S._jump=true;
+    if(!run_id){if(c?.draft){c.id=root;c.title=c.title||text.slice(0,60);if(viewing)S.cur=root;}if(viewing)S.tab='document';render();return;}
+    if(!c||c.draft){S.convs=S.convs.filter(x=>x.id!==origin);}
     await refreshList();
-    const target=S.convs.find(x=>x.turns.includes(run_id));
+    const target=S.convs.find(x=>x.turns?.includes(run_id));
     S.views[run_id]={pending:true,status:'queued',task:{message:text}};
-    select(target?target.id:run_id);S.tab='document';renderArtifacts();
-  }catch(e){S.error=e.message;render();}
+    if(viewing){select(target?target.id:run_id);S.tab='document';renderArtifacts();}else renderList();
+  }catch(e){if(!accepted)S.outbox[origin]={text,status:'failed',error:e.message};else S.error=e.message;render();}
   finally{S.sending=false;renderComposer();renderThread();}
 }
 function alertDraft(reason){const th=$('thread');th.insertAdjacentHTML('beforeend',msg('s','系统','未执行',`<div class="callout stop"><p>${esc(reason)}</p></div>`));}
