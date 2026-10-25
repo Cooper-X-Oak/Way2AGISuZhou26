@@ -96,8 +96,10 @@ def install(app):
         mgr=request.app.state.manager
         try:
             directory=mgr.directory(run_id)
-            result=build(directory)
+            # Capture status before reading artifacts. If the run finishes during
+            # build(), keep this response running so the UI fetches a final view.
             state=mgr.status(run_id)
+            result=build(directory)
             result.update(status=state['status'],mode='回放' if state.get('task',{}).get('mode')=='replay' else '实况',
                           task=state.get('task'),current_stage=state.get('current_stage'))
             result['questions']=activity(mgr,run_id)['questions']
