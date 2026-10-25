@@ -76,6 +76,14 @@ class RunManager:
                 if previous.get('area_id') != request.area or previous['profile']['id'] != request.profile:
                     raise ValueError('更换产品或商圈请新建任务')
                 inputs['request'] = previous['request'] + '\n追加要求：' + request.input
+                # Prior validated conclusions are context, not fresh evidence for this round.
+                prior = {}
+                for name in ('brief', 'channels', 'discovery', 'zones', 'competition', 'terminals', 'partners', 'materials'):
+                    path = directory / (name + '.json')
+                    if path.exists():
+                        artifact = read(path)
+                        prior[name] = artifact if name == 'brief' else {'decision': artifact.get('decision')}
+                inputs['previous_round'] = {'run_id': parent, 'artifacts': prior}
                 # A bare number answers the single outstanding numeric question.
                 # Preserve the original message and record the interpretation explicitly.
                 import re

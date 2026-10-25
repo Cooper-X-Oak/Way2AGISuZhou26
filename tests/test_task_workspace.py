@@ -73,4 +73,14 @@ def test_followup_retains_request_and_discovered_pois(tmp_path,monkeypatch):
         # The model prompt now receives the actual user request, not just the product label.
         context={**captured[1],'brief':{'radius_m':3000},'l1':{'items':[]}}
         assert '继续查找便利店' in prompt(context)
+        from pipeline.common import decide
+        class CaptureJudge:
+            def decide(self, stage, payload, rules):
+                assert payload['task_context']['brief']['request'] == captured[1]['request']
+                assert payload['task_context']['previous_round']['run_id'] == first
+                assert payload['task_context']['completed_decisions']['l1'] == '按当前目标选渠道'
+                return {}
+        context.update(judge=CaptureJudge(), l1={'decision':'按当前目标选渠道'})
+        for stage in ('L0','L1','L2','L2C','L3','L3P','L4'):
+            decide(context, stage, {}, lambda: {}, {})
     finally: manager.close()

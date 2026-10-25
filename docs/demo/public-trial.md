@@ -38,3 +38,9 @@ cloudflared tunnel --url http://127.0.0.1:8788 --protocol http2
 `uv run pytest tests/test_public_demo.py tests/test_workbench_polling.py -q` 覆盖两个独立访客之间的任务隔离、跨会话追问拒绝、同会话追问、私有文件与旧 API 不公开、跨站 POST 拒绝及请求频率限制。
 
 Quick Tunnel 不支持 SSE；本工作台使用任务视图轮询，不依赖 SSE。停止 tunnel 即停止公开访问，本机记录保留。
+
+## Brief 与连续上下文
+
+右侧 Brief 页签（或顶部“立项”）展示当前轮原始需求、追加要求、产品背景、范围、假设来源和待确认信息。用户通过当前对话补充需求，服务端沿 parent_id 继承累积请求、已采集商户，以及上一轮 Brief 和阶段结论；上一轮结论作为历史上下文，不作为本轮新采集事实。
+
+所有通用判断调用与找终端工具循环统一接收 task_context：当前 brief、previous_round 和本轮 completed_decisions。阶段检查与重试规则保留。当前执行器仍是分阶段流水线，实况中的找终端使用模型工具循环，其余阶段仍按现有规则模式执行；共享上下文接线不等于已实现全程自主调度或每关都调用模型。

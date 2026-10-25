@@ -204,7 +204,8 @@ def prompt(c):
     targets = [dict(channel_id=r['channel_id'], priority=r['priority'], name=channels[r['channel_id']]['name'],
                     scenes=[scenes[s] for s in r['scene_ids']], match_rule=channels[r['channel_id']].get('pattern'))
                for r in active(c)]
-    task = dict(product=p['product']['name'], request=c.get('request',''), area=c.get('area_id'), radius_m=c['brief']['radius_m'], target_channels=targets,
+    from pipeline.common import task_context
+    task = dict(task_context=task_context(c), product=p['product']['name'], request=c.get('request',''), area=c.get('area_id'), radius_m=c['brief']['radius_m'], target_channels=targets,
                 note='商户是否归入某渠道由代码按 match_rule 判定；补采到的商户名称或高德类型需符合 match_rule 才会被计数。')
     shape = {'decision': '一句话结论', 'items': [{'channel_id': '…', 'candidate_count': 0, 'status': '|'.join(STATUSES[:3]),
                                               'evidence': ['poi:<id>（最多5个）'], 'reason': '依据与说明'}],

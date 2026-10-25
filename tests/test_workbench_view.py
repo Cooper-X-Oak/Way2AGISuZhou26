@@ -14,6 +14,9 @@ def test_workbench_can_show_clarification_and_partial_steps(tmp_path):
     (tmp_path/'agent/steps.jsonl').write_text(json.dumps(dict(kind='model',tool_calls=['area_inventory'],note='private reasoning'))+'\n{"unfinished":',encoding='utf-8')
     data=build(tmp_path)
     assert data['status']=='blocked' and data['radius']==3000
+    assert data['brief']['request']=='推广任务'
+    assert data['brief']['questions']==['请补充 weeks']
+    assert data['brief']['product_background']['name']=='洞庭山·新鲜活泉'
     assert data['steps']==[dict(kind='model',calls=['盘点现有商户'],note='')]
     page=render(data)
     assert 'private reasoning' not in page

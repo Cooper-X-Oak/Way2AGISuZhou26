@@ -318,6 +318,7 @@ tr.C td{color:var(--muted)}
       <section class="card art" aria-labelledby="art-h">
         <div class="card-h"><h2 id="art-h">产物</h2>
           <div class="seg" role="tablist" id="seg">
+            <button type="button" role="tab" data-tab="brief">Brief</button>
             <button type="button" role="tab" data-tab="map">地图</button>
             <button type="button" role="tab" data-tab="dec">决策</button>
             <button type="button" role="tab" data-tab="list">名单</button>
@@ -397,7 +398,7 @@ async function refreshList(){
   const example=S.config?.public_demo?offlineConvs().filter(c=>S.views[c.turns[0]]?.steps?.length).slice(0,1).map(c=>({...c,title:'公共示例 · 真实 Agent 回放'})):[];
   S.convs=[...keep,...example,...own];
   if(S.config?.public_demo){
-    try{const cached=JSON.parse(localStorage.getItem('way2agi-public-history-v1')||'{}');
+    try{const cached=JSON.parse(localStorage.getItem('way2agi-public-history-v2')||'{}');
       const allowed=new Set(own.flatMap(c=>c.turns));
       for(const [id,v] of Object.entries(cached.views||{}))if(allowed.has(id)&&DONE(v.status)&&!S.views[id])S.views[id]=v;
     }catch{}
@@ -406,7 +407,7 @@ async function refreshList(){
 function cachePrivateHistory(){
   if(!S.config?.public_demo)return;
   const own=S.convs.filter(c=>!c.offline&&!c.draft),ids=new Set(own.flatMap(c=>c.turns));
-  try{localStorage.setItem('way2agi-public-history-v1',JSON.stringify({convs:own,views:Object.fromEntries(Object.entries(S.views).filter(([id,v])=>ids.has(id)&&DONE(v.status)))}));}catch{}
+  try{localStorage.setItem('way2agi-public-history-v2',JSON.stringify({convs:own,views:Object.fromEntries(Object.entries(S.views).filter(([id,v])=>ids.has(id)&&DONE(v.status)))}));}catch{}
 }
 async function loadTurn(id,force){
   const v=S.views[id];if(v&&DONE(v.status)&&!force)return;
@@ -608,8 +609,19 @@ function renderArtifacts(){
   document.querySelectorAll('#seg button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===S.tab));
   const v=lastView(),p=$('panel');
   if(!v||v.pending){p.innerHTML=`<div class="empty">${ICON.empty}<span>${conv()&&!conv().draft?'任务开始后显示商圈和产物':'任务执行后，这里显示地图、决策、名单和话术'}</span></div>`;return;}
-  p.innerHTML={map:mapHTML,dec:decHTML,list:listHTML,pitch:pitchHTML}[S.tab](v)+`<div class="boundary">${(v.boundary||[]).map(b=>`<span>${esc(b)}</span>`).join('')}</div>`;
+  p.innerHTML={brief:briefHTML,map:mapHTML,dec:decHTML,list:listHTML,pitch:pitchHTML}[S.tab](v)+`<div class="boundary">${(v.boundary||[]).map(b=>`<span>${esc(b)}</span>`).join('')}</div>`;
   if(S.tab==='dec'&&S.stage){const el=$('dec-'+S.stage);el?.scrollIntoView({block:'nearest'});}
+}
+function briefHTML(v){
+  const b=v.brief||{},request=b.request||v.request||v.task?.message||'';
+  const value=x=>x==null?'未提供':esc(x);
+  return `<div class="prose"><h3>任务 Brief</h3><p class="small">当前轮需求与背景。补充要求请在对话框发送，下一轮会沿用原需求和已采集商户。</p>
+  <h4>用户需求与补充</h4><p style="white-space:pre-wrap">${esc(request||'这条历史录制未包含完整需求')}</p>
+  <h4>产品与范围</h4><p>${esc(v.product||'')} · ${esc(v.area||'')}<br>覆盖半径：${b.radius_m==null?'未提供':esc(b.radius_m/1000)+' 公里'}<br>人员：${value(b.delivery_people)} · 周期：${b.weeks==null?'未提供':esc(b.weeks)+' 周'}</p>
+  ${b.product_background?`<h4>产品资料</h4><pre style="white-space:pre-wrap;overflow-wrap:anywhere">${esc([b.product_background.name,b.product_background.official_slogan,...(b.product_background.specification?.facts||[]),b.product_background.specification?.note].filter(Boolean).join("\n"))}</pre>`:''}
+  ${b.location_note?`<h4>位置来源</h4><p>${esc(b.location_note)}</p>`:''}
+  <h4>假设与来源</h4>${(b.assumptions||[]).length?`<ul>${b.assumptions.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:'<p class="small">该记录未提供假设说明。</p>'}
+  ${(b.questions||v.questions||[]).length?`<h4>待确认</h4><ul>${(b.questions||v.questions).map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}</div>`;
 }
 function mapHTML(v){
   const R=v.brief?.radius_m||null,Rd=R||v.radius||3000,pad=Rd*1.06,shown=foundShown(v);
@@ -704,7 +716,7 @@ document.addEventListener('click',e=>{
   if(t.dataset.pane)return showPane(t.dataset.pane);
   if(t.dataset.tab){showPane('art');S.tab=t.dataset.tab;renderArtifacts();return;}
   if(t.matches('.task'))return select(t.dataset.id);
-  if(t.matches('.node')){showPane('art');S.stage=t.dataset.stage;S.tab='dec';renderRail();renderComposer();renderArtifacts();return;}
+  if(t.matches('.node')){showPane('art');S.stage=t.dataset.stage;S.tab=S.stage==='L0'?'brief':'dec';renderRail();renderComposer();renderArtifacts();return;}
   if(t.id==='newbtn')return newTask();
   if(t.id==='quickstart'){if(S.sending)return;newTask();return send(TEMPLATES(picked())[0]);}
   if(t.id==='replay')return startReplay();
