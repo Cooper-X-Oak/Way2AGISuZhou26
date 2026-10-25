@@ -60,3 +60,30 @@ def test_library_snapshot_changes_product_facts_and_routes_skills_without_mutati
     assert task_context(inputs,'L1D')['skills'][0]['name']=='先盘点'
     assert task_context(inputs,'L4')['skills']==[]
     assert inputs['library_documents']['library-product']=='每袋两片\n资料来源：用户产品说明'
+
+
+def test_document_tool_can_continue_to_execution_in_the_same_turn(tmp_path, monkeypatch):
+    import server.chat
+    manager=Manager(tmp_path)
+    calls=[]
+    def completion(messages, tools=None):
+        calls.append(tools)
+        if len(calls)==1:
+            name='update_document';args={'brief':'周边3公里推广面包','plan':'先分析候选'}
+        elif len(calls)==2:
+            assert tools is server.chat.TOOLS
+            assert messages[-1]['role']=='tool'
+            name='execute_market_task';args={'request':'周边3公里推广面包','brief':'周边3公里推广面包','plan':'先分析候选'}
+        else:
+            assert tools is None
+            return {'role':'assistant','content':'任务已提交。'}
+        return {'role':'assistant','content':None,'tool_calls':[{'id':str(len(calls)),'type':'function',
+                'function':{'name':name,'arguments':json.dumps(args)}}]}
+    monkeypatch.setattr(server.chat,'completion',completion)
+    with TestClient(create_public_app(tmp_path,manager),base_url='https://demo.test') as client:
+        response=client.post('/api/chat',json={**BODY,'input':'现在执行分析'})
+        assert response.status_code==200
+        assert response.json()['run_id']=='a'*32
+        assert len(response.json()['messages'])==2
+        assert len(manager.started)==1
+        assert len(calls)==3

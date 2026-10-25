@@ -41,6 +41,9 @@ def test_blocked_task_numeric_answer_and_correction(tmp_path, monkeypatch):
         observer(dict(event='run_done',payload=state))
     monkeypatch.setattr(server.runs,'execute',execute)
     monkeypatch.setattr(pipeline.demo,'live_ready',lambda:[])
+    # The live entry constructs Judge(False); this test replaces execution entirely.
+    for key,value in (('LLM_BASE_URL','http://model.invalid'),('LLM_API_KEY','test'),('LLM_MODEL','synthetic-model')):
+        monkeypatch.setenv(key,value)
     manager=RunManager(tmp_path)
     try:
         parent=None
