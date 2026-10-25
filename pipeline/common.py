@@ -10,7 +10,13 @@ def task_context(inputs, stage=None):
     brief["request"] = inputs.get("request", brief.get("request", ""))
     brief["product"] = inputs.get("profile", {}).get("product", {})
     brief["area_id"] = inputs.get("area_id")
-    return {"brief": brief, "task_document": inputs.get("task_document"), "skills": [s for s in inputs.get("skills", []) if stage in s.get("stages", [])], "previous_round": inputs.get("previous_round"), "completed_decisions": {
+    from pipeline.skills import for_stage
+    business = for_stage(stage) if stage else None
+    return {"brief": brief, "task_document": inputs.get("task_document"),
+            # Business method for this stage (skills/<name>/SKILL.md) and the run agent's instruction for this attempt.
+            "stage_skill": business and {"name": business["name"], "method": business["body"]},
+            "agent_guidance": (inputs.get("guidance") or {}).get(stage),
+            "skills": [s for s in inputs.get("skills", []) if stage in s.get("stages", [])], "previous_round": inputs.get("previous_round"), "completed_decisions": {
         key: inputs[key].get("decision") for key in
         ("l1", "l1d", "l2", "l2c", "l3", "l3p", "l4")
         if isinstance(inputs.get(key), dict) and inputs[key].get("decision")

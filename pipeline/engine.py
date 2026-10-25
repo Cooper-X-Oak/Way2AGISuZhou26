@@ -1,4 +1,9 @@
-﻿"""Auditable L0-L4/PACK runner: bounded retries, explicit approvals and backtracking."""
+﻿"""Auditable L0-L4/PACK runner: bounded retries, explicit approvals and backtracking.
+
+`Run` holds one run's files, context and state and exposes each step (begin a stage, one attempt,
+L3 shortage backtrack, generic reset, stop, complete). `execute` drives them in the fixed classic
+order; `pipeline.runtime` lets an agent drive the same steps behind gates.
+"""
 import csv
 import hashlib
 import json
@@ -12,49 +17,66 @@ from pipeline.profiles import source_path
 
 STAGES=(("L0",l0),("L1",l1),("L1D",l1d),("L2",l2),("L2C",l2c),("L3",l3),("L3P",l3p),("L4",l4),("PACK",pack))
 NAMES={'L0':'brief','L1':'channels','L1D':'discovery','L2':'zones','L2C':'competition','L3':'terminals','L3P':'partners','L4':'materials','PACK':'pack'}
+ORDER=[n for n,_ in STAGES]
+# Runtime hooks (injected transports, keys, replay payloads) never reach run files.
+RUNTIME=('judge','llm_post','llm_post_l4','llm_post_runtime','amap_client','amap_key','amap_replay')
+LAYERS=('structure','references','business','judgment_quality','human_gate')
 
 
-def execute(inputs,root=Path('.'),stages=STAGES,*,run_id=None,observer=None,approve=None,source_root=Path('.')):
-    """Optional service hooks preserve CLI approval and ledger behavior by default."""
-    run_id=run_id or now().replace(':','').replace('-','').replace('.','')+'-'+uuid.uuid4().hex[:8]
-    directory=Path(root)/'runs'/run_id;directory.mkdir(parents=True,exist_ok=False)
-    store=RunStore(directory)
-    # Storage-only transformation: gates and retry feedback keep full objects.
-    persist=store.write
-    # Runtime hooks (injected transports, keys, replay payloads) never reach run files.
-    RUNTIME=('judge','llm_post','llm_post_l4','amap_client','amap_key','amap_replay')
-    public=deepcopy({k:v for k,v in inputs.items() if k not in RUNTIME})
-    sources={}
-    for row in inputs['profile']['scenes']+inputs['profile']['selling_points']:
-        file=row['source'].split('#')[0]
-        sources[file]=inputs.get('library_documents', {}).get(file) or source_path(file, source_root).read_text(encoding='utf-8')
-    public['source_documents']=sources
-    persist(directory/'inputs.json',public);persist(directory/'params.json',inputs['params'])
-    persist(directory/'pois.json',inputs['pois']);persist(directory/'coverage.json',inputs['coverage']);persist(directory/'profile.json',inputs['profile'])
-    persist(directory/'market.json',public.get('market',{'competitors':[],'partners':[],'open':['来源：未提供市场缓存。']}))
-    c={**deepcopy(public),**{k:inputs[k] for k in RUNTIME if k in inputs},'approvals':{},'checks':{},'excluded_zones':[],
-       'run_directory':str(directory),'source_root':str(source_root)}
-    state=dict(run_id=run_id,status='running',started_at=now(),judged_by=inputs['judge'].label.split(':',1)[0],
-               input_sha256=hashlib.sha256(json.dumps(public,sort_keys=True,ensure_ascii=False).encode()).hexdigest(),
-               completed_stages=[],stopped_at=None,backtracks=0)
-    write(directory/'status.json',state)
-    def ledger(entry):
-        with (directory/'ledger.jsonl').open('a',encoding='utf-8',newline='\n') as f:f.write(json.dumps({'timestamp':now(),**entry},ensure_ascii=False)+'\n')
-        if observer:observer(entry)
-    def event(kind,**payload):
-        if observer:ledger(dict(event=kind,**payload))
-    def stop(name,violations):
-        state.update(status='blocked',stopped_at=name,violations=violations,finished_at=now())
-        write(directory/'status.json',state)
-        event('run_failed',stage=name,payload=deepcopy(state))
-        return directory,state
-    index=0;revisions={};demo_configured=False
-    while index<len(stages):
-        name,module=stages[index];revision=revisions.get(name,0)+1;revisions[name]=revision
-        event('stage_start',stage=name,revision=revision)
+class Run:
+    """One run directory: setup, ledger, per-stage attempts and terminal states."""
+
+    def __init__(self,inputs,root=Path('.'),stages=STAGES,*,run_id=None,observer=None,approve=None,source_root=Path('.')):
+        self.stages=stages;self.observer=observer;self.approve=approve
+        run_id=run_id or now().replace(':','').replace('-','').replace('.','')+'-'+uuid.uuid4().hex[:8]
+        directory=self.directory=Path(root)/'runs'/run_id;directory.mkdir(parents=True,exist_ok=False)
+        self.store=RunStore(directory)
+        # Storage-only transformation: gates and retry feedback keep full objects.
+        persist=self.persist=self.store.write
+        public=deepcopy({k:v for k,v in inputs.items() if k not in RUNTIME})
+        sources={}
+        for row in inputs['profile']['scenes']+inputs['profile']['selling_points']:
+            file=row['source'].split('#')[0]
+            sources[file]=inputs.get('library_documents', {}).get(file) or source_path(file, source_root).read_text(encoding='utf-8')
+        public['source_documents']=sources
+        persist(directory/'inputs.json',public);persist(directory/'params.json',inputs['params'])
+        persist(directory/'pois.json',inputs['pois']);persist(directory/'coverage.json',inputs['coverage']);persist(directory/'profile.json',inputs['profile'])
+        persist(directory/'market.json',public.get('market',{'competitors':[],'partners':[],'open':['来源：未提供市场缓存。']}))
+        self.c={**deepcopy(public),**{k:inputs[k] for k in RUNTIME if k in inputs},'approvals':{},'checks':{},'excluded_zones':[],
+                'run_directory':str(directory),'source_root':str(source_root)}
+        self.state=dict(run_id=run_id,status='running',started_at=now(),judged_by=inputs['judge'].label.split(':',1)[0],
+                        input_sha256=hashlib.sha256(json.dumps(public,sort_keys=True,ensure_ascii=False).encode()).hexdigest(),
+                        completed_stages=[],stopped_at=None,backtracks=0)
+        self.revisions={};self.demo_configured=False
+        self.save()
+
+    # ------------------------------------------------------------ bookkeeping
+    def save(self):write(self.directory/'status.json',self.state)
+
+    def ledger(self,entry):
+        with (self.directory/'ledger.jsonl').open('a',encoding='utf-8',newline='\n') as f:f.write(json.dumps({'timestamp':now(),**entry},ensure_ascii=False)+'\n')
+        if self.observer:self.observer(entry)
+
+    def event(self,kind,**payload):
+        if self.observer:self.ledger(dict(event=kind,**payload))
+
+    def module(self,name):return dict(self.stages)[name]
+
+    def stop(self,name,violations,status='blocked'):
+        self.state.update(status=status,stopped_at=name,violations=violations,finished_at=now())
+        self.save()
+        self.event('run_failed',stage=name,payload=deepcopy(self.state))
+        return self.directory,self.state
+
+    # ------------------------------------------------------------ one stage
+    def begin(self,name):
+        """Start a new revision of a stage: clears retry feedback and this stage's approval."""
+        c,state=self.c,self.state
+        revision=self.revisions.get(name,0)+1;self.revisions[name]=revision
+        self.event('stage_start',stage=name,revision=revision)
         c.pop('previous',None);c.pop('violations',None);c['approvals'].pop(name,None)
-        if name=='L3' and c.get('demo_replay')=='backtrack' and not demo_configured:
-            demo_configured=True
+        if name=='L3' and c.get('demo_replay')=='backtrack' and not self.demo_configured:
+            self.demo_configured=True
             rows=l3.candidates(c)
             totals={z['zone_id']:0 for z in c['l2']['items'] if z['selected']}
             ranked=l3.ranked(c)
@@ -67,90 +89,129 @@ def execute(inputs,root=Path('.'),stages=STAGES,*,run_id=None,observer=None,appr
                 c['params']['min_terminals_per_zone']=min(totals.values())+1
                 c['params']['sources']['min_terminals_per_zone']='来源：--demo-replay backtrack 演示配置，固定为首轮最小A+B数+1；后续不降低'
                 c['seeded_backtrack']=True
-                persist(directory/'params.json',c['params'])
-                ledger(dict(event='demo_configuration',stage='L3',seeded_for_demo=True,parameter='min_terminals_per_zone',before=before,after=c['params']['min_terminals_per_zone']))
-        restart=False;passed=False
+                self.persist(self.directory/'params.json',c['params'])
+                self.ledger(dict(event='demo_configuration',stage='L3',seeded_for_demo=True,parameter='min_terminals_per_zone',before=before,after=c['params']['min_terminals_per_zone']))
+        return revision
+
+    def attempt(self,name,revision,attempt):
+        """Run + check one attempt. Returns (passed, artifact, violations). On pass the artifact becomes upstream for later stages."""
+        c,state,directory,persist,module=self.c,self.state,self.directory,self.persist,self.module(name)
+        c['attempt']=attempt;started=time.perf_counter();artifact=None
+        try:
+            artifact=module.run(c);json.dumps(artifact,allow_nan=False)
+            if c.get('auto_approve') and name in ('L2','L3'):c['approvals'][name]='auto (demo)'
+            report=module.inspect(artifact,c)
+            if name in ('L2','L3') and not c.get('auto_approve') and {v['code'] for v in report['violations']}=={'approval_pending'}:
+                preview=directory/f'pending/{name}-r{revision}.json'
+                persist(preview,{'artifact':artifact,'check':report,**({'competition_summary':l2c.preview(c,artifact)} if name=='L2' else {})})
+                self.event('gate_pending',stage=name,attempt=attempt,revision=revision,payload={'preview':str(preview.relative_to(directory))})
+                if self.approve is not None:approved=self.approve(name,preview)
+                else:
+                    try:approved=input(f'{name} 待确认：{preview}；输入 yes 确认，其他输入停止：').strip().lower()=='yes'
+                    except EOFError:approved=False
+                if approved:
+                    c['approvals'][name]='human';report=module.inspect(artifact,c)
+                    self.event('gate_approved',stage=name,attempt=attempt,approved_by='human')
+            violations=report['violations']
+        except Exception as exc:
+            violations=[dict(code='execution_error',path=name,message=f'{type(exc).__name__}: 执行失败，未生成替代结果')]
+            report={'stage':name,'passed':False,'layers':[dict(layer=k,status='failed' if i==0 else 'blocked',violations=violations if i==0 else []) for i,k in enumerate(LAYERS)],'review_queue':[],'violations':violations}
+            try:json.dumps(artifact,allow_nan=False)
+            except (ValueError,TypeError):artifact=None
+        filename=f'attempts/{name}-r{revision}-{attempt}.json'
+        entry=dict(stage=name,revision=revision,attempt=attempt,status='failed' if violations else 'passed',violations=violations,
+                   duration_seconds=round(time.perf_counter()-started,6),artifact_path=filename,check_path=f'checks/{name}-r{revision}-{attempt}.json',
+                   judged_by=artifact.get('judged_by') if artifact else None,approved_by=c['approvals'].get(name),
+                   seeded_for_demo=bool(c.get('seeded_backtrack') or artifact and artifact.get('seeded_for_demo')))
+        persist(directory/filename,{'artifact':artifact,'check':report,'violations':violations})
+        persist(directory/entry['check_path'],report);persist(directory/f'{name}.check.json',report)
+        entry.update(artifact_ref=self.store.reference(directory/filename),check_ref=self.store.reference(directory/entry['check_path']))
+        self.ledger(entry)
+        self.event('check',stage=name,attempt=attempt,payload=report)
+        for violation in violations:self.event('violation',stage=name,attempt=attempt,payload=violation)
+        if artifact is not None:
+            persist(directory/f'{name}.json',artifact)
+            if name=='L0':persist(directory/'brief.json',artifact)
+        if not violations:
+            key='brief' if name=='L0' else name.lower();c[key]=artifact;c['checks'][name]=report
+            persist(directory/f'{NAMES[name]}.json',artifact)
+            if name=='L1D' and artifact.get('added_pois'):
+                # Merge only after the stage passed; failed attempts never reach downstream.
+                c['pois']=c['pois']+[p for p in artifact['added_pois'] if p['id'] not in {q['id'] for q in c['pois']}]
+                persist(directory/'pois.json',c['pois'])
+                self.ledger(dict(stage='L1D',event='pois_merged',added=len(artifact['added_pois'])))
+            if name not in state['completed_stages']:state['completed_stages'].append(name)
+            self.event('stage_done',stage=name,attempt=attempt,payload={'completed_stages':list(state['completed_stages'])})
+            return True,artifact,violations
+        return False,artifact,violations
+
+    def shortage_backtrack(self,artifact):
+        """L3 zone shortage: exclude the short zones and return to L2. Returns False when the backtrack limit is reached."""
+        c,state=self.c,self.state
+        zones=l3.shortage(artifact,c)
+        backtrack=dict(event='backtrack',backtrack={'from':'L3','to':'L2','reason':'选中商圈内A+B级终端数不足，保持阈值并取消该商圈，补选下一名','zone_ids':zones},
+                       seeded_for_demo=bool(c.get('seeded_backtrack')),count=state['backtracks']+1)
+        limit=min(2,c['params']['max_backtracks'])
+        if state['backtracks']>=limit:
+            self.ledger({**backtrack,'status':'limit_exceeded'})
+            return False
+        state['backtracks']+=1
+        if not c.get('seeded_backtrack'):state['natural_backtrack']=True
+        self.ledger({**backtrack,'status':'returning'})
+        c['excluded_zones']=sorted(set(c['excluded_zones'])|set(zones))
+        # Same scope as before the refactor: L2/L3 artifacts stay in context until they are recomputed.
+        c['checks'].pop('L2',None);c['checks'].pop('L3',None)
+        c['approvals'].pop('L2',None);c['approvals'].pop('L3',None)
+        for downstream in ('L2C','L3P','L4','PACK'):
+            c['checks'].pop(downstream,None);c.pop(downstream.lower(),None)
+        state['completed_stages']=[s for s in state['completed_stages'] if s not in ('L2','L2C','L3','L3P','L4','PACK')]
+        return True
+
+    def reset_from(self,name):
+        """Agent backtrack: invalidate every stage after `name` and mark `name` for re-running.
+        `name`'s own artifact stays in context so its next attempt can see what it replaces."""
+        c,state=self.c,self.state
+        later=ORDER[ORDER.index(name):]
+        for s in later:
+            c['checks'].pop(s,None);c['approvals'].pop(s,None)
+            if s!=name:c.pop('brief' if s=='L0' else s.lower(),None)
+        state['completed_stages']=[s for s in state['completed_stages'] if s not in later]
+        self.save()
+
+    def complete(self):
+        c,state,directory=self.c,self.state,self.directory
+        if 'pack' in c:
+            self.persist(directory/'trace.json',c['pack']['trace'])
+            fields=['poi_id','channel_id','zone_id','score','grade','next_action','reason','suggested_partner_id','supply_status','supply_distance_m']
+            with (directory/'terminals.csv').open('w',encoding='utf-8-sig',newline='') as f:
+                writer=csv.DictWriter(f,fieldnames=fields,extrasaction='ignore');writer.writeheader()
+                for terminal in c['pack']['items']:
+                    supply=c['pack']['supply_assignments'].get(terminal['poi_id'],{})
+                    writer.writerow({**terminal,'suggested_partner_id':supply.get('partner_id'),'supply_status':supply.get('status'),'supply_distance_m':supply.get('distance_m')})
+        state.update(status='completed',finished_at=now());self.save()
+        self.event('run_done',payload=deepcopy(state))
+        return directory,state
+
+
+def execute(inputs,root=Path('.'),stages=STAGES,*,run_id=None,observer=None,approve=None,source_root=Path('.')):
+    """Classic fixed-order run. Optional service hooks preserve CLI approval and ledger behavior by default."""
+    run=Run(inputs,root,stages,run_id=run_id,observer=observer,approve=approve,source_root=source_root)
+    c=run.c;index=0
+    while index<len(stages):
+        name,_=stages[index];revision=run.begin(name)
+        restart=False;passed=False;violations=[]
         for attempt in range(1,4):
-            c['attempt']=attempt;started=time.perf_counter();artifact=None
-            try:
-                artifact=module.run(c);json.dumps(artifact,allow_nan=False)
-                if c.get('auto_approve') and name in ('L2','L3'):c['approvals'][name]='auto (demo)'
-                report=module.inspect(artifact,c)
-                if name in ('L2','L3') and not c.get('auto_approve') and {v['code'] for v in report['violations']}=={'approval_pending'}:
-                    preview=directory/f'pending/{name}-r{revision}.json'
-                    persist(preview,{'artifact':artifact,'check':report,**({'competition_summary':l2c.preview(c,artifact)} if name=='L2' else {})})
-                    event('gate_pending',stage=name,attempt=attempt,revision=revision,payload={'preview':str(preview.relative_to(directory))})
-                    if approve is not None:approved=approve(name,preview)
-                    else:
-                        try:approved=input(f'{name} 待确认：{preview}；输入 yes 确认，其他输入停止：').strip().lower()=='yes'
-                        except EOFError:approved=False
-                    if approved:
-                        c['approvals'][name]='human';report=module.inspect(artifact,c)
-                        event('gate_approved',stage=name,attempt=attempt,approved_by='human')
-                violations=report['violations']
-            except Exception as exc:
-                violations=[dict(code='execution_error',path=name,message=f'{type(exc).__name__}: 执行失败，未生成替代结果')]
-                report={'stage':name,'passed':False,'layers':[dict(layer=k,status='failed' if i==0 else 'blocked',violations=violations if i==0 else []) for i,k in enumerate(('structure','references','business','judgment_quality','human_gate'))],'review_queue':[],'violations':violations}
-                try:json.dumps(artifact,allow_nan=False)
-                except (ValueError,TypeError):artifact=None
-            filename=f'attempts/{name}-r{revision}-{attempt}.json'
-            entry=dict(stage=name,revision=revision,attempt=attempt,status='failed' if violations else 'passed',violations=violations,
-                       duration_seconds=round(time.perf_counter()-started,6),artifact_path=filename,check_path=f'checks/{name}-r{revision}-{attempt}.json',
-                       judged_by=artifact.get('judged_by') if artifact else None,approved_by=c['approvals'].get(name),
-                       seeded_for_demo=bool(c.get('seeded_backtrack') or artifact and artifact.get('seeded_for_demo')))
-            persist(directory/filename,{'artifact':artifact,'check':report,'violations':violations})
-            persist(directory/entry['check_path'],report);persist(directory/f'{name}.check.json',report)
-            entry.update(artifact_ref=store.reference(directory/filename),check_ref=store.reference(directory/entry['check_path']))
-            ledger(entry)
-            event('check',stage=name,attempt=attempt,payload=report)
-            for violation in violations:event('violation',stage=name,attempt=attempt,payload=violation)
-            if artifact is not None:
-                persist(directory/f'{name}.json',artifact)
-                if name=='L0':persist(directory/'brief.json',artifact)
-            if not violations:
-                key='brief' if name=='L0' else name.lower();c[key]=artifact;c['checks'][name]=report
-                persist(directory/f'{NAMES[name]}.json',artifact)
-                if name=='L1D' and artifact.get('added_pois'):
-                    # Merge only after the stage passed; failed attempts never reach downstream.
-                    c['pois']=c['pois']+[p for p in artifact['added_pois'] if p['id'] not in {q['id'] for q in c['pois']}]
-                    persist(directory/'pois.json',c['pois'])
-                    ledger(dict(stage='L1D',event='pois_merged',added=len(artifact['added_pois'])))
-                if name not in state['completed_stages']:state['completed_stages'].append(name)
-                event('stage_done',stage=name,attempt=attempt,payload={'completed_stages':list(state['completed_stages'])})
-                passed=True;break
+            passed,artifact,violations=run.attempt(name,revision,attempt)
+            if passed:break
             codes={v['code'] for v in violations}
             if name=='L3' and codes <= {'zone_shortage','approval_pending'} and 'zone_shortage' in codes:
-                zones=l3.shortage(artifact,c)
-                backtrack=dict(event='backtrack',backtrack={'from':'L3','to':'L2','reason':'选中商圈内A+B级终端数不足，保持阈值并取消该商圈，补选下一名','zone_ids':zones},
-                               seeded_for_demo=bool(c.get('seeded_backtrack')),count=state['backtracks']+1)
-                limit=min(2,c['params']['max_backtracks'])
-                if state['backtracks']>=limit:
-                    ledger({**backtrack,'status':'limit_exceeded'})
-                    return stop('L2',[dict(code='backtrack_limit',path='L2',message='回退上限已到；需补充数据或重新立项，未放宽阈值')])
-                state['backtracks']+=1
-                if not c.get('seeded_backtrack'):state['natural_backtrack']=True
-                ledger({**backtrack,'status':'returning'})
-                c['excluded_zones']=sorted(set(c['excluded_zones'])|set(zones))
-                c['checks'].pop('L2',None);c['checks'].pop('L3',None)
-                c['approvals'].pop('L2',None);c['approvals'].pop('L3',None)
-                for downstream in ('L2C','L3P','L4','PACK'):
-                    c['checks'].pop(downstream,None);c.pop(downstream.lower(),None)
-                state['completed_stages']=[s for s in state['completed_stages'] if s not in ('L2','L2C','L3','L3P','L4','PACK')]
+                if not run.shortage_backtrack(artifact):
+                    return run.stop('L2',[dict(code='backtrack_limit',path='L2',message='回退上限已到；需补充数据或重新立项，未放宽阈值')])
                 index=next(i for i,(n,_) in enumerate(stages) if n=='L2');restart=True;break
-            if 'approval_pending' in codes:return stop(name,violations)
+            if 'approval_pending' in codes:return run.stop(name,violations)
             c.update(previous=artifact,violations=violations)
-        write(directory/'status.json',state)
+        run.save()
         if restart:continue
-        if not passed:return stop(name,violations)
+        if not passed:return run.stop(name,violations)
         index+=1
-    if 'pack' in c:
-        persist(directory/'trace.json',c['pack']['trace'])
-        fields=['poi_id','channel_id','zone_id','score','grade','next_action','reason','suggested_partner_id','supply_status','supply_distance_m']
-        with (directory/'terminals.csv').open('w',encoding='utf-8-sig',newline='') as f:
-            writer=csv.DictWriter(f,fieldnames=fields,extrasaction='ignore');writer.writeheader()
-            for terminal in c['pack']['items']:
-                supply=c['pack']['supply_assignments'].get(terminal['poi_id'],{})
-                writer.writerow({**terminal,'suggested_partner_id':supply.get('partner_id'),'supply_status':supply.get('status'),'supply_distance_m':supply.get('distance_m')})
-    state.update(status='completed',finished_at=now());write(directory/'status.json',state)
-    event('run_done',payload=deepcopy(state))
-    return directory,state
+    return run.complete()

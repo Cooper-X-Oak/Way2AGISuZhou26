@@ -651,12 +651,33 @@ function stepHTML(s,v){
   else if(s.total!=null)r=`<span class="res">共 <span class="num">${s.total}</span> 条</span>`;
   return `<li class="t"><span class="h">${esc(s.label||s.tool)}</span>${a?`<div class="args">${a}</div>`:''}${r}</li>`;
 }
+function runStepHTML(s){
+  if(s.kind==='model')return `<li class="m"><span class="h">${s.calls?.length?'决定：'+esc(s.calls.join('、')):'整理结论'}</span></li>`;
+  if(s.kind==='rejected')return `<li class="r"><span class="h">结论没通过运行契约，打回</span><span class="res err">${esc((s.problems||[]).join('；'))}</span></li>`;
+  const err=!s.ok?`<span class="res err">${esc(s.error||'被拒绝')}</span>`:'';
+  if(s.tool==='run_stage'){
+    const res=!s.ok?err:s.passed?'<span class="res">通过检查</span>':`<span class="res err">未通过：${esc((s.problems||[]).join('；'))}</span>`;
+    const back=s.auto_backtrack?`<span class="res err">门店不足，自动回退到「去哪里」，排除 ${esc((s.auto_backtrack.excluded_zones||[]).join('、'))}</span>`:'';
+    return `<li class="t"><span class="h">运行「${esc(s.stage_name||s.stage)}」</span>${s.guidance?`<div class="args"><span class="arg"><i>指引</i>${esc(s.guidance)}</span></div>`:''}${res}${back}</li>`;}
+  if(s.tool==='load_skill')return `<li class="t"><span class="h">读取技能</span><div class="args"><span class="arg"><i>技能</i>${esc(s.skill)}</span></div>${err}</li>`;
+  if(s.tool==='backtrack')return `<li class="r"><span class="h">回退到「${esc(s.stage_name||s.stage)}」</span>${s.ok?`<span class="res">${esc(s.reason||'')}</span>`:err}</li>`;
+  if(s.tool==='ask_user')return `<li class="t"><span class="h">向你提问</span><span class="res">${esc(s.question||'')}</span></li>`;
+  if(s.tool==='finish')return `<li class="t"><span class="h">收尾</span>${s.ok?'<span class="res">作战包已生成，任务完成</span>':err}</li>`;
+  return `<li class="t"><span class="h">${esc(s.label||s.tool)}</span>${err}</li>`;
+}
+function runAgentHTML(v,running){
+  const ra=v.run_agent;if(!ra?.steps?.length)return '';
+  const runs=ra.steps.filter(s=>s.tool==='run_stage'&&s.ok),fails=runs.filter(s=>!s.passed).length,skillsN=ra.steps.filter(s=>s.tool==='load_skill'&&s.ok).length;
+  const head=`<p>我来统筹这次任务：按状态链逐关推进，每关先读对应的业务技能再执行，共运行关卡 <span class="num">${runs.length}</span> 次${fails?`（未通过 ${fails} 次）`:''}，读取技能 ${skillsN} 次${ra.backtracks?`，主动回退 ${ra.backtracks} 次`:''}。</p>`;
+  return msg('a','Agent',esc('任务统筹'+(ra.model?' · '+ra.model:'')),`<div class="prose">${head}<details class="run" ${running?'open':''}><summary>决策过程 · ${ra.steps.length} 步</summary><ol class="tl">${ra.steps.map(runStepHTML).join('')}</ol></details>${ra.summary&&!running?`<p>${esc(ra.summary)}</p>`:''}</div>`);
+}
 function turnHTML(id,idx,isLast,hideUser=false){
   const c=conv(),v=S.views[id]||{pending:true},out=[];
   const message=v.task?.message||(idx===0?c.title:'')||v.request;
   if(!hideUser)out.push(msg('u','你',idx?'补充要求':'',`<div class="bubble">${esc(message)}</div>`));
   if(v.pending||v.status==='queued'){if(isLast)out.push(msg('a','Agent','准备中','<div class="typing"><i></i><i></i><i></i></div>'));return out.join('');}
   const running=v.status==='running'||v.status==='gate_pending';
+  out.push(runAgentHTML(v,running));
   let steps=v.steps||[];
   if(S.replay&&S.replay.id===id)steps=steps.slice(0,S.replay.k);
   if(steps.length||(running&&v.current_stage==='L1D')){

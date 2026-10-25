@@ -76,10 +76,13 @@ def build(directory, title=None, created_at=None):
     for line in steps_path.read_text(encoding='utf-8').splitlines() if steps_path.is_file() else []:
         try: raw_steps.append(json.loads(line))
         except ValueError: pass
-    steps, pitch_steps = [], []
+    steps, pitch_steps, run_steps = [], [], []
     for s in raw_steps:
         if s.get('stage') == 'L4':
             pitch_steps.append(s)
+            continue
+        if s.get('stage') == 'RUN':
+            run_steps.append(s)
             continue
         if s['kind'] == 'model':
             steps.append(dict(kind='model', calls=[TOOL_LABEL.get(c, c) for c in s.get('tool_calls', [])], note=''))
@@ -185,6 +188,7 @@ def build(directory, title=None, created_at=None):
         decision=discovery.get('decision'),
         channels=[dict(id=r['channel_id'], name=names.get(r['channel_id'], r['channel_id']), after=r.get('candidate_count',0)) for r in (discovery.get('items') or l1)],
         stages=stages, steps=steps, pitch_agent=_pitch_agent(materials_doc, pitch_steps, ledger, names, terminals, by_id),
+        run_agent=_run_agent(status, run_steps),
         map=dict(base=base, found=found, zones=[dict(id=z['zone_id'], rank=z.get('rank')) for z in selected]),
         terminals=term_rows, pitches=pitches,
         route=dict(days=len(days), pending=scheduling_pending, planning_note=pack.get('planning_note'), first=[by_id.get(pid, {}).get('name') for pid in (first_day or {}).get('poi_ids', [])]),
@@ -192,6 +196,38 @@ def build(directory, title=None, created_at=None):
                   '补采商户来自高德 POI 基础字段，不代表实际经营情况或进货意愿，需走访确认。',
                   '价格、毛利、首单政策未知，话术中不做承诺。'],
     )
+
+
+RUN_TOOL = {'status': '查看进度', 'load_skill': '读取技能', 'run_stage': '运行关卡', 'backtrack': '回退', 'ask_user': '向你提问', 'finish': '收尾'}
+STAGE_NAME = {'L0': '立项', 'L1': '卖给谁', 'L1D': '找终端', 'L2': '去哪里', 'L2C': '对手', 'L3': '进哪家', 'L3P': '供货', 'L4': '怎么说', 'PACK': '作战包'}
+
+
+def _run_agent(status, raw):
+    """Full-run agent decisions (experimental runtime). None for runs driven by the fixed engine."""
+    if not raw:
+        return None
+    steps = []
+    for s in raw:
+        if s['kind'] == 'model':
+            steps.append(dict(kind='model', calls=[RUN_TOOL.get(c, c) for c in s.get('tool_calls', [])]))
+        elif s['kind'] == 'rejected':
+            steps.append(dict(kind='rejected', problems=s.get('problems', [])[:5]))
+        elif s['kind'] == 'tool':
+            a, r = s.get('args') or {}, s.get('result') or {}
+            row = dict(kind='tool', tool=s['tool'], label=RUN_TOOL.get(s['tool'], s['tool']), ok=bool(r.get('ok', True)), error=r.get('error'))
+            if s['tool'] == 'run_stage':
+                row.update(stage=a.get('stage'), stage_name=STAGE_NAME.get(a.get('stage')), guidance=a.get('guidance') or None,
+                           passed=r.get('passed'), problems=(r.get('problems') or [])[:3], auto_backtrack=r.get('automatic_backtrack'))
+            elif s['tool'] == 'load_skill':
+                row.update(skill=a.get('name'))
+            elif s['tool'] == 'backtrack':
+                row.update(stage=a.get('stage'), stage_name=STAGE_NAME.get(a.get('stage')), reason=a.get('reason'))
+            elif s['tool'] == 'ask_user':
+                row.update(question=a.get('question'))
+            steps.append(row)
+    agent = status.get('agent') or {}
+    return dict(model=str(agent.get('model') or '') or None, summary=agent.get('summary'), outcome=agent.get('outcome'),
+                backtracks=status.get('agent_backtracks', 0), steps=steps)
 
 
 def _pitch_agent(doc, raw, ledger, names, terminals, by_id):

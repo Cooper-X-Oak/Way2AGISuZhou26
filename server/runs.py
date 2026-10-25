@@ -1,5 +1,6 @@
 """Bounded, cache-only background runs and revision-specific human gates."""
 import json
+import os
 import threading
 import uuid
 from concurrent.futures import ThreadPoolExecutor
@@ -65,6 +66,8 @@ class RunManager:
                 # and the same checks/retries apply. Replays keep rules because the recording holds L1D calls only.
                 inputs['judge'] = Judge(False)
                 inputs['agent_l4'] = True
+                # Set PUSHI_AGENT_RUNTIME=0 to fall back to the fixed-order engine for live tasks.
+                inputs['agent_runtime'] = os.getenv('PUSHI_AGENT_RUNTIME', '1') != '0'
             else:
                 if parent or (request.profile, request.area, request.input) != (CASE['profile'], CASE['area'], CASE['request']):
                     raise ValueError('录制只适用于新鲜活泉 × 狮山的原始任务；新任务请选择实况')
@@ -159,6 +162,9 @@ class RunManager:
                            signal=threading.Event(), decision=None))
             elif kind == 'backtrack' and entry['status'] == 'returning':
                 row['completed_stages'] = [s for s in row['completed_stages'] if s in ('L0', 'L1')]
+            elif kind == 'agent_runtime' and entry.get('tool') == 'backtrack':
+                from pipeline.engine import ORDER
+                row['completed_stages'] = [s for s in row['completed_stages'] if ORDER.index(s) < ORDER.index(entry['stage'])]
             elif kind in ('run_done', 'run_failed'):
                 row.update(entry['payload'])
                 row['current_stage'] = row.get('stopped_at')
@@ -186,9 +192,13 @@ class RunManager:
 
     def _run(self, run_id, inputs):
         try:
-            execute(inputs, self.root, run_id=run_id, source_root=self.source_root,
-                    observer=lambda entry: self._observe(run_id, entry),
-                    approve=lambda stage, preview: self._approve(run_id, stage, preview))
+            # Experimental branch: live tasks are driven by the full-run agent (pipeline.runtime) over the same stages and checks.
+            runner = execute
+            if inputs.get('agent_runtime'):
+                from pipeline.runtime import execute_agent as runner
+            runner(inputs, self.root, run_id=run_id, source_root=self.source_root,
+                   observer=lambda entry: self._observe(run_id, entry),
+                   approve=lambda stage, preview: self._approve(run_id, stage, preview))
         except Exception as exc:
             # Do not expose provider/environment exception text through the API.
             with self.lock:
