@@ -35,7 +35,7 @@ class GateRequest(BaseModel):
     note: str = Field(default='', max_length=4000)
 
 
-def create_app(manager=None):
+def create_app(manager=None, task_access=None):
     @asynccontextmanager
     async def lifespan(app):
         app.state.manager = manager or RunManager()
@@ -122,7 +122,7 @@ def create_app(manager=None):
         return {'stage': stage, 'decision': body.decision, 'approved_by': 'human'}
 
     from server.tasks import install
-    install(app)
+    install(app, access=task_access)
     return app
 
 

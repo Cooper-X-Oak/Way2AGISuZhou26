@@ -65,33 +65,40 @@ def activity(manager, run_id):
     return public(dict(state=state,events=events,artifacts=artifacts,questions=questions))
 
 
-def install(app):
+def install(app, access=None):
     @app.get('/api/tasks/config')
     def config():
         from pipeline.demo import CASE, RECORDING, live_ready
         missing=live_ready()
-        return dict(live_ready=not missing,missing=missing,replay_available=RECORDING.is_file(),case=CASE)
+        return dict(live_ready=not missing,missing=missing,replay_available=RECORDING.is_file(),case=CASE,public_demo=access is not None)
 
     @app.get('/api/tasks')
     def history(request: Request):
         mgr=request.app.state.manager
         with mgr.lock:
-            return sorted([mgr.status(k) for k,v in mgr.runs.items() if v.get('task')],
+            return sorted([mgr.status(k) for k,v in mgr.runs.items() if v.get('task') and (access is None or access.owns(request,k))],
                           key=lambda row:row['task']['created_at'],reverse=True)
 
     @app.post('/api/tasks',status_code=202)
     def start(body: TaskRequest,request: Request):
-        try: return {'run_id':request.app.state.manager.start(body)}
+        if access is not None and body.parent_id:
+            access.check(request,body.parent_id)
+        try:
+            run_id=request.app.state.manager.start(body)
+            if access is not None: access.record(request,run_id)
+            return {'run_id':run_id}
         except (ValueError,KeyError) as exc: raise HTTPException(422,str(exc)) from None
         except RuntimeError as exc: raise HTTPException(429,str(exc)) from None
 
     @app.get('/api/tasks/{run_id}')
     def detail(run_id:str,request:Request):
+        if access is not None: access.check(request,run_id)
         try: return activity(request.app.state.manager,run_id)
         except KeyError: raise HTTPException(404,'任务不存在') from None
 
     @app.get('/api/tasks/{run_id}/view')
     def workbench_view(run_id:str,request:Request):
+        if access is not None: access.check(request,run_id)
         from pipeline.view import build
         mgr=request.app.state.manager
         try:

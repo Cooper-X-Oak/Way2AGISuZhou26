@@ -274,6 +274,9 @@ tr.C td{color:var(--muted)}
   .app{grid-template-columns:minmax(0,1fr);grid-template-rows:72px minmax(0,1fr);gap:12px}
   .side{display:grid;grid-template-columns:auto 1fr;align-items:center}
   .side .brand,.side .list-h{display:none}
+  body.public-demo .app{grid-template-rows:108px minmax(0,1fr)}
+  body.public-demo .side{grid-template-columns:1fr 1fr;grid-template-rows:36px minmax(0,1fr)}
+  body.public-demo .tasks{grid-column:1/-1}
   .tasks{grid-auto-flow:column;grid-auto-columns:minmax(200px,70vw);overflow-x:auto}
   .rail{grid-template-columns:repeat(9,84px)}
 }
@@ -285,6 +288,7 @@ tr.C td{color:var(--muted)}
   <aside class="side" aria-label="任务">
     <div class="brand"><b>铺市 Agent</b><span class="small">新品进店 · 市场开发策略</span></div>
     <button class="newbtn" id="newbtn" type="button"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.8" fill="none"/></svg>新建任务</button>
+    <button class="newbtn" id="quickstart" type="button" hidden>快速开始一次实况</button>
     <span class="small list-h">任务记录</span>
     <ul class="tasks" id="tasks"></ul>
   </aside>
@@ -387,18 +391,33 @@ function group(rows){
   return groupTaskRecords(rows).map(({root,latest:last,ids})=>({id:root.run_id,turns:ids,title:root.task.message,product:root.task.product,area:AREA[root.task.area]||root.task.area,
       area_id:root.task.area,profile:root.task.profile,status:last.status,stopped_at:last.stopped_at,current_stage:last.current_stage,created_at:root.task.created_at,updated_at:last.task.created_at,mode:root.task.mode==='replay'?'回放':'实况'}));
 }
-async function refreshList(){const rows=await api('tasks');const keep=S.convs.filter(c=>c.draft);S.convs=[...keep,...group(rows)];}
+async function refreshList(){
+  const rows=await api('tasks'),keep=S.convs.filter(c=>c.draft),own=group(rows);
+  const example=S.config?.public_demo?offlineConvs().filter(c=>S.views[c.turns[0]]?.steps?.length).slice(0,1).map(c=>({...c,title:'公共示例 · 真实 Agent 回放'})):[];
+  S.convs=[...keep,...example,...own];
+  if(S.config?.public_demo){
+    try{const cached=JSON.parse(localStorage.getItem('way2agi-public-history-v1')||'{}');
+      const allowed=new Set(own.flatMap(c=>c.turns));
+      for(const [id,v] of Object.entries(cached.views||{}))if(allowed.has(id)&&DONE(v.status)&&!S.views[id])S.views[id]=v;
+    }catch{}
+  }
+}
+function cachePrivateHistory(){
+  if(!S.config?.public_demo)return;
+  const own=S.convs.filter(c=>!c.offline&&!c.draft),ids=new Set(own.flatMap(c=>c.turns));
+  try{localStorage.setItem('way2agi-public-history-v1',JSON.stringify({convs:own,views:Object.fromEntries(Object.entries(S.views).filter(([id,v])=>ids.has(id)&&DONE(v.status)))}));}catch{}
+}
 async function loadTurn(id,force){
   const v=S.views[id];if(v&&DONE(v.status)&&!force)return;
   try{S.views[id]=await api(`tasks/${id}/view`);}catch(e){if(e.status!==409)throw e;S.views[id]={pending:true,status:'queued'};}
 }
 async function poll(){
-  clearTimeout(S.timer);const c=conv();if(!S.online||!c||c.draft)return;
+  clearTimeout(S.timer);const c=conv();if(!S.online||!c||c.draft||c.offline)return;
   try{
     await Promise.all(c.turns.map(id=>loadTurn(id)));
     const last=S.views[c.turns.at(-1)];
     if(last&&!last.pending){c.status=last.status;c.current_stage=last.current_stage;c.stopped_at=last.stopped_at;}
-    S.error='';
+    S.error='';cachePrivateHistory();
   }catch(e){S.error=e.message;}
   render();
   if(!DONE(conv()?.status))S.timer=setTimeout(poll,1000);
@@ -549,6 +568,7 @@ function picked(){const ps=$('p-sel'),as=$('a-sel');const prof=S.profiles.find(x
   return {product:prof?.name||'洞庭山·新鲜活泉',area:AREA[as?.value||'shishan']||'狮山'};}
 function renderComposer(){
   const c=conv(),v=lastView(),running=v&&!DONE(v.status);
+  $('quickstart').hidden=!S.config?.public_demo;$('quickstart').disabled=S.sending||!S.config?.live_ready;
   const draft=!c||c.draft;
   $('pickers').hidden=!(draft&&S.online);
   if(draft&&S.online&&!$('p-sel')){
@@ -567,7 +587,7 @@ function renderComposer(){
   $('ask').disabled=!!running;$('send').disabled=!!running||S.sending;$('tb').disabled=!!running;
   $('hint').textContent=!S.online?'离线页面：可以编辑和查看，发送需要连接本地服务':
     !S.config?.live_ready?`本地服务已连接，但实况配置缺少：${(S.config?.missing||[]).join('、')||'—'}`:
-    draft?'发送后由 Agent 实时执行':running?'执行中…':'发送后在这个对话里继续执行';
+    c?.offline?'公共回放示例。可点“快速开始一次实况”创建自己的任务':draft?'发送后由 Agent 实时执行':running?'执行中…':'发送后在这个对话里继续执行';
   renderToolbox();
 }
 function toolboxItems(){
@@ -638,6 +658,8 @@ function select(id){showPane('chat');clearTimeout(S.timer);stopReplay(false);S.c
 function newTask(){let d=S.convs.find(c=>c.draft);if(!d){d={id:'draft',draft:true};S.convs.unshift(d);}select(d.id);$('ask').focus();}
 async function send(text){
   text=text.trim();if(!text||text.startsWith('/'))return;
+  if(S.sending)return;
+  if(S.online&&conv()?.offline){newTask();}
   const c=conv();
   if(!S.online||!S.config?.live_ready){
     const reason=!S.online?'这是离线页面，没有连接 Agent 服务，这条指令没有执行。':`本地服务缺少实况配置（${(S.config?.missing||[]).join('、')}），这条指令没有执行。`;
@@ -675,7 +697,7 @@ function startReplay(){
 /* ================= events ================= */
 function showPane(name){document.querySelector('.panes').dataset.show=name;document.querySelectorAll('[data-pane]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.pane===name)));}
 document.addEventListener('click',e=>{
-  const t=e.target.closest('[data-pane],[data-fill],[data-tab],.task,.node,#newbtn,#replay,#tb,.note');
+  const t=e.target.closest('[data-pane],[data-fill],[data-tab],.task,.node,#newbtn,#quickstart,#replay,#tb,.note');
   if(!t){if(S.toolbox&&!e.target.closest('#toolbox')){S.toolbox=false;renderToolbox();}return;}
   if(t.matches('.note')){t.classList.toggle('open');return;}
   if(t.dataset.fill!=null)return fill(t.dataset.fill);
@@ -684,6 +706,7 @@ document.addEventListener('click',e=>{
   if(t.matches('.task'))return select(t.dataset.id);
   if(t.matches('.node')){showPane('art');S.stage=t.dataset.stage;S.tab='dec';renderRail();renderComposer();renderArtifacts();return;}
   if(t.id==='newbtn')return newTask();
+  if(t.id==='quickstart'){if(S.sending)return;newTask();return send(TEMPLATES(picked())[0]);}
   if(t.id==='replay')return startReplay();
   if(t.id==='tb'){S.toolbox=!S.toolbox;S.tbIndex=-1;renderToolbox();}
 });
@@ -703,7 +726,7 @@ async function boot(){
   if(location.protocol!=='file:'){
     try{
       const [config,profiles,areas]=await Promise.all([api('tasks/config'),api('profiles'),api('areas')]);
-      Object.assign(S,{online:true,config,profiles,areas});await refreshList();
+      Object.assign(S,{online:true,config,profiles,areas});document.body.classList.toggle("public-demo",!!config.public_demo);document.querySelector(".list-h").textContent=config.public_demo?"我的任务 · 仅当前浏览器":"任务记录";await refreshList();
     }catch{S.online=false;}
   }
   if(!S.online)S.convs=offlineConvs();
