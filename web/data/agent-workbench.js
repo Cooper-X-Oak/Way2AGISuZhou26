@@ -31,7 +31,7 @@ if(location.protocol!=='file:'){
   $('task-options').hidden=!T.draft;
   $('hint').textContent=config?.live_ready?'已连接本机 Agent。发送会真实执行；任务结束后可补充要求继续。':'已连接任务服务；实况配置未就绪，可回看已有录制。';
   document.querySelector('.send').disabled=loading||(!T.draft&&T.connected&&!done(T.status));
-  if(T.connected){if(typeof renderMeta==='function')renderMeta();
+  if(T.connected){$('meta').innerHTML=`<span>${esc(T.mode)} · ${esc(({completed:'已完成',blocked:'待补充',failed:'未完成',running:'执行中',queued:'准备中'})[T.status]||T.status)}</span><span>${fmt(T.created_at)}</span><span>${!done(T.status)&&T.current_stage?'正在 '+esc(STAGE_NAMES[T.current_stage]||T.current_stage):''}</span>`;
    $('replay').hidden=!done(T.status);
   }
  }
@@ -78,7 +78,6 @@ if(location.protocol!=='file:'){
    const [cfg,profiles,areas,records]=await Promise.all([request('tasks/config'),request('profiles'),request('areas'),request('tasks')]);config=cfg;
    $('product-select').innerHTML=profiles.map(p=>`<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('');$('product-select').value='xinxian-huoquan';
    $('area-select').innerHTML=areas.map(a=>`<option value="${esc(a.id)}">${esc(({shishan:'狮山',guanqian:'观前街',ligongdi:'李公堤'})[a.id]||a.id)}</option>`).join('');$('area-select').value='shishan';
-   if(typeof counters==='function')counters(null,0);
    const restored=groupTaskRecords(records).map(({root,latest:r,ids})=>({id:r.run_id,run_id:r.run_id,turnIds:ids,task:r.task,title:root.task.message.slice(0,24),product:r.task.product,area:r.task.area,request:r.task.message,created_at:r.task.created_at,status:r.status,stopped_at:r.stopped_at,connected:true,pending:true,mode:r.task.mode==='replay'?'回放':'实况',draft:false,extra:[],stages:[],steps:[],channels:[],terminals:[],pitches:[],map:{base:[],found:[],zones:[]},counts:{},targets:[],boundary:[],radius:3000,cache:{total:0},route:{first:[]}}));
    tasks.unshift(...restored.filter(Boolean));
    const id=location.hash.split('/').pop();const index=tasks.findIndex(t=>t.id===id||t.turnIds?.includes(id));
