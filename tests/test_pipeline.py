@@ -4,6 +4,7 @@ import json
 import random
 from pathlib import Path
 import pytest
+from pipeline.profiles import source_path
 from pipeline import l0,l1,l2,l3,l4,pack
 from pipeline.engine import execute,STAGES
 from pipeline.io import read
@@ -28,7 +29,7 @@ def raw():
 @pytest.fixture
 def contexts(raw):
     c=deepcopy({k:v for k,v in raw.items() if k!='judge'});c['judge']=raw['judge']
-    c.update(checks={},approvals={'L2':'auto (demo)','L3':'auto (demo)'},source_documents={raw['profile']['source']:Path(raw['profile']['source']).read_text(encoding='utf-8')})
+    c.update(checks={},approvals={'L2':'auto (demo)','L3':'auto (demo)'},source_documents={raw['profile']['source']:source_path(raw['profile']['source']).read_text(encoding='utf-8')})
     result={}
     for name,module in STAGES:
         result[name]=deepcopy(c)
@@ -36,6 +37,35 @@ def contexts(raw):
         assert r['passed'],r
         c['brief' if name=='L0' else name.lower()]=a;c['checks'][name]=r
     return result
+
+
+@pytest.mark.parametrize('message',[
+    '苏州高新区周边3公里，推广产品',
+    '苏州高新区周边3公里，2个地推',
+    '苏州高新区周边3公里，做4周',
+])
+def test_strategy_completes_without_staffing(raw,tmp_path,message):
+    raw['request']=message
+    directory,state=execute(raw,tmp_path)
+    assert state['status']=='completed',state
+    brief=read(directory/'brief.json')
+    result=read(directory/'pack.json')
+    assert brief['questions']==[]
+    assert brief['delivery_people'] is None or brief['weeks'] is None
+    assert result['days']==[]
+    assert {t['poi_id'] for t in result['backlog']}=={t['poi_id'] for t in result['items'] if t['grade'] in ('A','B')}
+    assert result['materials']['items']
+    assert '排期待安排' in result['planning_note']
+
+
+def test_optional_staffing_still_rejects_invented_or_invalid_values(raw):
+    raw['request']='周边3公里推广产品'
+    artifact=l0.run(raw)
+    assert not l0.check(artifact,raw)
+    artifact['delivery_people']=2
+    assert any(v.code=='changed_fact' for v in l0.check(artifact,raw))
+    raw['request']='周边3公里，0个地推，做4周'
+    assert any(v.code=='positive' for v in l0.check(l0.run(raw),raw))
 
 
 @pytest.mark.parametrize('name,module',STAGES)
@@ -62,6 +92,7 @@ def test_each_layer_negative(name,module,layer,contexts):
     elif layer=='judgment_quality':a['confidence']=0.1
     elif name=='L0':a['planned_visits_day']=9999
     elif name=='L1':a['items'][0]['commercial_conditions']['price_band']='编造价格'
+    elif name=='L1D':a['items'][0]['candidate_count']+=1
     elif name=='L2':a['items'][0]['counts'][next(iter(a['items'][0]['counts']))]+=1
     elif name=='L2C':a['items'][0]['intensity']='高'
     elif name=='L3P':
@@ -105,7 +136,7 @@ def test_strict_contracts(name,module,mutation,contexts):
     if mutation=='duplicate':a['items'].append(deepcopy(r))
     if mutation=='nan':r['confidence']=float('nan')
     if mutation=='source':r['judged_by']='llm'
-    if mutation=='enum':r[{'L1':'priority','L2':'type','L2C':'strategy','L3':'grade','L3P':'type','L4':'target'}[name]]='invented'
+    if mutation=='enum':r[{'L1':'priority','L1D':'status','L2':'type','L2C':'strategy','L3':'grade','L3P':'type','L4':'target'}[name]]='invented'
     if mutation=='contact':r['phone']='synthetic unwanted field'
     assert module.check(a,c)
 
@@ -211,12 +242,17 @@ def test_backtrack_limit(raw,tmp_path):
     assert not (directory/'pack.json').exists()
 
 
-def test_natural_backtrack_not_seeded(raw,tmp_path):
+def test_preflight_avoids_predictable_backtrack(raw,tmp_path):
     for p in raw['pois']:
         if p['name']=='测试餐饮':p['name']='测试火锅'
     raw['params']['min_terminals_per_zone']=2
     directory,state=execute(raw,tmp_path)
-    assert state['status']=='completed' and state['natural_backtrack']
+    assert state['status']=='completed' and state['backtracks']==0
+    assert read(directory/'params.json')['min_terminals_per_zone']==2
+    terminals=read(directory/'terminals.json')['items']
+    for zone in read(directory/'zones.json')['items']:
+        if zone['selected']:
+            assert sum(t['zone_id']==zone['zone_id'] and t['grade'] in ('A','B') for t in terminals)>=2
     assert not any(r.get('seeded_for_demo') for r in ledger(directory))
 
 

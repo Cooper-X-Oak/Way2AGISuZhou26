@@ -22,7 +22,21 @@ def ordered(c):
 
 
 def selection(c):
-    return [z for z,n in ordered(c) if sum(n.values()) and z not in c.get('excluded_zones',[])][:c['params']['max_selected_zones']]
+    from pipeline.l3 import candidates, ranked, shortage
+    data=ordered(c)
+    eligible=[z for z,n in data if sum(n.values()) and z not in c.get('excluded_zones',[])][:c['params']['max_selected_zones']]
+    # max_selected_zones is a ceiling. Preflight the unchanged downstream
+    # grading rule: filling every slot can leave lower-ranked zones all C.
+    for size in range(len(eligible),0,-1):
+        chosen=eligible[:size]
+        probe={**c,'l2':{'items':[dict(zone_id=z,rank=i+1,selected=z in chosen)
+                                  for i,(z,_) in enumerate(data)]}}
+        grades=ranked(probe)
+        terminals={'items':[dict(zone_id=z['zone_id'],grade=grades[p['id']]['grade'])
+                            for p,_,z in candidates(probe)]}
+        if not shortage(terminals,probe):return chosen
+    # Preserve failure/backtracking when no ranked prefix meets the gate.
+    return eligible
 
 
 def run(c):
@@ -34,10 +48,11 @@ def run(c):
             rows.append(dict(zone_id=z,tier='社区级',type=next(iter(types)) if len(types)==1 else ('混合' if types else '非目标'),
                              **meta(c,['L1:'+k for k,v in n.items() if v] or ['params.priority_weights'],
                                     opened=[f"来源：500米网格与{c['coverage']['source']}点位；商圈层级暂按社区级假设，需现场验证。"])))
-        return {'decision':'按目标业态加权点位数排序，选择未被回退排除的商圈。','items':rows}
+        return {'decision':'按目标业态加权点位数排序，在商圈数上限内选择满足既有A/B终端要求的最长排名前缀；无可行前缀时保留回退检查。','items':rows}
     decision=decide(c,'L2',{'counts':dict(data),'profile':c['profile'],'channels':c['l1']},rules,
                     '返回 decision,items；每项 zone_id,tier,type,evidence,judged_by,confidence,open；所有网格各一次，不计算counts/rank/selected。')
-    computed={z:dict(counts=n,rank=i+1,selected=z in selection(c)) for i,(z,n) in enumerate(data)}
+    chosen=set(selection(c))
+    computed={z:dict(counts=n,rank=i+1,selected=z in chosen) for i,(z,n) in enumerate(data)}
     for r in decision['items']:
         r.update(computed.get(r['zone_id'],{}))
     return envelope(c,decision['decision'],decision['items'])
@@ -48,11 +63,11 @@ def references(a,c):
 
 
 def business(a,c):
-    out=[]; ranked=ordered(c); expected={z:(n,i+1) for i,(z,n) in enumerate(ranked)}
+    out=[]; ranked=ordered(c); expected={z:(n,i+1) for i,(z,n) in enumerate(ranked)}; chosen=set(selection(c))
     for r in a['items']:
         n,rank=expected[r['zone_id']]
         if r['counts']!=n or r['rank']!=rank:out.append(violation('recount','counts/rank','计数或排名与POI代码重算不一致'))
-        if r['selected']!=(r['zone_id'] in selection(c)):out.append(violation('selection','selected','必须按排名补选，排除回退商圈'))
+        if r['selected']!=(r['zone_id'] in chosen):out.append(violation('selection','selected','必须按排名和既有终端要求选区，排除回退商圈'))
     selected=[r for r in a['items'] if r['selected']]
     if not selected or len(selected)>c['params']['max_selected_zones']:out.append(violation('selection_limit','items','无可选商圈或超出上限'))
     coverage=c['coverage']; b=c['brief'];s=coverage['site']

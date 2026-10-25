@@ -134,6 +134,8 @@ def export_run(run, out):
                 continue
             entry = json.loads(line)
             stage = entry.get('stage', entry.get('backtrack', {}).get('from'))
+            if stage == 'L1D':
+                continue  # Agent discovery is summarised separately; the workbench shows the eight legacy stations.
             if stage not in stages:
                 raise ValueError('Unrecognized ledger stage')
             row = pick(entry, ('timestamp', 'stage', 'event', 'revision', 'attempt', 'status', 'violations', 'duration_seconds', 'judged_by', 'approved_by', 'seeded_for_demo', 'backtrack', 'count', 'parameter', 'before', 'after'))

@@ -35,7 +35,7 @@ class GateRequest(BaseModel):
     note: str = Field(default='', max_length=4000)
 
 
-def create_app(manager=None):
+def create_app(manager=None, task_access=None):
     @asynccontextmanager
     async def lifespan(app):
         app.state.manager = manager or RunManager()
@@ -72,6 +72,14 @@ def create_app(manager=None):
     def profiles():
         return [dict(id=path.stem, name=load(path.stem)['product']['name'])
                 for path in sorted(PROFILE_DIR.glob('*.yaml'))]
+
+    @app.get('/api/library')
+    def library():
+        return {'products': [dict(id=p.stem, name=load(p.stem)['product']['name'],
+                                 facts='；'.join(x['fact'] for x in load(p.stem)['selling_points']),
+                                 source=load(p.stem).get('source','产品档案'),
+                                 channels=[x['name'] for x in load(p.stem)['channels']])
+                             for p in sorted(PROFILE_DIR.glob('*.yaml'))], 'areas': areas()}
 
     @app.post('/api/runs', status_code=202)
     def start(body: RunRequest, request: Request):
@@ -121,6 +129,10 @@ def create_app(manager=None):
             raise HTTPException(409, str(exc)) from None
         return {'stage': stage, 'decision': body.decision, 'approved_by': 'human'}
 
+    from server.tasks import install
+    install(app, access=task_access)
+    from server.chat import install as install_chat
+    install_chat(app, access=task_access)
     return app
 
 
