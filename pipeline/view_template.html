@@ -91,13 +91,14 @@ button{cursor:pointer;background:none;border:0;padding:0}
 .meta{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;font-size:var(--t-sm);color:var(--muted)}
 
 /* progress rail */
-.rail{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(9,minmax(72px,1fr));overflow-x:auto}
-.node{position:relative;display:grid;justify-items:center;gap:4px;padding:4px 4px 6px;text-align:center;cursor:pointer;border-radius:var(--r-sm)}
+.rail{list-style:none;margin:0;padding:0;display:flex;gap:4px;height:44px;min-height:44px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
+.rail::-webkit-scrollbar{display:none}
+.node{position:relative;display:flex;flex:1 0 auto;align-items:center;justify-content:center;gap:6px;padding:0 10px;height:40px;white-space:nowrap;cursor:pointer;border-radius:var(--r-sm)}
 .node:hover{background:var(--sunken)}
-.node::before{content:"";position:absolute;top:13px;left:-50%;right:50%;height:2px;background:var(--line)}
+.node::before{display:none}
 .node:first-child::before{display:none}
 .node.passed::before{background:var(--ok)}
-.dotn{position:relative;z-index:1;width:16px;height:16px;border-radius:50%;border:2px solid var(--line-strong);background:var(--surface);display:grid;place-items:center;color:#fff;font-size:10px;font-weight:700;margin-top:5px}
+.dotn{position:relative;z-index:1;width:16px;height:16px;border-radius:50%;border:2px solid var(--line-strong);background:var(--surface);display:grid;place-items:center;color:#fff;font-size:10px;font-weight:700;flex-shrink:0;margin-top:0}
 .node.done .dotn{background:var(--ok);border-color:var(--ok)}
 .node.done .dotn::after{content:"";width:6px;height:3px;border:2px solid #fff;border-top:0;border-right:0;transform:rotate(-45deg) translate(1px,-1px)}
 .node.run .dotn{background:var(--primary);border-color:var(--primary);box-shadow:0 0 0 4px var(--primary-soft);animation:ring 1.8s ease-in-out infinite}
@@ -278,7 +279,7 @@ tr.C td{color:var(--muted)}
   body.public-demo .side{grid-template-columns:1fr 1fr;grid-template-rows:36px minmax(0,1fr)}
   body.public-demo .tasks{grid-column:1/-1}
   .tasks{grid-auto-flow:column;grid-auto-columns:minmax(200px,70vw);overflow-x:auto}
-  .rail{grid-template-columns:repeat(9,84px)}
+  .node{flex:0 0 auto}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -479,9 +480,8 @@ function renderRail(){
     else if(st==='running'&&v?.current_stage===s.id)cls='run';
     else if(s.stopped||(st==='blocked'&&v?.stopped_at===s.id))cls=(s.id==='L0'&&v?.questions?.length)?'ask':'stop';
     const prevDone=i>0&&stages[i-1].done;
-    const sm=v&&!v.pending?stageSummary(v,s):'';
     return `<li class="node ${cls}${prevDone&&(s.done||cls)?' passed':''}${s.id==='L1D'?' agent':''}${S.stage===s.id?' sel':''}" data-stage="${s.id}" tabindex="0" role="button" aria-label="${esc(SNAME[s.id])}">
-      <span class="dotn"></span><span class="nm">${esc(SNAME[s.id])}${s.id==='L1D'?'<span class="ag">AGENT</span>':''}</span>${sm?`<span class="sm">${esc(sm)}</span>`:''}</li>`;}).join('');
+      <span class="dotn"></span><span class="nm">${esc(SNAME[s.id])}</span></li>`;}).join('');
 }
 
 /* ================= render: conversation ================= */
@@ -635,7 +635,7 @@ function decHTML(v){
   if(!rows.length)return `<div class="empty">${ICON.empty}<span>关卡完成后逐条列出决策和检查结果</span></div>`;
   const ST={passed:'通过',needs_review:'待复核',failed:'未通过',blocked:'阻断'};
   return `<ul class="dec">${rows.map(s=>`<li id="dec-${s.id}" class="${S.stage===s.id?'hl':''}"><div class="top"><span class="id">${s.id}</span><span class="nm">${esc(SNAME[s.id])}</span><span class="src ${s.judged_by==='模型'?'llm':''}">${s.judged_by==='模型'?'模型判断':'规则'}</span>${s.attempts>1?`<span class="src">尝试 ${s.attempts} 次</span>`:''}${s.review?`<span class="src">待复核 ${s.review} 项</span>`:''}</div>
-    ${s.decision?`<p>${esc(s.decision)}</p>`:''}${(s.stopped||s.id===v.stopped_at)&&v.stop_reason?`<p style="color:var(--danger)">${esc(v.stop_reason)}</p>`:''}
+    ${stageSummary(v,s)?`<p class="small">${esc(stageSummary(v,s))}</p>`:''}${s.decision?`<p>${esc(s.decision)}</p>`:''}${(s.stopped||s.id===v.stopped_at)&&v.stop_reason?`<p style="color:var(--danger)">${esc(v.stop_reason)}</p>`:''}
     ${s.checks?.length?`<div class="checks">${s.checks.map(c=>`<span class="${c.status}">${esc(c.layer)}${c.status==='passed'?'':' '+(ST[c.status]||c.status)}</span>`).join('')}</div>`:''}</li>`).join('')}</ul>`;
 }
 function listHTML(v){
