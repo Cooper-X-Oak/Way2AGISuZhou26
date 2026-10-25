@@ -119,7 +119,8 @@ class AmapAdapter:
             code = str(p.get('typecode', ''))
             if code.startswith('0506'): cat = 'tea'
             elif code.startswith(('0501', '0502', '0503', '0504')): cat = 'restaurant'
-            else: continue
+            # Non-dining rows are kept (not silently dropped) so other categories can be matched by profile rules.
+            else: cat = 'other'
             gcj_lon, gcj_lat = map(float, p['location'].split(','))
             lat, lon = (gcj_lat, gcj_lon) if native else gcj_to_wgs(gcj_lat, gcj_lon)
             d = distance(site['lat'], site['lon'], lat, lon)

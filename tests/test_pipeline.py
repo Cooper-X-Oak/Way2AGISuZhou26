@@ -62,6 +62,7 @@ def test_each_layer_negative(name,module,layer,contexts):
     elif layer=='judgment_quality':a['confidence']=0.1
     elif name=='L0':a['planned_visits_day']=9999
     elif name=='L1':a['items'][0]['commercial_conditions']['price_band']='编造价格'
+    elif name=='L1D':a['items'][0]['candidate_count']+=1
     elif name=='L2':a['items'][0]['counts'][next(iter(a['items'][0]['counts']))]+=1
     elif name=='L2C':a['items'][0]['intensity']='高'
     elif name=='L3P':
@@ -105,7 +106,7 @@ def test_strict_contracts(name,module,mutation,contexts):
     if mutation=='duplicate':a['items'].append(deepcopy(r))
     if mutation=='nan':r['confidence']=float('nan')
     if mutation=='source':r['judged_by']='llm'
-    if mutation=='enum':r[{'L1':'priority','L2':'type','L2C':'strategy','L3':'grade','L3P':'type','L4':'target'}[name]]='invented'
+    if mutation=='enum':r[{'L1':'priority','L1D':'status','L2':'type','L2C':'strategy','L3':'grade','L3P':'type','L4':'target'}[name]]='invented'
     if mutation=='contact':r['phone']='synthetic unwanted field'
     assert module.check(a,c)
 

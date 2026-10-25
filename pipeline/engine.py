@@ -6,12 +6,12 @@ import time
 import uuid
 from copy import deepcopy
 from pathlib import Path
-from pipeline import l0,l1,l2,l2c,l3,l3p,l4,pack
+from pipeline import l0,l1,l1d,l2,l2c,l3,l3p,l4,pack
 from pipeline.io import now,write,RunStore
 from pipeline.profiles import source_path
 
-STAGES=(("L0",l0),("L1",l1),("L2",l2),("L2C",l2c),("L3",l3),("L3P",l3p),("L4",l4),("PACK",pack))
-NAMES={'L0':'brief','L1':'channels','L2':'zones','L2C':'competition','L3':'terminals','L3P':'partners','L4':'materials','PACK':'pack'}
+STAGES=(("L0",l0),("L1",l1),("L1D",l1d),("L2",l2),("L2C",l2c),("L3",l3),("L3P",l3p),("L4",l4),("PACK",pack))
+NAMES={'L0':'brief','L1':'channels','L1D':'discovery','L2':'zones','L2C':'competition','L3':'terminals','L3P':'partners','L4':'materials','PACK':'pack'}
 
 
 def execute(inputs,root=Path('.'),stages=STAGES,*,run_id=None,observer=None,approve=None,source_root=Path('.')):
@@ -21,7 +21,9 @@ def execute(inputs,root=Path('.'),stages=STAGES,*,run_id=None,observer=None,appr
     store=RunStore(directory)
     # Storage-only transformation: gates and retry feedback keep full objects.
     persist=store.write
-    public=deepcopy({k:v for k,v in inputs.items() if k!='judge'})
+    # Runtime hooks (injected transports, keys, replay payloads) never reach run files.
+    RUNTIME=('judge','llm_post','amap_client','amap_key','amap_replay')
+    public=deepcopy({k:v for k,v in inputs.items() if k not in RUNTIME})
     sources={}
     for row in inputs['profile']['scenes']+inputs['profile']['selling_points']:
         file=row['source'].split('#')[0]
@@ -30,7 +32,8 @@ def execute(inputs,root=Path('.'),stages=STAGES,*,run_id=None,observer=None,appr
     persist(directory/'inputs.json',public);persist(directory/'params.json',inputs['params'])
     persist(directory/'pois.json',inputs['pois']);persist(directory/'coverage.json',inputs['coverage']);persist(directory/'profile.json',inputs['profile'])
     persist(directory/'market.json',public.get('market',{'competitors':[],'partners':[],'open':['来源：未提供市场缓存。']}))
-    c={**deepcopy(public),'judge':inputs['judge'],'approvals':{},'checks':{},'excluded_zones':[]}
+    c={**deepcopy(public),**{k:inputs[k] for k in RUNTIME if k in inputs},'approvals':{},'checks':{},'excluded_zones':[],
+       'run_directory':str(directory),'source_root':str(source_root)}
     state=dict(run_id=run_id,status='running',started_at=now(),judged_by=inputs['judge'].label.split(':',1)[0],
                input_sha256=hashlib.sha256(json.dumps(public,sort_keys=True,ensure_ascii=False).encode()).hexdigest(),
                completed_stages=[],stopped_at=None,backtracks=0)
@@ -107,6 +110,11 @@ def execute(inputs,root=Path('.'),stages=STAGES,*,run_id=None,observer=None,appr
             if not violations:
                 key='brief' if name=='L0' else name.lower();c[key]=artifact;c['checks'][name]=report
                 persist(directory/f'{NAMES[name]}.json',artifact)
+                if name=='L1D' and artifact.get('added_pois'):
+                    # Merge only after the stage passed; failed attempts never reach downstream.
+                    c['pois']=c['pois']+[p for p in artifact['added_pois'] if p['id'] not in {q['id'] for q in c['pois']}]
+                    persist(directory/'pois.json',c['pois'])
+                    ledger(dict(stage='L1D',event='pois_merged',added=len(artifact['added_pois'])))
                 if name not in state['completed_stages']:state['completed_stages'].append(name)
                 event('stage_done',stage=name,attempt=attempt,payload={'completed_stages':list(state['completed_stages'])})
                 passed=True;break

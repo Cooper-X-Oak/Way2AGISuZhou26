@@ -1,0 +1,71 @@
+# 演示档案：示例假设，非真实品牌。原文见 docs/demo/bread-trial-brief.md。
+id: bread-trial
+source: docs/demo/bread-trial-brief.md
+product:
+  name: 示例切片吐司（演示假设）
+  specification:
+    volume: null
+    pack_size: null
+    note: 示例资料未提供规格
+    facts: []
+    source: docs/demo/bread-trial-brief.md#产品简介
+  official_slogan: null
+selling_points:
+- id: single-pack
+  name: 独立小包装
+  fact: 独立小包装，开袋即食
+  source: docs/demo/bread-trial-brief.md#卖点/1
+  scene_ids: [scene-1, scene-2]
+  mapping_source: 示例假设的卖点场景映射，非已验证结论
+- id: ambient-shelf
+  name: 常温陈列
+  fact: 常温保存，适合门店常规陈列
+  source: docs/demo/bread-trial-brief.md#卖点/2
+  scene_ids: [scene-1, scene-2]
+  mapping_source: 示例假设的卖点场景映射，非已验证结论
+scenes:
+- id: scene-1
+  name: 通勤早餐
+  visual_keywords: 早高峰路过门店，顺手带一袋当早餐
+  emotion: null
+  source: docs/demo/bread-trial-brief.md#使用场景/序号1
+- id: scene-2
+  name: 加班补给
+  visual_keywords: 写字楼加班间隙，抽屉里常备的简便主食
+  emotion: null
+  source: docs/demo/bread-trial-brief.md#使用场景/序号2
+compliance_rules:
+- id: demo-claims
+  terms: [最好吃, 第一, 零添加, 减肥]
+  source: docs/demo/bread-trial-brief.md#合规红线
+channels:
+- id: bakery
+  name: 面包烘焙店
+  categories: [other]
+  match_type_text: true
+  pattern: 面包|烘焙|糕饼|西点|蛋糕|吐司|bakery
+  scene_ids: [scene-1, scene-2]
+  rules_fit: 0.9
+  rules_reason: 面包烘焙店的顾客本身有买面包的需求，适合陈列包装吐司（示例假设，待走访验证）。
+  grid_type: 社区零售
+  source: 示例渠道假设，非已验证结论
+- id: convenience
+  name: 便利店/超市
+  categories: [other]
+  match_type_text: true
+  pattern: 便利店|便民商店|超市|超级市场|全家|罗森|7-ELEVEn|7-11|快客|好德|可的
+  scene_ids: [scene-1, scene-2]
+  rules_fit: 0.85
+  rules_reason: 便利店覆盖通勤早餐和加班补给的即时购买（示例假设，待走访验证）。
+  grid_type: 社区零售
+  source: 示例渠道假设，非已验证结论
+material:
+  selling_point_ids: [single-pack]
+  pitch: 老板/店长您好，想了解贵店早餐面包的陈列安排。{product}的资料卖点是“{fact}”。
+  pitch_template: 老板/店长您好，针对{scene}场景，想请您看看{product}。资料原文：{fact}。建议先了解顾客早餐和加班时段的购买习惯，再决定是否试陈列。进货成本与建议售价请与品牌方核对后再评估，价格和首单政策由品牌方和您确认，不承诺销量。
+  angles:
+    补位: 先了解门店现有早餐面包品类有没有缺口，讨论补充陈列。
+    正面: 围绕本品资料介绍特点，邀请核对样品与进货条件。
+    避让: 先做需求访谈并记录后续跟进条件，暂不推动替换现有陈列。
+  display: 建议放在早餐区或收银台旁，规格与零售价由门店核实后填写。
+  table_copy: '{product}，早餐顺手带一袋。'

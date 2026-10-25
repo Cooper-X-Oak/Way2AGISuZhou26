@@ -11,6 +11,11 @@ def active(c):return {r['channel_id']:r for r in c['l1']['items'] if r['priority
 ANGLES={'补位':'先了解尚未满足的用水需求，讨论补充陈列。','正面':'围绕本品资料介绍特点，邀请核对样品与进货条件。','避让':'先做需求访谈并记录后续跟进条件，暂不推动替换现有陈列。'}
 
 
+def angles(c):
+    """Profile may override wording per strategy; default keeps the legacy water copy."""
+    return {**ANGLES,**(c['profile'].get('material',{}).get('angles') or {})}
+
+
 def targets(c):
     channels=active(c);zones={r['zone_id']:r for r in c['l2c']['items']}
     result={t['poi_id']:(channels[t['channel_id']],zones[t['zone_id']]['strategy']) for t in c['l3']['items'] if t['grade'] in ('A','B') and t['channel_id'] in channels}
@@ -27,13 +32,15 @@ def run(c):
         for key,(ch,strategy) in targets(c).items():
             ids=ch['selling_point_ids'];fact='；'.join(points[s]['fact'] for s in ids)
             scene='、'.join(scenes[s]['name'] for s in ch['scene_ids'])
-            pitch=f"老板您好，针对{scene}场景，可把{c['profile']['product']['name']}作为顾客用水的一个选择。资料原文：{fact}。建议先询问客人的用水需求，再介绍产品；是否增加点单需要试陈列验证。您可以核对进货成本与售价后再评估毛利，价格带、首单政策由品牌方和您确认，不承诺利润或销量。"
-            pitch+=ANGLES[strategy]
+            template=c['profile'].get('material',{}).get('pitch_template')
+            if template:pitch=template.format(scene=scene,product=c['profile']['product']['name'],fact=fact)
+            else:pitch=f"老板您好，针对{scene}场景，可把{c['profile']['product']['name']}作为顾客用水的一个选择。资料原文：{fact}。建议先询问客人的用水需求，再介绍产品；是否增加点单需要试陈列验证。您可以核对进货成本与售价后再评估毛利，价格带、首单政策由品牌方和您确认，不承诺利润或销量。"
+            pitch+=angles(c)[strategy]
             items.append(dict(target=key,pitch=pitch,table_card=c['profile']['material']['table_copy'].format(product=c['profile']['product']['name']),selling_point_ids=ids,
                               **meta(c,['L1:'+ch['channel_id']]+['selling_point:'+s for s in ids],opened=['来源：档案未提供商业条件；毛利、价格带和首单政策待确认；增量点单是待验证假设。'])))
         return dict(decision='按业态准备店主沟通话术与桌牌，不承诺销量或利润。',items=items)
     decision=decide(c,'L4',{'profile':c['profile'],'channels':c['l1'],'terminals':c['l3'],'competition':c['l2c'],
-                    'required_targets':{key:dict(channel=ch['channel_id'],strategy=s,required_angle=ANGLES[s]) for key,(ch,s) in targets(c).items()}},rules,
+                    'required_targets':{key:dict(channel=ch['channel_id'],strategy=s,required_angle=angles(c)[s]) for key,(ch,s) in targets(c).items()}},rules,
                     '返回decision,items；每项target,pitch,table_card,selling_point_ids,evidence,judged_by,confidence,open；required_targets各一次；pitch必须包含required_angle；老板视角、讲点单机会和成本核算，不编造毛利价格政策；卖点引用原文；禁止功效、点名或贬低竞品。')
     seeded=c.get('demo_replay')=='compliance' and c.get('attempt',1)==1
     if seeded and decision['items']:
@@ -69,7 +76,7 @@ def business(a,c):
     out=scan({k:v for k,v in a.items() if k!='items'},c['profile']);points={s['id']:s for s in c['profile']['selling_points']}
     for i,r in enumerate(a['items']):
         strategy=targets(c)[r['target']][1]
-        if ANGLES[strategy] not in r['pitch']:out.append(violation('strategy_pitch',f'items[{i}].pitch','话术未体现所在网格切入策略'))
+        if angles(c)[strategy] not in r['pitch']:out.append(violation('strategy_pitch',f'items[{i}].pitch','话术未体现所在网格切入策略'))
         content={k:v for k,v in r.items() if k!='compliance'}
         hits=scan(content,c['profile'])
         out.extend(scan(content,c['profile'],f'items[{i}]'))
