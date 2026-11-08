@@ -668,13 +668,16 @@ function renderHead(){
 function renderRail(){
   const v=lastView(),st=v&&!v.pending?v.status:conv()?.status;
   const stages=v?.stages||STAGES.map(([id,name])=>({id,name}));
+  const rp=S.replay?.id===lastId()&&v?.steps?.length?S.replay:null,ai=stages.findIndex(s=>s.id==='L1D');
+  const cur=rp?(rp.k<v.steps.length?ai:ai+1+(rp.t||0)):-1,isDone=i=>rp?i<cur:stages[i].done;
   $('rail').innerHTML=stages.map((s,i)=>{
     let cls='';
-    if(s.done)cls='done';
+    if(rp)cls=i<cur?'done':i===cur?'run':'';
+    else if(s.done)cls='done';
     else if(st==='running'&&v?.current_stage===s.id)cls='run';
     else if(s.stopped||(st==='blocked'&&v?.stopped_at===s.id))cls=(s.id==='L0'&&v?.questions?.length)?'ask':'stop';
-    const prevDone=i>0&&stages[i-1].done;
-    return `<li class="node ${cls}${prevDone&&(s.done||cls)?' passed':''}${s.id==='L1D'?' agent':''}${S.stage===s.id?' sel':''}" data-stage="${s.id}" tabindex="0" role="button" aria-label="${esc(SNAME[s.id])}">
+    const prevDone=i>0&&isDone(i-1);
+    return `<li class="node ${cls}${prevDone&&(isDone(i)||cls)?' passed':''}${s.id==='L1D'?' agent':''}${S.stage===s.id?' sel':''}" data-stage="${s.id}" tabindex="0" role="button" aria-label="${esc(SNAME[s.id])}">
       <span class="dotn"></span><span class="nm">${esc(SNAME[s.id])}</span></li>`;}).join('');
 }
 
@@ -708,7 +711,7 @@ function feedHTML(v){
 function activityHTML(v,running){
   if(!(v.activity||[]).length)return '';
   if(running)return msg('a','Agent','执行动态',`${feedHTML(v)}${v.live?`<div class="liveline"><span class="spin"></span><span>${esc(v.live.text)}</span><span class="num" data-since="${esc(v.live.since||'')}"></span></div>`:''}`);
-  return msg('s','执行动态',`${v.activity.length} 条`,`<details class="run"><summary>查看完整执行动态</summary>${feedHTML(v)}</details>`);
+  return msg('s','执行动态',`${v.activity.length} 条`,`<details class="run" open><summary>查看完整执行动态</summary>${feedHTML(v)}</details>`);
 }
 function turnHTML(id,idx,isLast,hideUser=false){
   const c=conv(),v=S.views[id]||{pending:true},out=[];
@@ -723,7 +726,7 @@ function turnHTML(id,idx,isLast,hideUser=false){
     const cat=v.cache?.by_category||{};
     const intro=steps.length?`<p>缓存里有 <span class="num">${v.cache?.total??0}</span> 家（${Object.entries(cat).map(([k,n])=>`${esc(CAT[k]||k)} ${n}`).join('、')||'—'}），先看看目标渠道够不够。</p>`:'';
     const live=running&&v.current_stage==='L1D';
-    out.push(msg('a','Agent',esc(v.model?'找终端 · '+v.model:'找终端'),`<div class="prose">${intro}<details class="run" ${live||!DONE(v.status)||S.replay?.id===id||!v.decision?'open':''}><summary>${steps.length?`执行过程 · ${steps.length} 步`:'开始执行…'}</summary><ol class="tl">${steps.map(s=>stepHTML(s,v)).join('')}${live||(S.replay?.id===id&&S.replay.k<v.steps.length)?'<li><div class="typing"><i></i><i></i><i></i></div></li>':''}</ol></details></div>`));
+    out.push(msg('a','Agent',esc(v.model?'找终端 · '+v.model:'找终端'),`<div class="prose">${intro}<details class="run" open><summary>${steps.length?`执行过程 · ${steps.length} 步`:'开始执行…'}</summary><ol class="tl">${steps.map(s=>stepHTML(s,v)).join('')}${live||(S.replay?.id===id&&S.replay.k<v.steps.length)?'<li><div class="typing"><i></i><i></i><i></i></div></li>':''}</ol></details></div>`));
   }
   const replaying=S.replay?.id===id&&S.replay.k<(v.steps||[]).length;
   const agentRan=(v.steps||[]).length>0||v.stages?.find(s=>s.id==='L1D')?.judged_by==='模型';
@@ -733,7 +736,7 @@ function turnHTML(id,idx,isLast,hideUser=false){
   const pa=v.pitch_agent;
   if(pa?.steps?.length&&!replaying){
     const pc=pa.steps.filter(s=>s.tool==='check_pitch'),ok=pc.filter(s=>s.passed).length,n=pa.steps.find(s=>s.tool==='list_targets')?.total,back=pa.steps.filter(s=>s.kind==='rejected').length;
-    out.push(msg('a','Agent',esc('怎么说'+(pa.model?' · '+pa.model:'')),`<div class="prose"><p>${n?`为 <span class="num">${n}</span> 个目标写进店话术，`:''}用本关的正式检查自查 <span class="num">${pc.length}</span> 次（通过 ${ok} 次）${back?`，交稿被打回 ${back} 次`:''}，全部达标后才交稿。</p><details class="run"><summary>执行过程 · ${pa.steps.length} 步</summary><ol class="tl">${pa.steps.map(s=>stepHTML(s,v)).join('')}</ol></details><div class="links"><button class="linkbtn" data-tab="pitch" type="button">看话术</button></div></div>`));
+    out.push(msg('a','Agent',esc('怎么说'+(pa.model?' · '+pa.model:'')),`<div class="prose"><p>${n?`为 <span class="num">${n}</span> 个目标写进店话术，`:''}用本关的正式检查自查 <span class="num">${pc.length}</span> 次（通过 ${ok} 次）${back?`，交稿被打回 ${back} 次`:''}，全部达标后才交稿。</p><details class="run" open><summary>执行过程 · ${pa.steps.length} 步</summary><ol class="tl">${pa.steps.map(s=>stepHTML(s,v)).join('')}</ol></details><div class="links"><button class="linkbtn" data-tab="pitch" type="button">看话术</button></div></div>`));
   }
   if(running&&!(v.current_stage==='L1D'))out.push(msg('s','流水线',esc('正在'+(SNAME[v.current_stage]||'')),'<div class="typing"><i></i><i></i><i></i></div>'));
   if(replaying||running)return out.join('');
@@ -943,9 +946,12 @@ function startReplay(){
   if(S.replay){stopReplay();return;}
   S.replay={id,k:0};S.tab='map';S._jump=true;render();
   const tick=()=>{if(!S.replay)return;S.replay.k++;S._jump=true;render();
-    if(S.replay.k<v.steps.length)S.replay.timer=setTimeout(tick,reduced?0:(v.steps[S.replay.k-1]?.kind==='model'?1400:1000));
-    else S.replay.timer=setTimeout(()=>{S.replay=null;render();},reduced?0:900);};
-  S.replay.timer=setTimeout(tick,reduced?0:600);
+    if(S.replay.k<v.steps.length)S.replay.timer=setTimeout(tick,reduced?0:(v.steps[S.replay.k-1]?.kind==='model'?3500:2500));
+    else{const ai=(v.stages||[]).findIndex(s=>s.id==='L1D'),rest=(v.stages||[]).length-ai-1;
+      const tail=()=>{if(!S.replay)return;S.replay.t=(S.replay.t??-1)+1;renderRail();
+        S.replay.timer=S.replay.t<rest?setTimeout(tail,reduced?0:1500):setTimeout(()=>{S.replay=null;render();},reduced?0:4000);};
+      S.replay.t=-1;S.replay.timer=setTimeout(tail,reduced?0:1500);}};
+  S.replay.timer=setTimeout(tick,reduced?0:1500);
 }
 
 /* ================= events ================= */
