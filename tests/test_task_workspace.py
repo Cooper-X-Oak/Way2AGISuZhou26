@@ -67,8 +67,8 @@ def test_followup_retains_request_and_discovered_pois(tmp_path,monkeypatch):
         assert manager.runs[second]['done'].wait(15)
         assert len(captured)==2
         assert captured[0]['agent_l1d'] is True
-        # Live tasks hand every judgment stage to the model; code checks still decide pass/fail.
-        assert captured[0]['judge'].label=='llm:synthetic-model'
+        # Live tasks run 找终端/怎么说 as agents; the other stages stay on rules.
+        assert captured[0]['judge'].label=='rules' and captured[0]['agent_l4'] is True
         assert captured[1]['request']=='周边3公里，2个人，4周\n追加要求：继续查找便利店'
         assert any(p['id']=='synthetic-discovered' for p in captured[1]['pois'])
         assert captured[1]['task']['parent_id']==first

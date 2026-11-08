@@ -61,9 +61,8 @@ class RunManager:
             if task_mode == 'live':
                 missing = live_ready()
                 if missing: raise ValueError('实况配置缺少：' + '、'.join(missing))
-                # Live tasks: every judgment stage asks the model; code still computes scores, grades and routes,
-                # and the same checks/retries apply. Replays keep rules because the recording holds L1D calls only.
-                inputs['judge'] = Judge(False)
+                # Live tasks: 找终端 and 怎么说 run as agents (tools + self-checks). The other stages stay on the
+                # proven rules path: a single-call model judge failed the reference check at 卖给谁 in a live run.
                 inputs['agent_l4'] = True
             else:
                 if parent or (request.profile, request.area, request.input) != (CASE['profile'], CASE['area'], CASE['request']):
