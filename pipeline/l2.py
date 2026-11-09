@@ -50,10 +50,10 @@ def references(a,c):
 
 def business(a,c):
     out=[]; ranked=ordered(c); expected={z:(n,i+1) for i,(z,n) in enumerate(ranked)}
-    for r in a['items']:
+    for i,r in enumerate(a['items']):
         n,rank=expected[r['zone_id']]
-        if r['counts']!=n or r['rank']!=rank:out.append(violation('recount','counts/rank','计数或排名与POI代码重算不一致'))
-        if r['selected']!=(r['zone_id'] in selection(c)):out.append(violation('selection','selected','必须按排名补选，排除回退商圈'))
+        if r['counts']!=n or r['rank']!=rank:out.append(violation('recount',f'items[{i}].counts/rank','计数或排名与POI代码重算不一致'))
+        if r['selected']!=(r['zone_id'] in selection(c)):out.append(violation('selection',f'items[{i}].selected','必须按排名补选，排除回退商圈'))
     selected=[r for r in a['items'] if r['selected']]
     if not selected or len(selected)>c['params']['max_selected_zones']:out.append(violation('selection_limit','items','无可选商圈或超出上限'))
     coverage=c['coverage']; b=c['brief'];s=coverage['site']

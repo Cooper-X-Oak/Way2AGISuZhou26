@@ -92,11 +92,11 @@ def references(a,c):return equal_ids(a['items'],'zone_id',counts(c))
 
 def business(a,c):
     out=[];values=counts(c);mapped=strategies(c,values)
-    for r in a['items']:
+    for i,r in enumerate(a['items']):
         n=values[r['zone_id']]
-        if r['counts']!=n or r['intensity']!=intensity(sum(n.values()),c,values):out.append(violation('competition_recount','items','竞争计数/强度与代码重算不符'))
-        if r['strategy']!=mapped[r['zone_id']]:out.append(violation('competition_strategy','strategy','策略与配置及P1排名重算不符'))
-        if r['reason']!=reason(n):out.append(violation('competition_reason','reason','理由只能引用计数'))
+        if r['counts']!=n or r['intensity']!=intensity(sum(n.values()),c,values):out.append(violation('competition_recount',f'items[{i}].items','竞争计数/强度与代码重算不符'))
+        if r['strategy']!=mapped[r['zone_id']]:out.append(violation('competition_strategy',f'items[{i}].strategy','策略与配置及P1排名重算不符'))
+        if r['reason']!=reason(n):out.append(violation('competition_reason',f'items[{i}].reason','理由只能引用计数'))
     return out
 
 

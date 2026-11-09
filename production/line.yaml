@@ -7,11 +7,6 @@ stages:
   skills_allowed:
   - clarify-requirements
   tools_allowed:
-  - get_brief
-  - get_artifact
-  - get_profile
-  - load_skill
-  - read_result
   - submit_artifact
   checks: pipeline.l0.inspect
   layers:
@@ -21,8 +16,11 @@ stages:
   - judgment_quality
   - human_gate
   gate: none
-  max_steps: 16
+  max_steps: 6
   max_attempts: 3
+  decision_schema: runtime.decisions.L0
+  assembler: runtime.assembly.assemble
+  token_budget: 20000
 - name: L1
   sop: 依据场景与产品原文判断渠道优先级，保留缺失商业条件。
   inputs:
@@ -33,15 +31,7 @@ stages:
   - scene-channel-mapping
   - business-classification
   tools_allowed:
-  - get_brief
-  - get_artifact
-  - get_profile
-  - load_skill
-  - read_result
   - submit_artifact
-  - poi_query
-  - poi_detail
-  - compliance_scan
   checks: pipeline.l1.inspect
   layers:
   - structure
@@ -50,8 +40,11 @@ stages:
   - judgment_quality
   - human_gate
   gate: none
-  max_steps: 16
+  max_steps: 6
   max_attempts: 3
+  decision_schema: runtime.decisions.L1
+  assembler: runtime.assembly.assemble
+  token_budget: 35000
 - name: L2
   sop: 读取网格统计，判断商圈类型与层级；保留代码排名和选择并通过人工关口。
   inputs:
@@ -63,15 +56,9 @@ stages:
   - zone-analysis
   - business-classification
   tools_allowed:
-  - get_brief
-  - get_artifact
-  - get_profile
-  - load_skill
-  - read_result
   - submit_artifact
   - grid_stats
-  - poi_query
-  - poi_detail
+  - get_profile
   checks: pipeline.l2.inspect
   layers:
   - structure
@@ -80,8 +67,11 @@ stages:
   - judgment_quality
   - human_gate
   gate: human
-  max_steps: 16
+  max_steps: 10
   max_attempts: 3
+  decision_schema: runtime.decisions.L2
+  assembler: runtime.assembly.assemble
+  token_budget: 35000
 - name: L2C
   sop: 分析竞争与饮品可得性代理指标，结合现有验收政策选择切入策略；不得推断市场份额。
   inputs:
@@ -93,14 +83,9 @@ stages:
   skills_allowed:
   - competition-analysis
   tools_allowed:
-  - get_brief
-  - get_artifact
-  - get_profile
-  - load_skill
-  - read_result
   - submit_artifact
   - competitor_scan
-  - grid_stats
+  - get_profile
   checks: pipeline.l2c.inspect
   layers:
   - structure
@@ -109,8 +94,11 @@ stages:
   - judgment_quality
   - human_gate
   gate: none
-  max_steps: 16
+  max_steps: 10
   max_attempts: 3
+  decision_schema: runtime.decisions.L2C
+  assembler: runtime.assembly.assemble
+  token_budget: 25000
 - name: L3
   sop: 查询候选证据，调用确定性评分；解释优选理由，不自算分数或等级。
   inputs:
@@ -124,15 +112,9 @@ stages:
   - terminal-rationale
   - business-classification
   tools_allowed:
-  - get_brief
-  - get_artifact
-  - get_profile
-  - load_skill
-  - read_result
   - submit_artifact
-  - poi_query
   - poi_detail
-  - score_terminals
+  - get_profile
   checks: pipeline.l3.inspect
   layers:
   - structure
@@ -141,8 +123,11 @@ stages:
   - judgment_quality
   - human_gate
   gate: human
-  max_steps: 16
+  max_steps: 10
   max_attempts: 3
+  decision_schema: runtime.decisions.L3
+  assembler: runtime.assembly.assemble
+  token_budget: 65000
 - name: L3P
   sop: 依据名称与高德类型判断伙伴类别，读取几何覆盖与配置分配，明确资质待核实。
   inputs:
@@ -157,15 +142,10 @@ stages:
   - partner-screening
   - business-classification
   tools_allowed:
-  - get_brief
-  - get_artifact
-  - get_profile
-  - load_skill
-  - read_result
   - submit_artifact
   - partner_candidates
-  - poi_detail
   - partner_coverage
+  - get_profile
   checks: pipeline.l3p.inspect
   layers:
   - structure
@@ -174,8 +154,11 @@ stages:
   - judgment_quality
   - human_gate
   gate: none
-  max_steps: 16
+  max_steps: 10
   max_attempts: 3
+  decision_schema: runtime.decisions.L3P
+  assembler: runtime.assembly.assemble
+  token_budget: 25000
 - name: L4
   sop: 按真实上游目标编写老板视角话术，保留卖点原文、切入策略和商业条件待确认，并扫描合规。
   inputs:
@@ -191,13 +174,7 @@ stages:
   - owner-pitch
   - compliance-rewrite
   tools_allowed:
-  - get_brief
-  - get_artifact
-  - get_profile
-  - load_skill
-  - read_result
   - submit_artifact
-  - compliance_scan
   checks: pipeline.l4.inspect
   layers:
   - structure
@@ -206,8 +183,11 @@ stages:
   - judgment_quality
   - human_gate
   gate: none
-  max_steps: 16
+  max_steps: 6
   max_attempts: 3
+  decision_schema: runtime.decisions.L4
+  assembler: runtime.assembly.assemble
+  token_budget: 65000
 - name: PACK
   sop: 读取已验收交付物，调用路线与证据拼装计算，提交完整作战包与有边界的总结。
   inputs:
@@ -223,15 +203,7 @@ stages:
   skills_allowed:
   - campaign-pack
   tools_allowed:
-  - get_brief
-  - get_artifact
-  - get_profile
-  - load_skill
-  - read_result
   - submit_artifact
-  - route_plan
-  - pack_components
-  - compliance_scan
   checks: pipeline.pack.inspect
   layers:
   - structure
@@ -240,5 +212,8 @@ stages:
   - judgment_quality
   - human_gate
   gate: none
-  max_steps: 16
+  max_steps: 6
   max_attempts: 3
+  decision_schema: runtime.decisions.PACK
+  assembler: runtime.assembly.assemble
+  token_budget: 30000

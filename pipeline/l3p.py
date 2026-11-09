@@ -75,14 +75,14 @@ def references(a,c):return equal_ids(a['items'],'partner_id',candidates(c))
 def business(a,c):
     out=[];rows=candidates(c);selection=recommended(c)
     selected={pid for ids in selection.values() for pid in ids}
-    for r in a['items']:
+    for i,r in enumerate(a['items']):
         p=rows[r['partner_id']];ids=coverage(p,c);k=kind(p,c)
         expected=dict(recommended_zone_ids=sorted(z for z,chosen in selection.items() if r['partner_id'] in chosen),type=k,covered_terminal_ids=ids,coverage_count=len(ids),recommendation='优先' if r['partner_id'] in selected else '暂缓',reason=reason(p,k,ids,c))
-        if any(r[key]!=value for key,value in expected.items()):out.append(violation('partner_recount','items','伙伴分类、覆盖、推荐或理由与证据重算不符'))
+        if any(r[key]!=value for key,value in expected.items()):out.append(violation('partner_recount',f'items[{i}].items','伙伴分类、覆盖、推荐或理由与证据重算不符'))
     for zid in selection:
         actual=[r for r in a['items'] if zid in r['recommended_zone_ids']]
         if len(actual)>min(3,c['params']['partners']['max_recommended_per_zone']):
-            out.append(violation('partner_limit','items','每商圈推荐伙伴超过配置上限'))
+            out.append(violation('partner_limit',f'items[{i}].items','每商圈推荐伙伴超过配置上限'))
     return out
 
 

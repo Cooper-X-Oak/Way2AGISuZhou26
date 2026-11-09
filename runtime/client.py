@@ -9,7 +9,7 @@ class Client:
     label = 'llm:agent'
     offline = False
 
-    def __init__(self, *, budget=200_000, max_output_tokens=8192, transport=None):
+    def __init__(self, *, budget=300_000, max_output_tokens=4096, transport=None):
         from pipeline.llm.client import Gateway
         config = Gateway()  # Reuse credential/URL validation; never persist configuration.
         self.base_url, self.key, self.model = config.base_url, config.key, config.model
@@ -21,12 +21,15 @@ class Client:
         self.stopped = False
         self.call_token_limit = None
 
-    def complete(self, messages, tools, *, stage, emit):
+    def complete(self, messages, tools, *, stage, emit, tool_choice=None):
         if self.stopped:
             raise LLMError('llm_run_stopped')
-        body = dict(model=self.model, messages=messages, tools=tools, tool_choice='required',
+        body = dict(model=self.model, messages=messages, tools=tools, tool_choice='required' if tool_choice is None else tool_choice,
                     max_tokens=self.max_output_tokens)
-        reserve = len(serialized(body).encode('utf-8')) + 1024 + self.max_output_tokens
+        from runtime.limits import size
+        input_bound=size(dict(messages=messages,tools=tools))+256
+        if input_bound>8000: raise LLMError('agent_context_limit')
+        reserve = input_bound + self.max_output_tokens
         for attempt in range(1, 4):
             if self.call_token_limit is not None and self.total_tokens + reserve > self.call_token_limit:
                 raise LLMError('agent_stage_budget_exceeded')
@@ -50,7 +53,7 @@ class Client:
                      and usage['total_tokens'] >= usage['prompt_tokens'] + usage['completion_tokens'])
             charged = usage['total_tokens'] if valid else reserve
             self.total_tokens += charged
-            record = dict(charged_tokens=charged, total_tokens=self.total_tokens,
+            record = dict(input_token_bound=input_bound, charged_tokens=charged, total_tokens=self.total_tokens,
                           accounting='provider' if valid else 'conservative_reservation',
                           usage={k: usage[k] for k in ('prompt_tokens', 'completion_tokens', 'total_tokens')} if valid else None,
                           transport_attempt=attempt, http_status=response.status_code if response is not None else None)

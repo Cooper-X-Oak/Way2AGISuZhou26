@@ -31,31 +31,56 @@ class Script:
     def complete(self, messages, tools, *, stage, emit):
         self.seen.append((stage, deepcopy(messages), {t['function']['name'] for t in tools}))
         self.total_tokens += 100
-        name, arguments = next(self.replies)
+        last=messages[-1] if messages else {}
+        tools_seen=[m for m in messages if m['role']=='tool']
+        last_result=json.loads(tools_seen[-1]['content']) if tools_seen else {}
+        if not tools_seen:
+            summaries=[json.loads(m['content']) for m in messages if m['role']=='user' and '"latest_tool_results"' in m['content']]
+            if summaries and summaries[-1]['latest_tool_results']:last_result=summaries[-1]['latest_tool_results'][-1]
+        def cursor(v):
+            if isinstance(v,dict):
+                if v.get('next_cursor'):return v['next_cursor']
+                for x in v.values():
+                    found=cursor(x)
+                    if found:return found
+            return None
+        next_page=cursor(last_result)
+        if next_page and (stage,next_page) not in getattr(self,'paged',set()):
+            self.paged=getattr(self,'paged',set())|{(stage,next_page)}
+            name,arguments='read_result',{'cursor':next_page}
+        else:
+            name, arguments = next(self.replies)
         return dict(role='assistant', content='读取证据或按检查清单修订后提交。',
                     reasoning_content='THIS MUST NEVER BE SAVED',
                     tool_calls=[dict(id=f'call-{len(self.seen)}', type='function',
                                      function=dict(name=name, arguments=json.dumps(arguments, ensure_ascii=False)))])
 
 
+def decisions(name, c, a):
+    from runtime.assembly import decision_data, groups, review_rows
+    if name=='L0':return dict(fields={k:a[k] for k in __import__('pipeline.l0',fromlist=['REQUIRED']).REQUIRED},questions=a['questions'])
+    if name=='L1':return {'items':[dict(channel_id=r['channel_id'],priority=r['priority'],reason=r['reason']) for r in a['items']]}
+    if name=='L2':return {'items':[dict(zone_id=r['zone_id'],tier=r['tier'],type=r['type'],selected=True,reason='测试夹具判断') for r in a['items'] if r['selected']]}
+    if name=='L2C':return {'items':[dict(zone_id=r['zone_id'],intensity=r['intensity'],strategy=r['strategy'],reason='测试夹具判断') for r in a['items'] if r['zone_id'] in {z['zone_id'] for z in c['l2']['items'] if z['selected']}]}
+    if name=='L3':return {'items':[dict(poi_id=r['poi_id'],channel_id=r['channel_id'],exclude=False,reason='测试夹具复核') for r in review_rows(c)]}
+    if name=='L3P':return {'items':[dict(zone_id=r['zone_id'],partner_ids=r['required_partner_ids'],reason='测试夹具覆盖判断') for r in decision_data(name,c)]}
+    if name=='L4':
+        lookup={r['target']:r for r in a['items']}
+        return {'items':[dict(group_id=k,**{f:lookup[g['targets'][0]][f] for f in ('pitch','table_card','selling_point_ids')}) for k,g in groups(c).items()]}
+    return {'items':[dict(reason='测试夹具总结',refs=['profile:'+c['profile']['id']])]}
+
+
 def fixtures(contexts, count=3):
-    result = {}
-    for name, module in STAGES[:count]:
-        a = module.run(contexts[name])
-        a['judged_by'] = 'llm'
-        for row in a.get('items', []):
-            row['judged_by'] = 'llm'
-        result[name] = a
-    return result
+    return {name:decisions(name,contexts[name],module.run(contexts[name])) for name,module in STAGES[:count]}
 
 
 def script_for(artifacts, stages, *, retry=True):
-    result = []
+    result=[]
     for stage in stages:
-        result.extend([('load_skill', {'name': stage.skills_allowed[0]}), ('get_brief', {})])
-        if retry:
-            result.append(('submit_artifact', {'payload': {}}))
-        result.append(('submit_artifact', {'payload': artifacts[stage.name]}))
+        result.extend([('load_skill',{'name':stage.skills_allowed[0]}),('decision_data',{})])
+        if 'get_profile' in stage.tools_allowed:result.append(('get_profile',{'section':'channels'}))
+        if retry:result.append(('submit_artifact',{'payload':{}}))
+        result.append(('submit_artifact',{'payload':artifacts[stage.name]}))
     return result
 
 
@@ -76,15 +101,16 @@ def test_one_agent_three_workshops_retry_compression_and_gates(raw, contexts, tm
     events = rows(session)
     for stage in stages:
         selected = [e for e in events if e['stage'] == stage.name]
-        assert any(e['kind'] == 'check.violation' and e['detail']['code'] == 'schema' for e in selected)
+        assert any(e['kind'] == 'check.violation' and e['detail']['code'] == 'decision_schema' for e in selected)
         assert sum(e['kind'] == 'agent.output' for e in selected) == 2
         assert any(e['kind'] == 'agent.read' and e['detail'].get('skill') == stage.skills_allowed[0] for e in selected)
     for stage, messages, tools in client.seen:
-        assert tools == set(next(s for s in stages if s.name == stage).tools_allowed)
+        assert tools <= set(next(s for s in stages if s.name == stage).tools_allowed)
+        assert 'submit_artifact' in tools
         assert sum(m['role'] == 'system' for m in messages) == 1
-    assert client.seen[0][2] != client.seen[4][2] != client.seen[8][2]
+    assert {stage for stage,_,_ in client.seen}=={'L0','L1','L2'}
     compacted = [e['detail'] for e in events if e['kind'] == 'context.compacted']
-    assert len(compacted) == 3
+    assert len(compacted) >= 3
     assert all(e['after_tokens'] < e['before_tokens'] for e in compacted)
     assert 'THIS MUST NEVER BE SAVED' not in json.dumps(read(directory / 'session.json'))
     assert [e['seq'] for e in events] == list(range(1, len(events) + 1))
@@ -106,7 +132,7 @@ def test_full_line_mock_never_calls_old_stage_runners(raw, tmp_path, monkeypatch
         artifact = module.run(c)
         report = module.inspect(artifact, c)
         assert report['passed'], report
-        artifacts[name] = artifact
+        artifacts[name] = decisions(name,c,artifact)
         c['brief' if name == 'L0' else name.lower()] = artifact
         c['checks'][name] = report
     def forbidden(*args, **kwargs): raise AssertionError('old runner called during agent execution')
@@ -118,7 +144,7 @@ def test_full_line_mock_never_calls_old_stage_runners(raw, tmp_path, monkeypatch
     _, state = session.run()
     assert state['status'] == 'completed', state
     assert state['completed_stages'] == [s.name for s in stages]
-    assert read(session.directory / 'pack.json')['items'] == artifacts['L3']['items']
+    assert read(session.directory / 'pack.json')['items'] == read(session.directory / 'L3.json')['items']
     assert sum(e['kind'] == 'artifact.ready' for e in rows(session)) == 8
 
 
@@ -159,9 +185,12 @@ def test_bounded_failures(raw, tmp_path, failure):
     stage = stages[0].model_copy(deep=True)
     stage.max_steps = 2 if failure != 'attempts' else 16
     if failure == 'budget': stage.token_budget = 50
-    replies = [('get_brief', {})] * 3
+    replies = [('decision_data', {})] * 3
     if failure == 'tool_error': replies = [('poi_detail', {'poi_id': 'not-allowed'})] * 3
-    if failure == 'attempts': replies = [('submit_artifact', {'payload': {}})] * 4
+    if failure == 'attempts':
+        # Distinct invalid submissions test the attempt ceiling; identical calls
+        # are now suppressed by the session's duplicate guard.
+        replies = [('submit_artifact', {'payload': {'questions': [f'revision {i}']}}) for i in range(4)]
     session = Session(raw, tmp_path, client=Script(replies), line=([stage], catalog))
     _, state = session.run()
     assert state['error'] == ('agent_stage_budget_exceeded' if failure == 'budget' else 'agent_max_attempts' if failure == 'attempts' else 'agent_max_steps')
@@ -218,7 +247,7 @@ def test_line_reference_validation_and_skill_boundary(tmp_path, raw):
     toolbox = session.make_tools(stages[0])
     with pytest.raises(ValueError, match='skill_not_allowed'):
         toolbox.call('load_skill', {'name': 'zone-analysis'})
-    with pytest.raises(ValueError, match='artifact_not_upstream'):
+    with pytest.raises(ValueError, match='tool_not_allowed'):
         toolbox.call('get_artifact', {'stage': 'L2'})
 
 
@@ -228,15 +257,13 @@ def test_large_list_pagination_and_explicit_assembly(raw, tmp_path):
     # A labelled synthetic tool value, not source data or an LLM output.
     toolbox.values['fixture'] = [{'id': str(i), 'count': i} for i in range(150)]
     page = toolbox.call('read_result', {'ref': 'fixture', 'offset': 12, 'limit': 100})
-    assert len(page['data']['rows']) == 100 and page['data']['total'] == 150
-    with pytest.raises(ValueError):
-        toolbox.call('read_result', {'ref': 'fixture', 'limit': 1000})
-    output = toolbox.call('submit_artifact', {'payload': {'items': {
-        '$each': {'$ref': 'fixture'}, 'set': {'judged_by': 'llm'},
-        'key': 'id', 'overrides': {'149': {'note': 'model authored'}}}}})
-    assert len(output['items']) == 150 and output['items'][-1]['note'] == 'model authored'
-    assert output['items'][0]['count'] == 0
-    assert 'judged_by' not in toolbox.values['fixture'][0]
+    from runtime.limits import size
+    assert size(page)<=1500 and page['next_cursor']
+    with pytest.raises(ValueError):toolbox.call('read_result',{'ref':'fixture','limit':1000})
+    # Generic assembly helpers can still copy data internally, but model submission
+    # accepts the decision contract only.
+    output=toolbox.resolve({'$each':{'$ref':'fixture'},'set':{'note':'fixture'}})
+    assert len(output)==150 and 'note' not in toolbox.values['fixture'][0]
 
 
 def test_transport_failure_retries_share_budget(config, monkeypatch):

@@ -10,6 +10,8 @@ from pipeline.llm.client import LLMError
 from pipeline import l3
 from pipeline.quality import registry
 from runtime.agent import Agent, summary
+from runtime.decisions import SCHEMAS
+from runtime.assembly import map_violations
 from runtime.client import Client
 from runtime.events import Events
 from runtime.line import load_line, CONTRACTS, CHECKS
@@ -39,6 +41,7 @@ class Session:
                           index=0, revision=1, attempt=0, backtracks=0)
         self.toolbox = None
         self.pending = None
+        self.agent.checkpoint=self.save
         self.events.emit('run.started', actor='system', detail={'agent_id': self.agent.id})
         self.save()
 
@@ -48,6 +51,10 @@ class Session:
         snapshot = dict(state=self.state, context={k: v for k, v in self.c.items() if k != 'judge'},
                         agent=self.agent.snapshot(), pending=self.pending,
                         values=self.toolbox.values if self.toolbox else None,
+                        source_map=self.toolbox.source_map if self.toolbox else {},
+                        tools_used=sorted(self.toolbox.used) if self.toolbox else [],
+                        loaded_skills=sorted(self.toolbox.loaded_skills) if self.toolbox else [],
+                        last_decision=self.toolbox.last_decision if self.toolbox else None,
                         budget=self.client.budget, max_output_tokens=self.client.max_output_tokens,
                         total_tokens=self.client.total_tokens)
         # Atomic checkpoint; never contains URL, key, model or a client instance.
@@ -69,12 +76,17 @@ class Session:
         self.store = RunStore(self.directory)
         self.agent = Agent(self.client, self.events.emit)
         self.agent.restore(data['agent'])
+        self.agent.checkpoint=self.save
         self.c = {**data['context'], 'judge': self.client}
         self.state, self.pending = data['state'], data['pending']
         self.toolbox = None
         if data['values'] is not None and self.state['index'] < len(self.line):
             self.toolbox = self.make_tools(self.line[self.state['index']])
             self.toolbox.values = data['values']
+            self.toolbox.source_map = data.get('source_map',{})
+            self.toolbox.used=set(data.get('tools_used',[]))
+            self.toolbox.loaded_skills=set(data.get('loaded_skills',[]))
+            self.toolbox.last_decision = data.get('last_decision')
         return self
 
     def make_tools(self, stage):
@@ -86,6 +98,11 @@ class Session:
 
     def inspect(self, stage, artifact):
         report = CHECKS[stage.checks](artifact, self.c)
+        if self.toolbox and self.toolbox.submission_errors:
+            errors=self.toolbox.submission_errors
+            report['violations']=errors
+            report['passed']=False
+            report['layers'][0].update(status='failed',violations=errors)
         group = self.events.emit('check.started', stage=stage.name, detail={'attempt': self.state['attempt']})
         for layer in report['layers']:
             self.events.emit('check.layer', stage=stage.name, parent_id=group['id'], detail=layer,
@@ -96,7 +113,7 @@ class Session:
         # Gate rechecks are separate immutable siblings of the original failed inspection.
         if (self.directory / f'attempts/{stem}.json').exists():
             stem += '-gate'
-        self.store.write(self.directory / f'attempts/{stem}.json', {'artifact': artifact, 'check': report})
+        self.store.write(self.directory / f'attempts/{stem}.json', {'artifact': artifact, 'check': report, 'decision': self.toolbox.last_decision if self.toolbox else None, 'source_map': self.toolbox.source_map if self.toolbox else {}})
         self.store.write(self.directory / f'checks/{stem}.json', report)
         self.store.write(self.directory / f'{stage.name}.check.json', report)
         self.ledger(dict(stage=stage.name, revision=self.state['revision'], attempt=self.state['attempt'],
@@ -140,6 +157,9 @@ class Session:
             self.c['checks'].pop(name, None)
             self.c['approvals'].pop(name, None)
             self.agent.memory.pop(name, None)
+            self.c.get('decision_drafts',{}).pop(name,None)
+            self.c.get('assembly_provenance',{}).pop(name,None)
+            if name=='L3': self.c.pop('terminal_reviews',None)
             # Revision artifacts stay in attempts; remove stale current pointers.
             for filename in (f'{name}.json', f'{NAMES[name]}.json', f'{name}.check.json'):
                 (self.directory / filename).unlink(missing_ok=True)
@@ -173,20 +193,22 @@ class Session:
         self.accept(stage, artifact, report)
         return self.directory, self.state
 
-    def run(self, approve=None):
+    def run(self, approve=None, *, only_stage=None):
+        only_stage = only_stage or self.state.get('stage_test')
         if self.state['status'] != 'running':
             return self.directory, self.state
         try:
             while self.state['index'] < len(self.line):
                 stage = self.line[self.state['index']]
+                if only_stage is not None and stage.name != only_stage:
+                    break
                 if self.toolbox is None:
                     self.toolbox = self.make_tools(stage)
-                    upstream = {'artifacts': deepcopy(self.agent.memory),
+                    upstream = {'artifacts': list(self.agent.memory),
                                 'profile_evidence': 'profile:' + self.c['profile']['id'],
-                                'known_evidence': sorted(r for r in registry(self.c, stage.name)
-                                                         if r.startswith(('profile:', 'profile_channel:', 'scene:', 'selling_point:')))}
-                    self.agent.enter(stage, CONTRACTS[stage.output_contract], self.catalog, upstream,
-                                     self.state.pop('backtrack_reason', None))
+                                'instruction': '只引用本会话已展示的编号。'}
+                    self.agent.enter(stage, SCHEMAS[stage.name], self.catalog, upstream,
+                                     self.state.pop('backtrack_reason', None), toolbox=self.toolbox)
                     self.events.emit('stage.started', stage=stage.name, actor='system', detail={'agent_id': self.agent.id, 'tools': stage.tools_allowed})
                 if self.state['attempt'] >= stage.max_attempts:
                     return self.fail('agent_max_attempts')
@@ -215,6 +237,8 @@ class Session:
                         return self.directory, self.state
                     continue
                 if stage.name == 'L3' and 'zone_shortage' in codes and codes <= {'zone_shortage', 'approval_pending'}:
+                    if only_stage is not None:
+                        return self.fail('stage_test_backtrack_required', report['violations'])
                     self.backtrack('L2', 'A/B终端不足，保持阈值并补选下一商圈', l3.shortage(artifact, self.c))
                     continue
                 if self.state['attempt'] >= stage.max_attempts:
@@ -227,7 +251,7 @@ class Session:
                              'valid_profile_reference': 'profile:' + self.c['profile']['id'],
                              'channel_reference_prefix': 'profile_channel:',
                              'instruction': 'evidence是引用ID列表，不是自然语言；channel:不是已注册前缀。'}
-                self.agent.feedback(report['violations'], hints)
+                self.agent.feedback(map_violations(report['violations'],self.toolbox.source_map), hints)
                 self.events.emit('agent.retry', stage=stage.name, actor='agent', detail={'attempt': self.state['attempt'] + 1, 'violations': report['violations']})
                 self.save()
             if 'pack' in self.c:

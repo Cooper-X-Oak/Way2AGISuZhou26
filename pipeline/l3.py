@@ -15,6 +15,9 @@ def candidates(c):
     result=[]
     for p in selected_pois(c):
         ch=channel_for(p,c['profile']);z=grid_id(p,c['brief'])
+        review=c.get('terminal_reviews',{}).get(p['id'],{})
+        if review.get('channel_id'):
+            ch=next(row for row in c['profile']['channels'] if row['id']==review['channel_id'])
         if ch and ch['id'] in channels and z in zones:result.append((p,channels[ch['id']],zones[z]))
     return sorted(result,key=lambda r:r[0]['id'])
 
@@ -40,7 +43,8 @@ def ranked(c):
         grade='A' if i<ceil(n*shares['A']) else 'B' if i<ceil(n*(shares['A']+shares['B'])) else 'C'
         unknown=ch['channel_id']=='restaurant_other'
         if unknown:grade='C'
-        values[p['id']].update(grade=grade,next_action='首访-了解需求' if unknown else ACTIONS[grade])
+        if c.get('terminal_reviews',{}).get(p['id'],{}).get('exclude'):grade='C'
+        values[p['id']].update(grade=grade,next_action='暂缓' if c.get('terminal_reviews',{}).get(p['id'],{}).get('exclude') else '首访-了解需求' if unknown else ACTIONS[grade])
     return values
 
 
@@ -84,11 +88,11 @@ def shortage(a,c):
 
 def business(a,c):
     out=check_compliance(a,c);rows={p['id']:(p,ch,z) for p,ch,z in candidates(c)};expected=ranked(c)
-    for r in a['items']:
+    for i,r in enumerate(a['items']):
         p,ch,z=rows[r['poi_id']]
-        if any(r[k]!=v for k,v in expected[r['poi_id']].items()):out.append(violation('score','score_components/score/grade/next_action','与代码重算不一致'))
-        if r['reason']!=reason(p,ch,z,c):out.append(violation('reason','reason','理由只能使用该POI已知字段'))
-        if r['grade'] in ('A','B') and not any('现售佐餐饮料品牌待首访确认' in s for s in r['open']):out.append(violation('stock_open','open','A/B终端缺少现售品牌待确认项'))
+        if any(r[k]!=v for k,v in expected[r['poi_id']].items()):out.append(violation('score',f'items[{i}].score_components/score/grade/next_action','与代码重算不一致'))
+        if r['reason']!=reason(p,ch,z,c):out.append(violation('reason',f'items[{i}].reason','理由只能使用该POI已知字段'))
+        if r['grade'] in ('A','B') and not any('现售佐餐饮料品牌待首访确认' in s for s in r['open']):out.append(violation('stock_open',f'items[{i}].open','A/B终端缺少现售品牌待确认项'))
     for z in shortage(a,c):out.append(violation('zone_shortage',z,'A+B终端数不足 params.min_terminals_per_zone；必须回退L2'))
     return out
 

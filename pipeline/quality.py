@@ -49,6 +49,9 @@ def evaluate(stage, artifact, context, schema, references, business):
                 if not set(row['evidence']) <= allowed:
                     results['references'].append(violation('evidence', f'rows[{i}].evidence', '引用不在上游/档案/POI/params中'))
                 expected = 'rules' if stage == 'PACK' and i == 0 else label(context)
+                if i and stage in context.get('assembly_provenance', {}):
+                    key=next((row[k] for k in ('poi_id','zone_id','channel_id','partner_id','target') if k in row),None)
+                    expected=context['assembly_provenance'][stage].get(key,expected)
                 if row['judged_by'] != expected:
                     results['references'].append(violation('provenance', f'rows[{i}].judged_by', '判断来源不符'))
                 if any('来源' not in s for s in row['open']):

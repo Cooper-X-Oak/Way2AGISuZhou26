@@ -21,6 +21,8 @@ class Stage(BaseModel):
     name: str
     sop: str = Field(min_length=1)
     inputs: list[str]
+    decision_schema: str
+    assembler: str
     output_contract: str
     skills_allowed: list[str]
     tools_allowed: list[str]
@@ -53,11 +55,13 @@ def load_line(path=ROOT / 'production/line.yaml', *, skills_root=ROOT / 'skills'
     catalog = skills_catalog(skills_root)
     seen = {'brief'}
     for stage in stages:
+        from runtime.decisions import SCHEMAS
+        if stage.decision_schema != 'runtime.decisions.'+stage.name or stage.name not in SCHEMAS or stage.assembler != 'runtime.assembly.assemble': raise ValueError('invalid_decision_assembler')
         if stage.output_contract not in CONTRACTS or stage.checks not in CHECKS: raise ValueError('unknown_contract_or_check')
         if not set(stage.inputs) <= seen: raise ValueError('input_not_upstream')
         if not set(stage.skills_allowed) <= catalog.keys(): raise ValueError('unknown_skill')
         if not set(stage.tools_allowed) <= Toolbox.names(): raise ValueError('unknown_tool')
-        if not {'submit_artifact', 'load_skill'} <= set(stage.tools_allowed): raise ValueError('missing_agent_tools')
+        if not {'submit_artifact'} <= set(stage.tools_allowed): raise ValueError('missing_agent_tools')
         if stage.layers != list(LAYERS): raise ValueError('invalid_check_layers')
         if (stage.gate == 'human') != (stage.name in ('L2', 'L3')): raise ValueError('invalid_gate')
         seen.add(stage.name)

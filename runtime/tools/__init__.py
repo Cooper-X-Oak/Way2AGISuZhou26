@@ -34,6 +34,12 @@ class Toolbox:
     def __init__(self, context, stage, skills, allowed):
         self.c, self.stage, self.skills = context, stage, skills
         self.values = {}
+        self.seen = context.setdefault("seen_references", [])
+        self.last_decision = None
+        self.source_map = {}
+        self.submission_errors = []
+        self.used = set()
+        self.loaded_skills = set()
         self.allowed = set(allowed)
         self.schemas = {}
         for name in self.names():
@@ -49,9 +55,34 @@ class Toolbox:
     def definitions(self):
         result = []
         for name in sorted(self.allowed):
+            if name=='decision_data' and name in self.used:continue
+            if name=='load_skill' and self.loaded_skills==set(self.skills):continue
             schema = self.schemas[name].model_json_schema()
-            schema['properties']['intent'] = {'type': 'string', 'description': '一句公开行动意图，首轮为本车间计划摘要；不含隐藏推理。'}
+            schema['properties']['intent'] = {'type': 'string'}
             schema.setdefault('required', []).append('intent')
+            if name=='load_skill':schema['properties']['name']['enum']=sorted(set(self.skills)-self.loaded_skills)
+            def strip(v):
+                if isinstance(v,dict):return {k:strip(x) for k,x in v.items() if k not in ('title',)}
+                if isinstance(v,list):return [strip(x) for x in v]
+                return v
+            if name in ('submit_artifact','save_decisions'):
+                from runtime.decisions import SCHEMAS
+                decision=SCHEMAS[self.stage].model_json_schema()
+                defs=decision.get('$defs',{})
+                def inline(v):
+                    if isinstance(v,dict):
+                        if '$ref' in v:return inline(defs[v['$ref'].split('/')[-1]])
+                        return {k:inline(x) for k,x in v.items() if k!='$defs'}
+                    if isinstance(v,list):return [inline(x) for x in v]
+                    return v
+                decision=inline(decision)
+                if name=='submit_artifact':
+                    schema['properties']['payload']=decision
+                    if 'save_decisions' in self.allowed:
+                        schema['properties']['payload']={'anyOf':[decision,{'type':'object','properties':{'use_saved':{'const':True}},'required':['use_saved'],'additionalProperties':False}]}
+                else:
+                    schema['properties']['items']=decision['properties']['items']
+            schema=strip(schema)
             result.append({'type': 'function', 'function': {'name': name, 'description': getattr(self, name).__doc__, 'parameters': schema}})
         return result
 
@@ -60,23 +91,54 @@ class Toolbox:
             raise ValueError('tool_not_allowed')
         args = self.schemas[name].model_validate({k: v for k, v in arguments.items() if k != 'intent'}).model_dump()
         result = getattr(self, name)(**args)
+        self.used.add(name)
+        if name=='load_skill':self.loaded_skills.add(args['name'])
         if name == 'submit_artifact':
             return result
         key = f'r{len(self.values) + 1}'
         self.values[key] = deepcopy(result)
-        limit = args.get('limit', 12) if name == 'read_result' else 3 if name == 'pack_components' else 12
-        pages = []
-        def hints(value, path):
-            if isinstance(value, list) and len(value) > limit:
-                pages.append({'ref': path, 'offset': limit, 'limit': 100, 'total': len(value)})
-            elif isinstance(value, dict):
-                if len(value) > max(limit, 20):
-                    pages.append({'ref': path, 'offset': limit, 'limit': 100, 'total': len(value)})
-                    return
-                for k, v in value.items(): hints(v, path + '/' + k)
-        hints(result, key)
-        return {'ref': key, 'data': compact(result, limit),
-                **({'read_result_next_pages': pages[:12]} if pages else {})}
+        from runtime.limits import size, pages
+        if size({'ref':key,'data':result}) <= 1500:
+            displayed={'ref':key,'data':result}
+        else:
+            chunks=pages(result)
+            displayed={'ref':key,'total_pages':len(chunks),'records':chunks[0],
+                       'next_cursor':key+':1' if len(chunks)>1 else None}
+        if size(displayed)>1500: raise ValueError('tool_result_limit')
+        self.observe(displayed)
+        return displayed
+
+    def observe(self, displayed):
+        # Only IDs actually present in the rendered page, never hidden storage.
+        from pipeline.quality import registry
+        import json
+        text=json.dumps(displayed,ensure_ascii=False)
+        candidates=registry(self.c,self.stage)
+        candidates |= {'cell:'+z for z,_ in l2.ordered(self.c)} if 'l1' in self.c else set()
+        candidates |= {'rule:'+r['id'] for r in self.c['profile'].get('compliance_rules',[])}
+        if self.stage=='L4':
+            from runtime.assembly import groups
+            candidates |= {'group:'+k for k in groups(self.c)}
+        for ref in candidates:
+            raw=ref.split(':',1)[-1]
+            if json.dumps(ref,ensure_ascii=False) in text or json.dumps(raw,ensure_ascii=False) in text:
+                if ref not in self.seen:self.seen.append(ref)
+
+    @tool
+    def save_decisions(self, items: list[dict]) -> dict:
+        """Save model-authored decision rows across pages. IDs replace earlier draft rows. Final submit payload={use_saved:true}."""
+        key_field={'L1':'channel_id','L2':'zone_id','L2C':'zone_id','L3':'poi_id','L3P':'zone_id','L4':'group_id'}.get(self.stage)
+        if key_field is None: raise ValueError('draft_not_supported')
+        draft=self.c.setdefault('decision_drafts',{}).setdefault(self.stage,{})
+        for row in items:
+            draft[row[key_field]]=deepcopy(row)
+        return {'saved_count':len(draft),'saved_ids':list(draft)}
+
+    @tool
+    def decision_data(self) -> Any:
+        """Read the small decision worklist, computed constraints, IDs and sources. Read more pages only when necessary for the workshop decision."""
+        from runtime.assembly import decision_data
+        return decision_data(self.stage,self.c)
 
     def resolve(self, value, depth=0):
         if depth > 30:
@@ -110,9 +172,15 @@ class Toolbox:
         return {k: self.resolve(v, depth + 1) for k, v in value.items()}
 
     @tool
-    def read_result(self, ref: str, offset: Annotated[int, Field(ge=0)] = 0,
-                    limit: Annotated[int, Field(ge=1, le=100)] = 40) -> dict:
+    def read_result(self, ref: str = "", offset: Annotated[int, Field(ge=0)] = 0,
+                    limit: Annotated[int, Field(ge=1, le=100)] = 40, cursor: str | None = None) -> dict:
         """Read a saved result or list page, including exact IDs; ref uses r1/path/0 syntax."""
+        if cursor is not None:
+            from runtime.limits import pages
+            key, page=cursor.rsplit(':',1);page=int(page)
+            chunks=pages(self.values[key])
+            if not 0<=page<len(chunks):raise ValueError('invalid_page')
+            return {'records':chunks[page], 'total_pages':len(chunks), 'next_cursor':key+':'+str(page+1) if page+1<len(chunks) else None}
         if offset < 0 or not 1 <= limit <= 100:
             raise ValueError('invalid_page')
         value = self.resolve({'$ref': ref})
@@ -295,5 +363,40 @@ class Toolbox:
 
     @tool
     def submit_artifact(self, payload: dict) -> dict:
-        """Submit full contract JSON or explicit $ref/$merge/$each/$concat assembly for the five-layer check."""
-        return self.resolve(payload)
+        """Submit only the workshop decision_schema. Harness assembles and runs all five check layers."""
+        from runtime.assembly import assemble
+        from runtime.decisions import SCHEMAS
+        from pydantic import ValidationError
+        self.last_decision=deepcopy(payload)
+        self.submission_errors=[]
+        try:
+            if payload=={'use_saved':True}:
+                payload={'items':list(self.c.get('decision_drafts',{}).get(self.stage,{}).values())}
+                self.last_decision=deepcopy(payload)
+            d=SCHEMAS[self.stage].model_validate(payload).model_dump()
+            # Typed reference fields and explicit citations must have appeared in this session.
+            def check(v,path=''):
+                if isinstance(v,list):
+                    for i,x in enumerate(v):check(x,f'{path}[{i}]')
+                elif isinstance(v,dict):
+                    for k,x in v.items():
+                        prefixes={'poi_id':'poi:','partner_ids':'poi:','zone_id':'cell:',
+                                  'channel_id':'profile_channel:','selling_point_ids':'selling_point:','group_id':'group:','profile_id':'profile:'}
+                        refs=x if k in ('refs','partner_ids','selling_point_ids') else [x]
+                        if k=='refs' or k in prefixes:
+                            for ref in refs:
+                                if ref is None:continue
+                                full=ref if k=='refs' else prefixes[k]+ref
+                                if full not in self.seen:
+                                    self.submission_errors.append(dict(code='unseen_reference',path=path+'.'+k,message=full))
+                        check(x,path+'.'+k)
+            check(d)
+            if self.submission_errors:return {}
+            artifact,self.source_map,provenance=assemble(self.stage,d,self.c)
+            self.c.setdefault('assembly_provenance',{})[self.stage]=provenance
+            return artifact
+        except ValidationError as exc:
+            self.submission_errors=[dict(code='decision_schema',path='.'.join(map(str,e['loc'])),message=e['msg']) for e in exc.errors(include_input=False)]
+        except (ValueError,KeyError) as exc:
+            self.submission_errors=[dict(code=str(exc) if isinstance(exc,ValueError) else 'decision_reference',path='items',message='Check decision IDs, required worklist and unique entries.')]
+        return {}
